@@ -1,0 +1,17 @@
+{
+  "translation_multipliers": {
+    "same_league": 1.0,
+    "tier_1": 1.06,
+    "tier_1_scotland": 0.94,
+    "tier_2": 0.93,
+    "tier_3": 0.82,
+    "default": 0.72
+  },
+  "adaptation_months": {
+    "base": 5.0,
+    "under_22_adjustment": 1.5,
+    "over_28_adjustment": -0.5,
+    "forward_adjustment": 0.5,
+    "minimum": 2.0
+  }
+}

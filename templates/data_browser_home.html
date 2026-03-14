@@ -1,0 +1,414 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .dash-grid      { display: grid; gap: 18px; }
+  .cols-2         { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .cols-4         { grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .full-span      { grid-column: 1/-1; }
+
+  .attention-bar  { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .attention-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border-radius: 12px; font-size: 14px; flex: 1 1 auto; min-width: 240px;
+  }
+  .attention-item.warn { background: #fff5f0; border: 1px solid #f5bfad; color: #8b3a1a; }
+  .attention-item.info { background: #eef7ff; border: 1px solid #b8d9f8; color: #0b4ea2; }
+  .attention-item a    { font-weight: 700; text-decoration: underline; color: inherit; }
+  .attention-dot       { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .attention-item.warn .attention-dot { background: #c75c30; }
+  .attention-item.info .attention-dot { background: #0b4ea2; }
+
+  .hero-row { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .hero-kpi {
+    background: linear-gradient(145deg, rgba(8,47,103,0.97), rgba(11,78,162,0.90));
+    color: #fff; border-radius: 20px; padding: 22px;
+    position: relative; overflow: hidden;
+  }
+  .hero-kpi::after {
+    content: ""; position: absolute; right: -44px; bottom: -60px;
+    width: 260px; height: 260px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,.22) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .hero-kpi h2   { color: #fff; margin-bottom: 4px; position: relative; z-index: 1; }
+  .hero-kpi .sub { color: rgba(255,255,255,.76); font-size: 14px; margin-bottom: 16px; position: relative; z-index: 1; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; position: relative; z-index: 1; }
+  .kpi-card {
+    padding: 12px 14px; border-radius: 16px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.14);
+  }
+  .kpi-card strong { display: block; font-size: 26px; letter-spacing: .02em; }
+  .kpi-card span   { font-size: 12px; color: rgba(255,255,255,.74); letter-spacing: .04em; text-transform: uppercase; }
+
+  .funnel       { display: flex; flex-direction: column; gap: 8px; }
+  .funnel-stage { display: flex; align-items: center; gap: 12px; }
+  .funnel-label { width: 120px; font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+  .funnel-bar-wrap { flex: 1; background: rgba(11,78,162,.08); border-radius: 999px; height: 14px; overflow: hidden; }
+  .funnel-bar   { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--county-blue-deep), var(--county-blue)); }
+  .funnel-count { min-width: 32px; text-align: right; font-size: 14px; font-weight: 700; color: var(--county-blue-deep); }
+
+  .brief-cards { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .brief-card  {
+    border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px;
+    background: rgba(255,255,255,.90); box-shadow: 0 8px 20px rgba(8,47,103,.07);
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .brief-card-title { font-weight: 800; color: var(--ink); text-decoration: none; font-size: 15px; }
+  .brief-card-title:hover { color: var(--accent); }
+  .brief-card-meta  { font-size: 13px; color: var(--muted); }
+  .brief-card-foot  { display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap; }
+  .run-badge        { display: inline-block; padding: 4px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+  .run-badge.yes    { background: rgba(14,127,100,.12); color: #0a6a54; border: 1px solid rgba(14,127,100,.2); }
+  .run-badge.no     { background: rgba(177,83,45,.10); color: #8b3a1a; border: 1px solid rgba(177,83,45,.18); }
+
+  .cov-table td:first-child a { color: var(--ink); text-decoration: none; font-weight: 700; }
+  .cov-table td:first-child a:hover { color: var(--accent); }
+  .pct-bar-wrap { display: flex; align-items: center; gap: 6px; }
+  .pct-bar      { flex: 1; height: 6px; border-radius: 999px; background: rgba(11,78,162,.1); overflow: hidden; }
+  .pct-bar-fill { height: 100%; border-radius: 999px; background: var(--county-blue); }
+  .pct-bar-fill.ok   { background: var(--success); }
+  .pct-bar-fill.warn { background: #c75c30; }
+  .pct-num      { font-size: 12px; font-weight: 700; color: var(--muted); min-width: 34px; text-align: right; }
+
+  .fix-grid   { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+  .fix-card   {
+    border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+    background: rgba(255,255,255,.88); box-shadow: 0 8px 18px rgba(8,47,103,.06);
+  }
+  .fix-score  { font-size: 20px; font-weight: 800; margin: 6px 0 2px; color: var(--ink); }
+  .fix-score a { color: inherit; text-decoration: none; }
+  .fix-score a:hover { color: var(--accent); }
+  .fix-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px; }
+  .fix-sub    { font-size: 12px; color: var(--muted); }
+  .enrich-dots { display: flex; gap: 10px; margin-top: 8px; }
+  .dot-label  { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .dot        { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.on     { background: var(--success); }
+  .dot.off    { background: rgba(96,119,146,.28); }
+
+  .form-cols  { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; }
+  .league-picker {
+    display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 6px 12px; max-height: 200px; overflow: auto; padding: 12px;
+    border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.9);
+  }
+  .league-opt { display: flex; align-items: start; gap: 8px; font-size: 14px; }
+  .league-opt input { width: auto; margin-top: 3px; }
+  .field-note { margin-left: 6px; color: var(--muted); font-size: 11px; letter-spacing: .04em; }
+  .form-hint  { margin-top: 14px; padding: 10px 13px; border-radius: 12px; background: rgba(11,78,162,.06); color: var(--muted); font-size: 13px; }
+  .btn-row    { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .msg        { margin-bottom: 18px; border-radius: 14px; padding: 12px 15px; border: 1px solid rgba(14,127,100,.3); background: rgba(14,127,100,.06); color: #0a6a54; }
+
+  @media (max-width: 860px) {
+    .hero-row, .cols-2, .kpi-grid, .brief-cards, .fix-grid, .form-cols, .league-picker { grid-template-columns: 1fr; }
+    .funnel-label { width: 80px; }
+  }
+</style>
+
+<header>
+  <div>
+    <span class="badge">County Blue Control Room</span>
+    <h1>Recruitment Dashboard</h1>
+    <div class="muted">Live coverage · Brief builder · Longlist runner · Wyscout cleanup</div>
+  </div>
+  <div class="meta">{{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+</header>
+
+{% if message %}<div class="msg">{{ message }}</div>{% endif %}
+
+{% if attention_items %}
+  <div class="attention-bar">
+    {% for item in attention_items %}
+      <div class="attention-item {{ item.type }}">
+        <div class="attention-dot"></div>
+        <span>{{ item.text }} — <a href="{{ item.href }}">{{ item.cta }}</a></span>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+{# Hero: KPIs + Pipeline #}
+<div class="hero-row">
+  <div class="hero-kpi">
+    <span class="badge" style="background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.2);">Stockport County</span>
+    <h2>Database Coverage</h2>
+    <div class="sub">Every tracked player, fixture, and enrichment layer currently loaded.</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><span>Players</span><strong>{{ "{:,}".format(totals.players) }}</strong></div>
+      <div class="kpi-card"><span>Fixtures</span><strong>{{ "{:,}".format(totals.fixtures) }}</strong></div>
+      <div class="kpi-card"><span>Perf Rows</span><strong>{{ "{:,}".format(totals.match_performances) }}</strong></div>
+      <div class="kpi-card"><span>Events</span><strong>{{ "{:,}".format(totals.match_events) }}</strong></div>
+      <div class="kpi-card"><span>Lineups</span><strong>{{ "{:,}".format(totals.lineups) }}</strong></div>
+      <div class="kpi-card"><span>Team Stats</span><strong>{{ "{:,}".format(totals.fixture_team_stats) }}</strong></div>
+      <div class="kpi-card"><span>Wyscout</span><strong>{{ "{:,}".format(totals.wyscout_season_stats) }}</strong></div>
+      <div class="kpi-card"><span>Standings</span><strong>{{ "{:,}".format(totals.standings_snapshots) }}</strong></div>
+    </div>
+  </div>
+
+  <div class="panel" style="display:flex;flex-direction:column;gap:16px;">
+    <div>
+      <h2 style="margin-bottom:14px;">Recruitment Pipeline</h2>
+      <div class="funnel">
+        {% set max_count = namespace(val=1) %}
+        {% for s in pipeline_summary %}{% if s.player_count > max_count.val %}{% set max_count.val = s.player_count %}{% endif %}{% endfor %}
+        {% for s in pipeline_summary %}
+          {% set pct = (s.player_count / max_count.val * 100) | int %}
+          <div class="funnel-stage">
+            <div class="funnel-label">{{ s.stage | replace("_"," ") | title }}</div>
+            <div class="funnel-bar-wrap"><div class="funnel-bar" style="width:{{ pct }}%;"></div></div>
+            <div class="funnel-count">{{ s.player_count }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--line);padding-top:14px;">
+      <div style="font-size:13px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Wyscout Cleanup</div>
+      {% if wyscout_review.unmatched_rows %}
+        <div style="color:var(--warn);font-weight:700;margin-bottom:8px;">{{ "{:,}".format(wyscout_review.unmatched_rows) }} rows unmatched</div>
+        {% if not viewer_read_only %}
+          <a class="button secondary" href="/wyscout-review" style="padding:8px 14px;font-size:13px;">Open Review</a>
+        {% endif %}
+      {% else %}
+        <div style="color:var(--success);font-weight:700;">All rows matched ✓</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="panel" style="margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+  <div>
+    <h2 style="margin:0;">On-Pitch Profiles</h2>
+    <div class="muted" style="margin-top:4px;">Open the brief-free profile board to see football-only rankings by role across the tracked leagues.</div>
+  </div>
+  <a class="button" href="/on-pitch">Open Profile Dashboard</a>
+</div>
+
+{# Briefs + Builder #}
+<div class="dash-grid cols-2" style="margin-bottom:18px;">
+
+  <div class="panel">
+    <h2>Recent Briefs</h2>
+    {% if recent_briefs %}
+      <div class="brief-cards">
+        {% for brief in recent_briefs %}
+          <div class="brief-card">
+            <a class="brief-card-title" href="/brief/{{ brief.brief_id }}">#{{ brief.brief_id }} · {{ brief.role_name }}</a>
+            <div class="brief-card-meta">
+              {{ brief.archetype_primary }}{% if brief.archetype_secondary %} / {{ brief.archetype_secondary }}{% endif %}{% if brief.season %} · {{ brief.season }}{% endif %}
+            </div>
+            <div class="brief-card-foot">
+              {% if brief.longlist_count > 0 %}
+                <span class="run-badge yes">{{ brief.longlist_count }} on longlist</span>
+              {% else %}
+                <span class="run-badge no">Not run</span>
+              {% endif %}
+              {% if brief.report_exists %}
+                <a href="/brief/{{ brief.brief_id }}/report" style="font-size:12px;font-weight:700;color:var(--accent);text-decoration:none;">Report →</a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">No briefs yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="panel">
+    <h2>Build A Brief</h2>
+    {% if viewer_read_only %}
+      <p class="muted" style="margin:0 0 14px;">Brief creation is disabled in this shared read-only view. Use the internal workspace to create or rerun briefs.</p>
+    {% else %}
+      <p class="muted" style="margin:0 0 14px;">Create and optionally run a longlist immediately.</p>
+      {% if brief_builder.errors %}
+        <div style="margin-bottom:12px;padding:10px 13px;border-radius:12px;background:#fff5f0;border:1px solid #f5bfad;color:#8b3a1a;">
+          {% for e in brief_builder.errors %}<div>{{ e }}</div>{% endfor %}
+        </div>
+      {% endif %}
+      <form method="post" action="/briefs/create">
+      <div class="form-cols">
+        <div>
+          <label for="role_name">Role</label>
+          <select id="role_name" name="role_name">
+            {% for rn, rf in brief_builder.role_options %}
+              <option value="{{ rn }}" {% if brief_builder.form_values.role_name == rn %}selected{% endif %}>{{ rn }}{% if rf %} · {{ rf }}{% endif %}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="intent">Intent</label>
+          <select id="intent" name="intent">
+            {% for v, l in brief_builder.intent_options %}
+              <option value="{{ v }}" {% if brief_builder.form_values.intent == v %}selected{% endif %}>{{ l }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="archetype_primary">Primary Archetype</label>
+          <select id="archetype_primary" name="archetype_primary">
+            {% for a in brief_builder.archetype_options %}
+              <option value="{{ a }}" {% if brief_builder.form_values.archetype_primary == a %}selected{% endif %}>{{ a }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="archetype_secondary">Secondary Archetype</label>
+          <select id="archetype_secondary" name="archetype_secondary">
+            <option value="">None</option>
+            {% for a in brief_builder.archetype_options %}
+              <option value="{{ a }}" {% if brief_builder.form_values.archetype_secondary == a %}selected{% endif %}>{{ a }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="budget_max_fee">Max Fee <span class="field-note">Optional</span></label>
+          <input id="budget_max_fee" name="budget_max_fee" value="{{ brief_builder.form_values.budget_max_fee }}" placeholder="Blank = no fee gate" />
+        </div>
+        <div>
+          <label for="budget_max_wage">Max Wage <span class="field-note">Optional</span></label>
+          <input id="budget_max_wage" name="budget_max_wage" value="{{ brief_builder.form_values.budget_max_wage }}" placeholder="Blank = no wage gate" />
+        </div>
+        <div>
+          <label for="budget_max_contract_years">Contract Years</label>
+          <input id="budget_max_contract_years" name="budget_max_contract_years" value="{{ brief_builder.form_values.budget_max_contract_years }}" />
+        </div>
+        <div>
+          <label for="timeline">Timeline</label>
+          <select id="timeline" name="timeline">
+            {% for tl in brief_builder.timeline_options %}
+              <option value="{{ tl }}" {% if brief_builder.form_values.timeline == tl %}selected{% endif %}>{{ tl }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="age_min">Age Min</label>
+          <input id="age_min" name="age_min" value="{{ brief_builder.form_values.age_min }}" />
+        </div>
+        <div>
+          <label for="age_max">Age Max</label>
+          <input id="age_max" name="age_max" value="{{ brief_builder.form_values.age_max }}" />
+        </div>
+        <div>
+          <label for="created_by">Created By</label>
+          <input id="created_by" name="created_by" value="{{ brief_builder.form_values.created_by }}" />
+        </div>
+        <div>
+          <label for="approved_by">Approved By</label>
+          <input id="approved_by" name="approved_by" value="{{ brief_builder.form_values.approved_by }}" />
+        </div>
+        <div style="grid-column:1/-1;">
+          <label for="pathway_player_id">Pathway Player ID <span class="field-note">Optional</span></label>
+          <input id="pathway_player_id" name="pathway_player_id" value="{{ brief_builder.form_values.pathway_player_id }}" placeholder="Leave blank if no academy comparison" />
+        </div>
+        <div style="grid-column:1/-1;">
+          <label>League Scope</label>
+          <div class="league-picker">
+            {% for opt in brief_builder.league_options %}
+              <label class="league-opt">
+                <input type="checkbox" name="league_scope" value="{{ opt.league_id }}" {% if opt.league_id in brief_builder.form_values.league_scope %}checked{% endif %} />
+                <span>{{ opt.label }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        </div>
+        <div style="grid-column:1/-1;">
+          <label class="league-opt" style="text-transform:none;font-size:15px;color:var(--ink);font-weight:600;">
+            <input type="checkbox" name="pathway_check_done" value="1" {% if brief_builder.form_values.pathway_check_done %}checked{% endif %} />
+            <span>Pathway check completed</span>
+          </label>
+        </div>
+      </div>
+      <div class="form-hint">Fee and wage caps are optional — leave blank to scout broadly without affordability filtering.</div>
+      <div class="btn-row">
+        <button type="submit" name="action" value="create_run">Create &amp; Run Longlist</button>
+        <button type="submit" name="action" value="create" class="secondary">Create Only</button>
+      </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+{# Coverage table #}
+<div class="panel" style="margin-bottom:18px;">
+  <h2>League &amp; Season Coverage</h2>
+  <table class="cov-table">
+    <thead>
+      <tr>
+        <th>League</th>
+        <th>Season</th>
+        <th>Fixtures</th>
+        <th>Perf Rows</th>
+        <th>Team Stats %</th>
+        <th>Events %</th>
+        <th>Lineups %</th>
+        <th>Date Range</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in coverage_rows %}
+        {% set fc = [row.fixture_count, 1] | max %}
+        {% set ts_pct = (row.team_stat_fixtures / fc * 100) | int %}
+        {% set ev_pct = (row.event_fixtures    / fc * 100) | int %}
+        {% set lu_pct = (row.lineup_fixtures   / fc * 100) | int %}
+        <tr>
+          <td>
+            <a href="/league?league_id={{ row.league_id }}&season={{ row.season }}">{{ row.league_name }}</a>
+            <div class="muted">{{ row.country }}{% if row.tier %} · Tier {{ row.tier }}{% endif %}</div>
+          </td>
+          <td>{{ row.season }}</td>
+          <td>{{ "{:,}".format(row.fixture_count) }}</td>
+          <td>{{ "{:,}".format(row.performance_rows) }}</td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bar"><div class="pct-bar-fill {% if ts_pct >= 80 %}ok{% elif ts_pct < 50 %}warn{% endif %}" style="width:{{ ts_pct }}%"></div></div>
+              <span class="pct-num">{{ ts_pct }}%</span>
+            </div>
+          </td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bar"><div class="pct-bar-fill {% if ev_pct >= 80 %}ok{% elif ev_pct < 50 %}warn{% endif %}" style="width:{{ ev_pct }}%"></div></div>
+              <span class="pct-num">{{ ev_pct }}%</span>
+            </div>
+          </td>
+          <td>
+            <div class="pct-bar-wrap">
+              <div class="pct-bar"><div class="pct-bar-fill {% if lu_pct >= 80 %}ok{% elif lu_pct < 50 %}warn{% endif %}" style="width:{{ lu_pct }}%"></div></div>
+              <span class="pct-num">{{ lu_pct }}%</span>
+            </div>
+          </td>
+          <td class="muted" style="font-size:13px;">
+            {% if row.first_fixture_date and row.last_fixture_date %}{{ row.first_fixture_date }} → {{ row.last_fixture_date }}{% else %}—{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{# Recent fixtures #}
+<div class="panel">
+  <h2>Recent Fixtures</h2>
+  <div class="fix-grid">
+    {% for row in recent_fixtures %}
+      <article class="fix-card">
+        <div class="fix-badges">
+          <span class="badge">{{ row.league_name }}</span>
+          <span class="badge">{{ row.season }}</span>
+        </div>
+        <div class="fix-score">
+          <a href="/fixture/{{ row.fixture_id }}">
+            {{ row.home_team }} {{ row.home_score if row.home_score is not none else "–" }} : {{ row.away_score if row.away_score is not none else "–" }} {{ row.away_team }}
+          </a>
+        </div>
+        <div class="fix-sub">{{ row.date.strftime("%d %b %Y %H:%M") if row.date else "Unknown date" }}{% if row.status %} · {{ row.status }}{% endif %}</div>
+        <div class="enrich-dots">
+          <span class="dot-label"><span class="dot {% if row.player_rows > 0 %}on{% else %}off{% endif %}"></span>Perf</span>
+          <span class="dot-label"><span class="dot {% if row.team_stat_rows > 0 %}on{% else %}off{% endif %}"></span>Stats</span>
+          <span class="dot-label"><span class="dot {% if row.event_rows > 0 %}on{% else %}off{% endif %}"></span>Events</span>
+          <span class="dot-label"><span class="dot {% if row.lineup_rows > 0 %}on{% else %}off{% endif %}"></span>Lineups</span>
+        </div>
+      </article>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

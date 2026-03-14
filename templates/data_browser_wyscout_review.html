@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.5fr auto;
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 18px;
+    }
+    .filter-form {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+    }
+    .filter-form label, .manual-form label {
+      display: grid;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .filter-form input,
+    .filter-form select,
+    .manual-form input {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      font-family: inherit;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .button,
+    button {
+      display: inline-block;
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: inherit;
+      text-decoration: none;
+    }
+    .button.secondary,
+    button.secondary {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffffff 0%, #f4f6ef 100%);
+    }
+    .summary-card strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 24px;
+    }
+    .review-layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 18px;
+    }
+    .league-breakdown {
+      display: grid;
+      gap: 8px;
+    }
+    .league-chip {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .league-chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+    }
+    .review-list {
+      display: grid;
+      gap: 14px;
+    }
+    .review-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: #fff;
+      padding: 16px;
+    }
+    .review-card header {
+      margin: 0 0 14px;
+      padding: 0 0 12px;
+    }
+    .review-card h2 {
+      margin-bottom: 4px;
+    }
+    .review-meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .review-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .candidate-list {
+      display: grid;
+      gap: 10px;
+    }
+    .candidate {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 14px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+    .candidate p {
+      margin: 0;
+    }
+    .candidate-choice {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--ink);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .batch-toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+    .callout {
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: #edf5ec;
+    }
+    .manual-form {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: minmax(0, 180px) auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 18px;
+      align-items: center;
+    }
+    .working-banner {
+      display: none;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--accent);
+      background: #edf5ec;
+    }
+    .working-banner.active {
+      display: block;
+    }
+    .is-submitting {
+      opacity: 0.72;
+      pointer-events: none;
+    }
+    .empty-state {
+      padding: 22px;
+      border-radius: 16px;
+      border: 1px dashed var(--line);
+      background: #fff;
+    }
+    @media (max-width: 980px) {
+      .toolbar, .review-layout, .filter-form, .summary-grid, .review-grid, .candidate, .manual-form {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+  <header>
+    <div>
+      <div class="muted"><a class="button secondary" href="/">Back to dashboard</a></div>
+      <h1>Wyscout Review</h1>
+      <div class="muted">Resolve remaining season-average Wyscout rows and rerun imports from the browser.</div>
+    </div>
+    <div class="meta">
+      Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}
+    </div>
+  </header>
+
+  {% if message %}
+    <section class="callout">{{ message }}</section>
+  {% endif %}
+
+  {% if viewer_read_only %}
+    <section class="callout">Read-only mode is enabled. You can browse unmatched rows here, but reruns and mapping actions are disabled.</section>
+  {% endif %}
+
+  <section class="working-banner" id="working-banner">
+    Saving the mapping and rerunning the relevant Wyscout import. This usually takes a few seconds.
+  </section>
+
+  <section class="panel toolbar">
+    <form class="filter-form" method="get" action="/wyscout-review">
+      <label>
+        League
+        <select name="league_id">
+          <option value="">All leagues</option>
+          {% for option in available_leagues %}
+            <option value="{{ option.league_id }}"{% if selected_league_id == option.league_id %} selected{% endif %}>{{ option.league_name }} ({{ option.count }})</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        Season
+        <select name="season">
+          <option value="">All seasons</option>
+          {% for option in available_seasons %}
+            <option value="{{ option }}"{% if selected_season == option %} selected{% endif %}>{{ option }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="button-row">
+        <button type="submit">Apply Filters</button>
+        <a class="button secondary" href="/wyscout-review">Reset</a>
+      </div>
+      <div class="muted">
+        Source root: {{ source_root }}{% if review_path %}<br />Review file: {{ review_path }}{% endif %}
+      </div>
+    </form>
+
+    {% if not viewer_read_only %}
+      <form method="post" action="/wyscout-review/reimport" data-pending-label="Rerunning import...">
+        {% if selected_league_id is not none %}<input type="hidden" name="league_id" value="{{ selected_league_id }}" />{% endif %}
+        {% if selected_season %}<input type="hidden" name="season" value="{{ selected_season }}" />{% endif %}
+        <input type="hidden" name="page" value="{{ page }}" />
+        <button type="submit">{% if selected_league_id is not none %}Rerun This League{% else %}Rerun All Folders{% endif %}</button>
+      </form>
+    {% endif %}
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card"><span class="muted">All Unmatched</span><strong>{{ "{:,}".format(summary.unmatched_rows) }}</strong></div>
+    <div class="summary-card"><span class="muted">Filtered Rows</span><strong>{{ "{:,}".format(summary.filtered_rows) }}</strong></div>
+    <div class="summary-card"><span class="muted">Rows With Candidates</span><strong>{{ "{:,}".format(summary.rows_with_candidates) }}</strong></div>
+    <div class="summary-card"><span class="muted">Rows With Team Match</span><strong>{{ "{:,}".format(summary.rows_with_team_matches) }}</strong></div>
+  </section>
+
+  <section class="review-layout">
+    <aside class="panel">
+      <h2>League Breakdown</h2>
+      <div class="league-breakdown">
+        <a class="league-chip{% if selected_league_id is none %} active{% endif %}" href="/wyscout-review{% if selected_season %}?season={{ selected_season }}{% endif %}">
+          <span>All leagues</span>
+          <strong>{{ "{:,}".format(summary.unmatched_rows) }}</strong>
+        </a>
+        {% for row in league_breakdown %}
+          <a class="league-chip{% if selected_league_id == row.league_id %} active{% endif %}" href="/wyscout-review?league_id={{ row.league_id }}{% if selected_season %}&season={{ selected_season }}{% endif %}">
+            <span>{{ row.league_name }}</span>
+            <strong>{{ "{:,}".format(row.count) }}</strong>
+          </a>
+        {% endfor %}
+      </div>
+    </aside>
+
+    <div>
+      {% if rows %}
+        {% if not viewer_read_only %}
+          <form id="batch-review-form" method="post" action="/wyscout-review/apply-batch" data-pending-label="Saving selected matches and rerunning...">
+            {% if selected_league_id is not none %}<input type="hidden" name="league_id" value="{{ selected_league_id }}" />{% endif %}
+            {% if selected_season %}<input type="hidden" name="season" value="{{ selected_season }}" />{% endif %}
+            <input type="hidden" name="page" value="{{ page }}" />
+          </form>
+
+          <section class="batch-toolbar">
+            <div>
+              <strong><span id="selected-match-count">0</span> queued on this page</strong>
+              <div class="muted">Tick one suggested candidate per player card, then apply the whole batch in one rerun.</div>
+            </div>
+            <div class="button-row">
+              <button type="submit" form="batch-review-form">Apply Selected Matches</button>
+            </div>
+          </section>
+        {% endif %}
+
+        <div class="review-list">
+          {% for row in rows %}
+            <article class="review-card">
+              <header>
+                <div class="review-meta">
+                  <span class="badge">League {{ row.league_id }}</span>
+                  <span class="badge">Season {{ row.season }}</span>
+                  <span class="badge">{{ row.source_file }}</span>
+                </div>
+                <h2>{{ row.player_name }}</h2>
+                <div class="muted">{{ row.team_name }}{% if row.current_team %} · current team {{ row.current_team }}{% endif %}</div>
+              </header>
+
+              <div class="review-grid">
+                <div class="panel">
+                  <div class="muted">Source Player</div>
+                  <strong>{{ row.player_name }}</strong>
+                </div>
+                <div class="panel">
+                  <div class="muted">Source Team</div>
+                  <strong>{{ row.team_name or "-" }}</strong>
+                </div>
+                <div class="panel">
+                  <div class="muted">Historical Team Match</div>
+                  <strong>{{ row.suggested_historical_team or "None yet" }}</strong>
+                  {% if row.suggested_team_score is not none %}
+                    <div class="muted">Score {{ "%.2f"|format(row.suggested_team_score) }}</div>
+                  {% endif %}
+                </div>
+              </div>
+
+              {% if row.candidate_options %}
+                <div class="candidate-list">
+                  {% for candidate in row.candidate_options %}
+                    <div class="candidate">
+                      <div>
+                        <p><strong><a href="/player/{{ candidate.player_id }}">{{ candidate.player_name }}</a></strong></p>
+                        <p class="muted">{{ candidate.label }}{% if candidate.score is not none %} · score {{ "%.2f"|format(candidate.score) }}{% endif %} · player {{ candidate.player_id }}</p>
+                      </div>
+                      {% if not viewer_read_only %}
+                        <label class="candidate-choice">
+                          <input
+                            type="checkbox"
+                            name="selected_match"
+                            value="{{ candidate.selection_token }}"
+                            form="batch-review-form"
+                            data-selection-group="{{ row.selection_group }}"
+                          />
+                          Queue This Match
+                        </label>
+                      {% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="panel warn">No player candidate suggestions yet for this row. You can still enter a player ID manually below.</div>
+              {% endif %}
+
+              {% if not viewer_read_only %}
+                <div class="muted" style="margin-top: 12px;">Batch selections are saved together and then rerun once at the end. Manual entries below still run immediately.</div>
+
+                <form class="manual-form" method="post" action="/wyscout-review/apply" data-pending-label="Saving manual mapping and rerunning...">
+                  <label>
+                    Manual player ID
+                    <input name="player_id" type="number" min="1" step="1" placeholder="API-Football player id" required />
+                  </label>
+                  <div class="button-row">
+                    <input type="hidden" name="source_player_name" value="{{ row.player_name }}" />
+                    <input type="hidden" name="source_team_name" value="{{ row.team_name }}" />
+                    <input type="hidden" name="league_id" value="{{ row.league_id }}" />
+                    <input type="hidden" name="season" value="{{ selected_season or row.season }}" />
+                    <input type="hidden" name="page" value="{{ page }}" />
+                    <button type="submit" class="secondary">Save Manual Mapping</button>
+                  </div>
+                </form>
+              {% endif %}
+            </article>
+          {% endfor %}
+        </div>
+
+        <div class="pagination">
+          <div class="muted">Page {{ page }} of {{ total_pages }}</div>
+          <div class="button-row">
+            {% if not viewer_read_only %}
+              <button type="submit" form="batch-review-form">Apply Selected Matches</button>
+            {% endif %}
+            {% if page > 1 %}
+              <a class="button secondary" href="/wyscout-review?{% if selected_league_id is not none %}league_id={{ selected_league_id }}&{% endif %}{% if selected_season %}season={{ selected_season }}&{% endif %}page={{ page - 1 }}">Previous</a>
+            {% endif %}
+            {% if page < total_pages %}
+              <a class="button secondary" href="/wyscout-review?{% if selected_league_id is not none %}league_id={{ selected_league_id }}&{% endif %}{% if selected_season %}season={{ selected_season }}&{% endif %}page={{ page + 1 }}">Next</a>
+            {% endif %}
+          </div>
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <h2>No rows match the current filter</h2>
+          <p class="muted">Try widening the league or season filters, or rerun the Wyscout import to refresh the review file.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <script>
+    (function () {
+      const banner = document.getElementById("working-banner");
+      const forms = document.querySelectorAll("form[data-pending-label]");
+      const checkboxes = document.querySelectorAll("input[data-selection-group]");
+      const counter = document.getElementById("selected-match-count");
+
+      function updateSelectedCount() {
+        if (!counter) {
+          return;
+        }
+        counter.textContent = String(document.querySelectorAll("input[data-selection-group]:checked").length);
+      }
+
+      for (const checkbox of checkboxes) {
+        checkbox.addEventListener("change", function () {
+          if (checkbox.checked) {
+            for (const peer of document.querySelectorAll("input[data-selection-group='" + checkbox.dataset.selectionGroup + "']")) {
+              if (peer !== checkbox) {
+                peer.checked = false;
+              }
+            }
+          }
+          updateSelectedCount();
+        });
+      }
+
+      for (const form of forms) {
+        form.addEventListener("submit", function (event) {
+          if (form.dataset.submitting === "true") {
+            event.preventDefault();
+            return;
+          }
+          form.dataset.submitting = "true";
+          form.classList.add("is-submitting");
+          if (banner) {
+            banner.textContent = form.dataset.pendingLabel || "Working...";
+            banner.classList.add("active");
+            banner.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          const button = event.submitter || form.querySelector("button[type='submit']");
+          if (button) {
+            button.disabled = true;
+            if (form.dataset.pendingLabel) {
+              button.textContent = form.dataset.pendingLabel;
+            }
+          }
+        });
+      }
+      updateSelectedCount();
+    }());
+  </script>
+{% endblock %}

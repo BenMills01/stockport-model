@@ -1,0 +1,26 @@
+{
+  "default_role_name": "controller",
+  "default_season_mode": "latest",
+  "minimum_minutes": 180,
+  "candidate_limit": 250,
+  "top_n": 10,
+  "shortlist_n": 5,
+  "league_top_n": 5,
+  "score_weights_pct": {
+    "role_fit": 40,
+    "current_performance": 35,
+    "upward_projection": 25
+  },
+  "present_weights_pct": {
+    "role_fit": 55,
+    "current_performance": 45
+  },
+  "upside_weights_pct": {
+    "role_fit": 30,
+    "upward_projection": 45,
+    "age_upside": 25
+  },
+  "unknown_age_upside_score": 25,
+  "unknown_age_penalty_multiplier": 0.85,
+  "minimum_known_age_upside_score": 5
+}

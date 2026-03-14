@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <div>
+    <div class="badge">Comparison</div>
+    <h1>{{ brief.role_name if brief else "Target" }} Comparison</h1>
+  </div>
+  <div class="meta">Generated {{ generated_at }}</div>
+</header>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Role Fit</th>
+      <th>Current</th>
+      <th>Projection</th>
+      <th>Availability</th>
+      <th>Financial</th>
+      <th>Composite</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for player in players %}
+    <tr>
+      <td><strong>{{ player.player_name }}</strong><br /><span class="muted">{{ player.team or "" }}</span></td>
+      <td>{{ player.role_fit }}</td>
+      <td>{{ player.current_performance }}</td>
+      <td>{{ player.projection_band.p10 }} / {{ player.projection_band.p50 }} / {{ player.projection_band.p90 }}</td>
+      <td>{{ player.availability }}</td>
+      <td>{{ player.financial }}</td>
+      <td>{{ player.composite }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+

@@ -1,0 +1,13 @@
+{
+  "age_band_leeway_years": 2.0,
+  "min_role_profile_label_rows": 5,
+  "min_role_profile_grid_rows": 5,
+  "pathway_hard_readiness_months": 12,
+  "pathway_hard_max_contract_years": 2,
+  "wage_discipline_multiplier": 1.2,
+  "availability_risk_caution_threshold": 0.40,
+  "championship_projection_floor": 40.0,
+  "pathway_soft_readiness_min_months": 12,
+  "pathway_soft_readiness_max_months": 24,
+  "pathway_soft_max_contract_years": 2
+}

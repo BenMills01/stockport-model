@@ -1,0 +1,26 @@
+[
+  {
+    "league_id": 41,
+    "name": "League One",
+    "tm_slug": "league-one/startseite/wettbewerb/GB3",
+    "tm_competition_code": "GB3"
+  },
+  {
+    "league_id": 40,
+    "name": "Championship",
+    "tm_slug": "championship/startseite/wettbewerb/GB2",
+    "tm_competition_code": "GB2"
+  },
+  {
+    "league_id": 42,
+    "name": "League Two",
+    "tm_slug": "league-two/startseite/wettbewerb/GB4",
+    "tm_competition_code": "GB4"
+  },
+  {
+    "league_id": 39,
+    "name": "Premier League",
+    "tm_slug": "premier-league/startseite/wettbewerb/GB1",
+    "tm_competition_code": "GB1"
+  }
+]

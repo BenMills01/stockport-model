@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <div>
+    <div class="badge">Recommendation</div>
+    <h1>{{ player.player_name if player else "Recommendation" }}</h1>
+  </div>
+  <div class="meta">
+    <div>Generated {{ generated_at }}</div>
+    {% if brief %}<div>{{ brief.role_name }} | {{ brief.archetype_primary }}</div>{% endif %}
+  </div>
+</header>
+
+<section class="grid two">
+  <div class="panel">
+    <h2>Executive Summary</h2>
+    <p>
+      {% if player and prediction %}
+      {{ player.player_name }} projects as a {{ brief.role_name }} target with a composite score of {{ "%.1f"|format(prediction.composite_score or 0) }},
+      role-fit score of {{ prediction.role_fit_score }}, and Championship projection band of
+      {{ prediction.championship_projection_10th }} / {{ prediction.championship_projection_50th }} / {{ prediction.championship_projection_90th }}.
+      {% else %}
+      Recommendation data is not yet complete.
+      {% endif %}
+    </p>
+  </div>
+  <div class="panel">
+    <h2>Scout Summary</h2>
+    {% if scout_notes %}
+      <ul>{% for note in scout_notes %}<li>{{ note.scout_name }}: {{ note.notes_text }}</li>{% endfor %}</ul>
+    {% else %}
+      <p class="muted">No scout notes available.</p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="panel" style="margin-top: 16px;">
+  <h2>Alternatives</h2>
+  {% if alternatives %}
+    <table>
+      <thead><tr><th>Player</th><th>Composite</th><th>Projection</th></tr></thead>
+      <tbody>
+      {% for item in alternatives %}
+        <tr>
+          <td>{{ item.player.player_name if item.player else "Unknown" }}</td>
+          <td>{{ item.prediction.composite_score if item.prediction else "n/a" }}</td>
+          <td>{{ item.prediction.championship_projection_50th if item.prediction else "n/a" }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="muted">No alternatives supplied.</p>
+  {% endif %}
+</section>
+
+<section class="panel" style="margin-top: 16px;">
+  <h2>Override History</h2>
+  {% if overrides %}
+    <ul>{% for item in overrides %}<li>{{ item.override_date }} — {{ item.reason_category }}: {{ item.reason_text }}</li>{% endfor %}</ul>
+  {% else %}
+    <p class="muted">No overrides logged.</p>
+  {% endif %}
+</section>
+{% endblock %}

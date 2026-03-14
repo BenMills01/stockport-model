@@ -1,0 +1,18 @@
+{
+  "projection_score": {
+    "anchors": {
+      "p10": 2.7,
+      "p50": 3.88,
+      "p90": 6.29
+    },
+    "score_at_anchors": {
+      "p10": 30.0,
+      "p50": 50.0,
+      "p90": 80.0
+    },
+    "tail_scale": 3.0
+  },
+  "board_score": {
+    "saturation_scale": 19.0
+  }
+}

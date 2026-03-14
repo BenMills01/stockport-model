@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    .backlink {
+      display: inline-block;
+      margin-bottom: 10px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .scoreline {
+      font-size: 30px;
+      margin-top: 8px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .team-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .player-row {
+      display: grid;
+      grid-template-columns: 1.2fr repeat(5, minmax(0, 1fr));
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .player-row.header {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+    }
+    .player-link { color: var(--ink); text-decoration: none; font-weight: 700; }
+    .player-link:hover { color: var(--accent); }
+    .event-list {
+      display: grid;
+      gap: 8px;
+    }
+    .event-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px 12px;
+      background: #fff;
+    }
+    .lineup-group + .lineup-group { margin-top: 16px; }
+    @media (max-width: 900px) {
+      .detail-grid, .team-columns { grid-template-columns: 1fr; }
+      .player-row { grid-template-columns: 1.4fr repeat(3, minmax(0, 1fr)); }
+    }
+  </style>
+  <header>
+    <div>
+      <a class="backlink" href="/league?league_id={{ fixture.league_id }}&season={{ fixture.season }}">Back to {{ league.name }} {{ fixture.season }}</a>
+      <h1>{{ fixture.home_team }} vs {{ fixture.away_team }}</h1>
+      <div class="scoreline">{{ fixture.home_score if fixture.home_score is not none else "-" }} - {{ fixture.away_score if fixture.away_score is not none else "-" }}</div>
+      <div class="muted">{{ fixture.date.strftime("%d %b %Y %H:%M") if fixture.date else "Unknown date" }}{% if fixture.status %} · {{ fixture.status }}{% endif %}</div>
+    </div>
+    <div class="meta">Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+  </header>
+
+  <div class="detail-grid">
+    <section class="panel">
+      <h2>Top Performances</h2>
+      {% for team_name, rows in performance_groups.items() %}
+        <div class="lineup-group">
+          <span class="badge">{{ team_name }}</span>
+          <div class="player-row header">
+            <div>Player</div>
+            <div>Pos</div>
+            <div>Min</div>
+            <div>Rating</div>
+            <div>Goals</div>
+            <div>Assists</div>
+          </div>
+          {% for row in rows[:12] %}
+            <div class="player-row">
+              <div><a class="player-link" href="/player/{{ row.player_id }}">{{ row.player_name or ("Player " ~ row.player_id) }}</a></div>
+              <div>{{ row.position or "-" }}</div>
+              <div>{{ row.minutes or "-" }}</div>
+              <div>{{ row.rating or "-" }}</div>
+              <div>{{ row.goals_scored or 0 }}</div>
+              <div>{{ row.assists or 0 }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    </section>
+
+    <section class="panel">
+      <h2>Team Stats</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Team</th>
+            <th>Poss</th>
+            <th>Shots</th>
+            <th>On Target</th>
+            <th>xG</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in team_stats %}
+            <tr>
+              <td>{{ row.team_name }}</td>
+              <td>{{ row.possession if row.possession is not none else "-" }}</td>
+              <td>{{ row.total_shots if row.total_shots is not none else "-" }}</td>
+              <td>{{ row.shots_on_target if row.shots_on_target is not none else "-" }}</td>
+              <td>{{ row.expected_goals if row.expected_goals is not none else "-" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <section class="panel" style="margin-top: 18px;">
+    <h2>Lineups</h2>
+    <div class="team-columns">
+      {% for team_name, groups in lineup_groups.items() %}
+        <div class="panel">
+          <span class="badge">{{ team_name }}</span>
+          <h3 style="margin-top: 12px; margin-bottom: 8px;">Starters</h3>
+          <ul>
+            {% for row in groups.starters %}
+              <li>{{ row.shirt_number or "-" }} · Player {{ row.player_id }}{% if row.position_label %} · {{ row.position_label }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+          <h3 style="margin-top: 12px; margin-bottom: 8px;">Substitutes</h3>
+          <ul>
+            {% for row in groups.substitutes %}
+              <li>{{ row.shirt_number or "-" }} · Player {{ row.player_id }}{% if row.position_label %} · {{ row.position_label }}{% endif %}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="panel" style="margin-top: 18px;">
+    <h2>Match Events</h2>
+    <div class="event-list">
+      {% for row in events %}
+        <div class="event-item">
+          <strong>{{ row.time_elapsed or 0 }}{% if row.time_extra %}+{{ row.time_extra }}{% endif %}'</strong>
+          · {{ row.event_type or "Event" }}
+          {% if row.event_detail %} · {{ row.event_detail }}{% endif %}
+          {% if row.team %} · {{ row.team }}{% endif %}
+          {% if row.player_name %} · {{ row.player_name }}{% endif %}
+          {% if row.assist_player_name %} · Assist: {{ row.assist_player_name }}{% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

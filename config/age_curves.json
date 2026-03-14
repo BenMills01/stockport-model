@@ -1,0 +1,45 @@
+{
+  "goalkeeper": {
+    "physical_peak": [27, 32],
+    "output_peak": [28, 34],
+    "decline_onset": [34, 36],
+    "resale_window": [25, 30],
+    "acceptable_older_signing_age": 33
+  },
+  "centre_back": {
+    "physical_peak": [26, 31],
+    "output_peak": [27, 32],
+    "decline_onset": [32, 34],
+    "resale_window": [24, 29],
+    "acceptable_older_signing_age": 31
+  },
+  "full_back_wing_back": {
+    "physical_peak": [24, 29],
+    "output_peak": [25, 30],
+    "decline_onset": [30, 32],
+    "resale_window": [22, 27],
+    "acceptable_older_signing_age": 29
+  },
+  "central_midfielder": {
+    "physical_peak": [25, 30],
+    "output_peak": [26, 31],
+    "decline_onset": [31, 33],
+    "resale_window": [23, 28],
+    "acceptable_older_signing_age": 30
+  },
+  "wide_attacker_winger": {
+    "physical_peak": [23, 28],
+    "output_peak": [24, 29],
+    "decline_onset": [29, 31],
+    "resale_window": [21, 26],
+    "acceptable_older_signing_age": 28
+  },
+  "striker": {
+    "physical_peak": [24, 29],
+    "output_peak": [25, 30],
+    "decline_onset": [30, 32],
+    "resale_window": [22, 27],
+    "acceptable_older_signing_age": 29
+  }
+}
+

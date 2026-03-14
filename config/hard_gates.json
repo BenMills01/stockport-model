@@ -1,0 +1,63 @@
+[
+  {
+    "name": "registration_eligibility",
+    "class": "absolute",
+    "threshold": "Registrable under EFL rules; non-UK/Irish players require an obtainable GBE outcome",
+    "override": "none"
+  },
+  {
+    "name": "budget_affordability",
+    "class": "absolute",
+    "threshold": "Estimated total cost must fit the approved brief budget envelope",
+    "override": "new brief required for any budget expansion"
+  },
+  {
+    "name": "role_relevance",
+    "class": "absolute",
+    "threshold": "Primary or secondary role must match the active brief role",
+    "override": "none"
+  },
+  {
+    "name": "pathway_blocking_hard",
+    "class": "absolute",
+    "threshold": "Internal player <12 months from readiness at same role and external target is same age or younger on 3+ year deal",
+    "override": "academy_manager_and_hor_joint_signoff"
+  },
+  {
+    "name": "wage_discipline",
+    "class": "caution",
+    "threshold": "Estimated wage exceeds 120% of the role wage band",
+    "override": "hor_and_finance_approval"
+  },
+  {
+    "name": "age_profile_fit",
+    "class": "caution",
+    "threshold": "Outside archetype range or position-specific age curve tolerance",
+    "override": "hor_role_specific_justification"
+  },
+  {
+    "name": "availability_risk_high",
+    "class": "caution",
+    "threshold": "Availability risk probability above 0.40",
+    "override": "medical_review_required"
+  },
+  {
+    "name": "data_confidence_low",
+    "class": "caution",
+    "threshold": "Fewer than 10 tracked appearances",
+    "override": "monitoring_only_with_scout_and_hor_signoff"
+  },
+  {
+    "name": "championship_projection_below_threshold",
+    "class": "exception",
+    "threshold": "Championship Transition or Emerging Asset target projects below the 40th percentile base case",
+    "override": "hor_and_coach_joint_signoff"
+  },
+  {
+    "name": "pathway_blocking_soft",
+    "class": "exception",
+    "threshold": "Internal player 12-24 months from readiness and external target would receive a 2+ year deal",
+    "override": "recruitment_meeting_discussion_required"
+  }
+]
+

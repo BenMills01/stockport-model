@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <header>
+    <div>
+      <span class="badge">Viewer Error</span>
+      <h1>{{ status.value }} {{ status.phrase }}</h1>
+      <div class="muted">{{ message }}</div>
+    </div>
+    <div class="meta">Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+  </header>
+  <section class="panel">
+    <p><a href="/" style="color: var(--accent); text-decoration: none; font-weight: 700;">Return to dashboard</a></p>
+  </section>
+{% endblock %}

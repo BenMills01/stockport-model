@@ -1,0 +1,478 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+  /* ── Layout ─────────────────────────────────────────────────────── */
+  .cols-2    { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+  .cols-3    { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; }
+
+  /* ── Stat boxes ─────────────────────────────────────────────────── */
+  .stat-box  {
+    border: 1px solid var(--line); border-radius: 18px; padding: 14px;
+    background: linear-gradient(180deg,rgba(255,255,255,.98),rgba(234,244,255,.84));
+    box-shadow: 0 10px 22px rgba(8,47,103,.07);
+  }
+  .stat-box strong { display:block; font-size:26px; }
+
+  /* ── Brief setup hero ───────────────────────────────────────────── */
+  .brief-setup {
+    background: linear-gradient(145deg,rgba(8,47,103,.96),rgba(11,78,162,.9));
+    color: #fff;
+  }
+  .brief-setup h2, .brief-setup .brief-kv strong { color: #fff; }
+  .brief-setup .brief-kv       { color: rgba(255,255,255,.88); }
+  .brief-kv-grid { display: grid; gap: 10px; }
+  .brief-kv strong { display:block; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); margin-bottom:2px; }
+
+  /* ── Chips ──────────────────────────────────────────────────────── */
+  .chip-row  { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+  .chip      { display:inline-block; padding:5px 10px; border-radius:999px; background:linear-gradient(180deg,#fff,var(--accent-soft)); border:1px solid rgba(11,78,162,.16); font-size:13px; }
+
+  /* ── Score guide ────────────────────────────────────────────────── */
+  .score-guide { display:grid; grid-template-columns:1.2fr 0.8fr; gap:18px; margin-bottom:18px; }
+  .score-items { display:grid; gap:10px; }
+  .score-item  { padding:11px 13px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.86); }
+  .score-item strong { display:block; margin-bottom:3px; color:var(--county-blue-deep); }
+  .weight-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:12px; }
+  .weight-card { padding:12px 14px; border-radius:14px; background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(216,235,255,.82)); border:1px solid var(--line); }
+  .weight-card strong { display:block; font-size:22px; margin-top:2px; }
+
+  /* ── Action tier grid ───────────────────────────────────────────── */
+  .tier-grid  { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:18px; }
+  .tier-card  { padding:13px 14px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.88); }
+  .tier-card strong { display:block; margin-bottom:4px; color:var(--county-blue-deep); }
+  .tier-pill  { display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; border:1px solid transparent; white-space:nowrap; }
+  .tier-pill.priority { background:rgba(14,127,100,.14); color:#0d7058; border-color:rgba(14,127,100,.22); }
+  .tier-pill.strong   { background:rgba(11,78,162,.12);  color:var(--county-blue-deep); border-color:rgba(11,78,162,.18); }
+  .tier-pill.active   { background:rgba(110,183,255,.18);color:#0b4ea2; border-color:rgba(11,78,162,.16); }
+  .tier-pill.monitor  { background:rgba(255,191,87,.2);  color:#8b5a00; border-color:rgba(139,90,0,.16); }
+  .tier-pill.park     { background:rgba(96,119,146,.14); color:#4d6178; border-color:rgba(96,119,146,.18); }
+  .score-sub  { margin-top:3px; font-size:12px; color:var(--muted); }
+
+  /* ── Longlist table ─────────────────────────────────────────────── */
+  .results-table td:first-child a { color:var(--ink); text-decoration:none; font-weight:700; }
+  .results-table td:first-child a:hover { color:var(--accent); }
+  th[data-sort] { cursor:pointer; user-select:none; }
+  th[data-sort]:hover { background:rgba(11,78,162,.09); }
+  th[data-sort-dir="desc"]::after { content:" ↓"; color:var(--accent); }
+  th[data-sort-dir="asc"]::after  { content:" ↑"; color:var(--accent); }
+  .th-wrap    { display:inline-flex; align-items:center; gap:5px; }
+  .th-help    { display:inline-flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:rgba(11,78,162,.1); color:var(--county-blue-deep); font-size:10px; font-weight:800; cursor:help; }
+
+  /* Score bar cells */
+  .score-cell { min-width: 90px; }
+  .sbar-wrap  { display:flex; align-items:center; gap:6px; }
+  .sbar       { flex:1; height:5px; border-radius:999px; background:rgba(11,78,162,.1); overflow:hidden; min-width:40px; }
+  .sbar-fill  { height:100%; border-radius:999px; }
+  .sbar-fill.high   { background: linear-gradient(90deg, var(--county-blue-deep), var(--county-sky)); }
+  .sbar-fill.medium { background: #6eb7ff; }
+  .sbar-fill.low    { background: rgba(177,83,45,.6); }
+  .sbar-val   { font-size:13px; font-weight:700; min-width:30px; }
+
+  /* Top-3 highlight */
+  .rank-1 td:first-child { border-left: 3px solid #d4af37; }
+  .rank-2 td:first-child { border-left: 3px solid #a8a9ad; }
+  .rank-3 td:first-child { border-left: 3px solid #cd7f32; }
+  .rank-badge { font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; padding:2px 6px; border-radius:6px; }
+  .rank-badge.gold   { background:#fffbe6; color:#a07800; border:1px solid #e8d070; }
+  .rank-badge.silver { background:#f5f5f5; color:#666;    border:1px solid #ccc; }
+  .rank-badge.bronze { background:#fff0e8; color:#8c4a1a; border:1px solid #d4955c; }
+
+  /* Confidence badge */
+  .conf-badge { font-size:10px; font-weight:700; padding:2px 6px; border-radius:6px; text-transform:uppercase; letter-spacing:.04em; }
+  .conf-badge.VeryHigh { background:rgba(14,127,100,.12); color:#0a6a54; }
+  .conf-badge.High     { background:rgba(11,78,162,.10); color:var(--county-blue-deep); }
+  .conf-badge.Medium   { background:rgba(255,191,87,.18); color:#8b5a00; }
+  .conf-badge.Low      { background:rgba(177,83,45,.10); color:#8b3a1a; }
+
+  .avail-risk { font-weight:700; }
+  .avail-risk.ok   { color: var(--success); }
+  .avail-risk.warn { color: var(--warn); }
+
+  @media (max-width:860px) {
+    .cols-2, .cols-3, .score-guide, .weight-grid, .tier-grid { grid-template-columns:1fr; }
+  }
+</style>
+
+<header>
+  <div>
+    <span class="badge">Recruitment Brief {{ brief.brief_id }}</span>
+    <h1>{{ brief.role_name }}</h1>
+    <div class="muted">{{ brief.archetype_primary }}{% if brief.archetype_secondary %} / {{ brief.archetype_secondary }}{% endif %} · {{ brief.intent }}</div>
+  </div>
+  <div class="meta">
+    <div>{{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+    <div>Season {{ brief.season }}</div>
+  </div>
+</header>
+
+{% if message %}<div style="margin-bottom:18px;border-radius:14px;padding:12px 15px;border:1px solid rgba(14,127,100,.3);background:rgba(14,127,100,.06);color:#0a6a54;">{{ message }}</div>{% endif %}
+
+{# ── Run status + Brief setup ──────────────────────────────────── #}
+<div class="cols-2" style="margin-bottom:18px;">
+  <div class="panel">
+    <h2>Run Status</h2>
+    <div class="cols-3" style="margin-top:12px;">
+      <div class="stat-box"><span class="muted">Predictions Logged</span><strong>{{ summary.prediction_count }}</strong></div>
+      <div class="stat-box"><span class="muted">Longlist Rows</span><strong>{{ summary.longlist_count }}</strong></div>
+      <div class="stat-box"><span class="muted">Last Run</span><strong style="font-size:17px;">{{ summary.last_prediction_at.strftime("%d %b %H:%M") if summary.last_prediction_at else "Not run" }}</strong></div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;align-items:center;">
+      {% if not viewer_read_only %}
+        <form method="post" action="/brief/{{ brief.brief_id }}/run">
+          <button type="submit">Run Longlist</button>
+        </form>
+      {% endif %}
+      {% if report_exists %}
+        <a class="button secondary" href="{{ report_url }}">Open Report</a>
+      {% endif %}
+      <a class="button secondary" href="/">← Dashboard</a>
+    </div>
+    {% if viewer_read_only %}
+      <p class="muted" style="margin-top:10px;font-size:13px;">This shared view is read-only, so longlist reruns are disabled here.</p>
+    {% endif %}
+    {% if report_exists %}<p class="muted" style="margin-top:10px;font-size:13px;">{{ report_path }}</p>{% endif %}
+  </div>
+
+  <div class="panel brief-setup">
+    <h2>Brief Setup</h2>
+    <div class="brief-kv-grid">
+      <div class="brief-kv"><strong>Timeline</strong>{{ brief.timeline if brief.timeline else "Not set" }}</div>
+      <div class="brief-kv"><strong>Budget Gates</strong>Fee {{ brief.budget_max_fee if brief.budget_max_fee is not none else "Off" }} · Wage {{ brief.budget_max_wage if brief.budget_max_wage is not none else "Off" }} · {{ brief.budget_max_contract_years }} yrs</div>
+      <div class="brief-kv"><strong>Age Band</strong>{{ brief.age_min }} – {{ brief.age_max }}</div>
+      <div class="brief-kv"><strong>Created / Approved</strong>{{ brief.created_by }} / {{ brief.approved_by }}</div>
+      <div class="brief-kv"><strong>Pathway Check</strong>{{ "Done ✓" if brief.pathway_check_done else "Not marked done" }}</div>
+    </div>
+  </div>
+</div>
+
+{# League scope #}
+<div class="panel" style="margin-bottom:18px;">
+  <h2>League Scope</h2>
+  <div class="chip-row">
+    {% for league in scoped_leagues %}<span class="chip">{{ league.league_name }}</span>{% endfor %}
+  </div>
+</div>
+
+{# ── Score guide + Weights ─────────────────────────────────────── #}
+<div class="score-guide">
+  <div class="panel">
+    <h2>How To Read This Board</h2>
+    <div class="score-items">
+      <div class="score-item"><strong>Composite</strong>Final ranking score blending all model layers. Availability is applied as a final multiplier.</div>
+      <div class="score-item"><strong>Board Score</strong>Display translation of composite for board readability. Same player order, more intuitive range.<div class="score-sub">{{ board_score_equation }}</div></div>
+      <div class="score-item"><strong>Projection</strong>Scored Championship projection (0–100). Raw P50 median shown below for reference.</div>
+      <div class="score-item"><strong>Availability Risk</strong>Probability the player is unavailable at the 75% threshold. Lower is better.</div>
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Composite Weighting</h2>
+    <div class="muted">Blending <strong>{{ brief.archetype_primary }}</strong>{% if brief.archetype_secondary %} + <strong>{{ brief.archetype_secondary }}</strong>{% endif %}.</div>
+    <div class="weight-grid">
+      {% for row in composite_weights %}
+        <div class="weight-card">
+          <span class="muted">{{ row.label }}</span>
+          <strong>{{ "%.1f"|format(row.percent) }}%</strong>
+        </div>
+      {% endfor %}
+    </div>
+    <p class="muted" style="margin-top:10px;font-size:13px;">{{ availability_mode_note }}</p>
+  </div>
+</div>
+
+{# ── Action tier summary ───────────────────────────────────────── #}
+<div class="tier-grid">
+  {% for tier in action_tier_summary %}
+    <div class="tier-card">
+      <span class="tier-pill {{ tier.style }}">{{ tier.label }}</span>
+      <strong style="margin-top:8px;">{{ tier.action }}</strong>
+      <div>{{ tier.summary }}</div>
+      <div class="score-sub">Board {{ "%.1f"|format(tier.board_min_score) }}+ · Raw {{ "%.1f"|format(tier.min_score) }}+ · <strong>{{ tier.count }}</strong> player(s)</div>
+    </div>
+  {% endfor %}
+</div>
+
+{# ── On-pitch board ────────────────────────────────────────────── #}
+<div class="panel" style="margin-bottom:18px;">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;">
+    <div>
+      <h2 style="margin:0;">On-Pitch Board</h2>
+      <div class="muted" style="margin-top:4px;">Pure football view for this profile. Ignores availability and financial value, and ranks players on role fit, current level, and projection. A softer minutes-evidence adjustment still applies so tiny samples do not dominate.</div>
+    </div>
+    <div class="chip-row" style="margin-top:0;">
+      {% for row in on_pitch_weights %}
+        <span class="chip">{{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="cols-2" style="margin-bottom:18px;">
+    <div>
+      <h3 style="margin:0 0 10px;">Top 10 On-Pitch</h3>
+      <div style="overflow-x:auto;">
+        <table class="results-table">
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>League</th>
+              <th>On-Pitch</th>
+              <th>Present</th>
+              <th>Upside</th>
+              <th>Minutes</th>
+              <th>Role Fit</th>
+              <th>Current</th>
+              <th>Projection</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in on_pitch_top_players %}
+              <tr>
+                <td>
+                  <a href="/player/{{ row.player_id }}">{{ row.player_name }}</a>
+                  <div class="muted">{{ row.current_team }}</div>
+                </td>
+                <td>{{ row.league_name }}</td>
+                <td><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></td>
+                <td>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</td>
+                <td>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</td>
+                <td>{{ "%.0f"|format(row.total_minutes or 0) }}</td>
+                <td>{{ "%.1f"|format(row.role_fit_score or 0) }}</td>
+                <td>{{ "%.1f"|format(row.l1_performance_score or 0) }}</td>
+                <td>{{ "%.1f"|format(row.projection_score or 0) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="tier-card" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div>
+            <h3 style="margin:0;">Present On-Pitch Top 5</h3>
+            <div class="muted" style="font-size:12px;margin-top:4px;">Role fit + current level, with the softer minutes-evidence adjustment.</div>
+          </div>
+          <div class="chip-row" style="margin-top:0;">
+            {% for row in present_on_pitch_weights %}
+              <span class="chip">{{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div style="margin-top:10px;display:grid;gap:10px;">
+          {% for row in present_on_pitch_top_players %}
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+              <div>
+                <strong style="display:block;">
+                  <a href="/player/{{ row.player_id }}" style="color:inherit;text-decoration:none;">{{ loop.index }}. {{ row.player_name }}</a>
+                </strong>
+                <div class="muted">{{ row.current_team }} · {{ row.league_name }}</div>
+              </div>
+              <div style="text-align:right;white-space:nowrap;">
+                <div><strong>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</strong></div>
+                <div class="score-sub">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="tier-card">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div>
+            <h3 style="margin:0;">Upside On-Pitch Top 5</h3>
+            <div class="muted" style="font-size:12px;margin-top:4px;">Role fit + projection, with the softer minutes-evidence adjustment.</div>
+          </div>
+          <div class="chip-row" style="margin-top:0;">
+            {% for row in upside_on_pitch_weights %}
+              <span class="chip">{{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div style="margin-top:10px;display:grid;gap:10px;">
+          {% for row in upside_on_pitch_top_players %}
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+              <div>
+                <strong style="display:block;">
+                  <a href="/player/{{ row.player_id }}" style="color:inherit;text-decoration:none;">{{ loop.index }}. {{ row.player_name }}</a>
+                </strong>
+                <div class="muted">{{ row.current_team }} · {{ row.league_name }}</div>
+              </div>
+              <div style="text-align:right;white-space:nowrap;">
+                <div><strong>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</strong></div>
+                <div class="score-sub">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <h3 style="margin:0 0 10px;">Top 5 By League</h3>
+    <div class="cols-2">
+      {% for league in on_pitch_league_top_fives %}
+        <div class="tier-card">
+          <div class="muted" style="font-size:12px;">{{ league.league_name }}</div>
+          <div style="margin-top:10px;display:grid;gap:10px;">
+            {% for row in league.players %}
+              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+                <div>
+                  <strong style="display:block;">
+                    <a href="/player/{{ row.player_id }}" style="color:inherit;text-decoration:none;">{{ loop.index }}. {{ row.player_name }}</a>
+                  </strong>
+                  <div class="muted">{{ row.current_team }}</div>
+                </div>
+                <div style="text-align:right;white-space:nowrap;">
+                  <div><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></div>
+                  <div class="score-sub">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{# ── Current Longlist ─────────────────────────────────────────── #}
+<div class="panel">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <h2 style="margin:0;">Current Longlist</h2>
+    {% if predictions %}
+      <span class="muted" style="font-size:13px;">Click any column header to sort ↕</span>
+    {% endif %}
+  </div>
+  {% if predictions %}
+    {% if warning_player_count %}
+      <div style="margin:0 0 14px; padding:10px 12px; border:1px solid rgba(180,95,0,.18); border-radius:12px; background:rgba(255,193,7,.08); color:#7a5200; font-size:13px;">
+        {{ warning_player_count }} player{{ "" if warning_player_count == 1 else "s" }} on this board include model fallback or heuristic notes. Those rows are still ranked, but they deserve extra analyst caution.
+      </div>
+    {% endif %}
+    <div style="overflow-x:auto;">
+      <table class="results-table" id="longtable">
+        <thead>
+          <tr>
+            <th>Player</th>
+            <th>League</th>
+            <th>Action</th>
+            <th data-sort class="score-cell"><span class="th-wrap">Board <span class="th-help" title="{{ score_column_help.board_score }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Composite <span class="th-help" title="{{ score_column_help.composite_score }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Role Fit <span class="th-help" title="{{ score_column_help.role_fit_score }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Current <span class="th-help" title="{{ score_column_help.current_score }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Projection <span class="th-help" title="{{ score_column_help.projection_score }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Avail Risk <span class="th-help" title="{{ score_column_help.availability_risk }}">?</span></span></th>
+            <th data-sort class="score-cell"><span class="th-wrap">Financial <span class="th-help" title="{{ score_column_help.financial_score }}">?</span></span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in predictions %}
+            {% set rank = loop.index %}
+            {% set bs   = row.board_score or 0 %}
+            {% set cs   = row.composite_score or 0 %}
+            {% set rf   = row.role_fit_score or 0 %}
+            {% set cp   = row.l1_performance_score or 0 %}
+            {% set pj   = row.projection_score or 0 %}
+            {% set ar   = row.availability_risk_pct or 0 %}
+            {% set fs   = row.financial_score or 0 %}
+            <tr class="{% if rank == 1 %}rank-1{% elif rank == 2 %}rank-2{% elif rank == 3 %}rank-3{% endif %}">
+              <td>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  {% if rank == 1 %}<span class="rank-badge gold">1st</span>
+                  {% elif rank == 2 %}<span class="rank-badge silver">2nd</span>
+                  {% elif rank == 3 %}<span class="rank-badge bronze">3rd</span>{% endif %}
+                  <div>
+                    <a href="/player/{{ row.player_id }}">{{ row.player_name }}</a>
+                    <div class="muted">{{ row.current_team }}</div>
+                    {% if row.model_warnings %}
+                      <div class="score-sub" style="color:#7a5200;">Model note: {{ row.model_warnings[0] }}</div>
+                    {% endif %}
+                  </div>
+                </div>
+                {% if row.confidence_tier %}
+                  <div style="margin-top:4px;"><span class="conf-badge {{ row.confidence_tier }}">{{ row.confidence_tier }}</span></div>
+                {% endif %}
+              </td>
+              <td>{{ row.league_name }}</td>
+              <td>
+                <span class="tier-pill {{ row.action_tier.style }}">{{ row.action_tier.action }}</span>
+                <div class="score-sub">{{ row.action_tier.label }}</div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(bs) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if bs >= 70 %}high{% elif bs >= 45 %}medium{% else %}low{% endif %}" style="width:{{ bs | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(bs) }}</span>
+                </div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(cs) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if cs >= 55 %}high{% elif cs >= 35 %}medium{% else %}low{% endif %}" style="width:{{ [cs * 1.2, 100] | min | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(cs) }}</span>
+                </div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(rf) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if rf >= 65 %}high{% elif rf >= 45 %}medium{% else %}low{% endif %}" style="width:{{ rf | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(rf) }}</span>
+                </div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(cp) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if cp >= 65 %}high{% elif cp >= 45 %}medium{% else %}low{% endif %}" style="width:{{ cp | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(cp) }}</span>
+                </div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(pj) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if pj >= 65 %}high{% elif pj >= 45 %}medium{% else %}low{% endif %}" style="width:{{ pj | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(pj) }}</span>
+                </div>
+                <div class="score-sub">P50 {{ "%.1f"|format(row.championship_projection_50th or 0) }}</div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(ar) }}">
+                <span class="avail-risk {% if ar <= 25 %}ok{% elif ar > 40 %}warn{% endif %}">{{ "%.0f"|format(ar) }}%</span>
+                <div class="score-sub">lower = better</div>
+              </td>
+              <td class="score-cell" data-value="{{ "%.2f"|format(fs) }}">
+                <div class="sbar-wrap">
+                  <div class="sbar"><div class="sbar-fill {% if fs >= 65 %}high{% elif fs >= 45 %}medium{% else %}low{% endif %}" style="width:{{ fs | int }}%"></div></div>
+                  <span class="sbar-val">{{ "%.1f"|format(fs) }}</span>
+                </div>
+                <div class="score-sub">VAR {{ "%.3f"|format(row.var_score or 0) }}</div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div style="padding:14px 16px;border-radius:14px;border:1px solid rgba(11,78,162,.14);background:rgba(11,78,162,.04);color:var(--muted);">
+      No longlist rows are currently visible for this brief. That usually means the latest run filtered down to zero players rather than the page failing to load.
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  (function () {
+    const table = document.getElementById('longtable');
+    if (!table) return;
+    const ths = table.querySelectorAll('th[data-sort]');
+    ths.forEach(function (th) {
+      th.addEventListener('click', function () {
+        const col = Array.from(th.parentElement.children).indexOf(th);
+        const dir = th.dataset.sortDir === 'desc' ? 'asc' : 'desc';
+        ths.forEach(function (t) { delete t.dataset.sortDir; });
+        th.dataset.sortDir = dir;
+        const tbody = table.querySelector('tbody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort(function (a, b) {
+          const av = parseFloat(a.cells[col].dataset.value ?? a.cells[col].textContent) || 0;
+          const bv = parseFloat(b.cells[col].dataset.value ?? b.cells[col].textContent) || 0;
+          return dir === 'asc' ? av - bv : bv - av;
+        });
+        rows.forEach(function (r) { tbody.appendChild(r); });
+      });
+    });
+  })();
+</script>
+{% endblock %}

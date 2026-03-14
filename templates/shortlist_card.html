@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <div>
+    <div class="badge">Shortlist Card</div>
+    <h1>{{ player.player_name if player else "Player" }}</h1>
+  </div>
+  <div class="meta">
+    <div>Generated {{ generated_at }}</div>
+    {% if brief %}<div>{{ brief.role_name }}</div>{% endif %}
+  </div>
+</header>
+
+<section class="grid two">
+  <div class="panel">
+    <h2>Layer Scores</h2>
+    <table>
+      <tr><th>Role Fit</th><td>{{ prediction.role_fit_score if prediction else "n/a" }}</td></tr>
+      <tr><th>Current</th><td>{{ prediction.l1_performance_score if prediction else "n/a" }}</td></tr>
+      <tr><th>Projection</th><td>{{ projection_band.p10 }} / {{ projection_band.p50 }} / {{ projection_band.p90 }}</td></tr>
+      <tr><th>Availability Risk</th><td>{{ prediction.availability_risk_prob if prediction else "n/a" }}</td></tr>
+      <tr><th>VAR</th><td>{{ prediction.var_score if prediction else "n/a" }}</td></tr>
+      <tr><th>Composite</th><td>{{ prediction.composite_score if prediction else "n/a" }}</td></tr>
+    </table>
+  </div>
+  <div class="panel">
+    <h2>Scout Notes</h2>
+    {% if scout_notes %}
+      <ul>
+      {% for note in scout_notes %}
+        <li><strong>{{ note.scout_name }}</strong>: {{ note.notes_text }}</li>
+      {% endfor %}
+      </ul>
+    {% else %}
+      <p class="muted">No scout notes logged yet.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
+

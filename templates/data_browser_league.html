@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block content %}
+  <style>
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+    .season-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .season-pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      text-decoration: none;
+      color: var(--ink);
+      background: #fff;
+    }
+    .season-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .summary-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: linear-gradient(180deg, #ffffff 0%, #f3f5ef 100%);
+    }
+    .summary-card strong {
+      display: block;
+      font-size: 24px;
+      margin-top: 6px;
+    }
+    .fixture-link {
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .fixture-link:hover { color: var(--accent); }
+    @media (max-width: 860px) {
+      .summary-grid { grid-template-columns: 1fr 1fr; }
+      .toolbar { display: block; }
+    }
+  </style>
+  <header>
+    <div>
+      <div class="muted"><a class="season-pill" href="/">Back to dashboard</a></div>
+      <h1>{{ league.name }}</h1>
+      <div class="muted">{{ league.country }}{% if league.tier %} · Tier {{ league.tier }}{% endif %}</div>
+    </div>
+    <div class="meta">Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+  </header>
+
+  <section class="toolbar">
+    <div class="season-pills">
+      {% for season in available_seasons %}
+        <a class="season-pill{% if season == selected_season %} active{% endif %}" href="/league?league_id={{ league_id }}&season={{ season }}">{{ season }}</a>
+      {% endfor %}
+    </div>
+    <div class="muted">
+      {% if summary.first_fixture_date and summary.last_fixture_date %}
+        {{ summary.first_fixture_date }} to {{ summary.last_fixture_date }}
+      {% endif %}
+    </div>
+  </section>
+
+  <section class="summary-grid">
+    <div class="summary-card"><span class="muted">Fixtures</span><strong>{{ "{:,}".format(summary.fixture_count) }}</strong></div>
+    <div class="summary-card"><span class="muted">Player Rows</span><strong>{{ "{:,}".format(summary.performance_rows) }}</strong></div>
+    <div class="summary-card"><span class="muted">Fixtures With Team Stats</span><strong>{{ "{:,}".format(summary.team_stat_fixtures) }}</strong></div>
+    <div class="summary-card"><span class="muted">Fixtures With Events</span><strong>{{ "{:,}".format(summary.event_fixtures) }}</strong></div>
+    <div class="summary-card"><span class="muted">Fixtures With Lineups</span><strong>{{ "{:,}".format(summary.lineup_fixtures) }}</strong></div>
+  </section>
+
+  <section class="panel">
+    <h2>Fixtures</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Fixture</th>
+          <th>Status</th>
+          <th>Player Rows</th>
+          <th>Team Stats</th>
+          <th>Events</th>
+          <th>Lineups</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in fixtures %}
+          <tr>
+            <td>{{ row.date.strftime("%d %b %Y") if row.date else "Unknown" }}</td>
+            <td>
+              <a class="fixture-link" href="/fixture/{{ row.fixture_id }}">{{ row.home_team }} {{ row.home_score if row.home_score is not none else "-" }} - {{ row.away_score if row.away_score is not none else "-" }} {{ row.away_team }}</a>
+            </td>
+            <td>{{ row.status or "-" }}</td>
+            <td>{{ "{:,}".format(row.player_rows) }}</td>
+            <td>{{ "{:,}".format(row.team_stat_rows) }}</td>
+            <td>{{ "{:,}".format(row.event_rows) }}</td>
+            <td>{{ "{:,}".format(row.lineup_rows) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </section>
+{% endblock %}

@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "stockport-model"
+version = "0.1.0"
+description = "Stockport County FC recruitment intelligence system"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "alembic>=1.14,<2.0",
+  "SQLAlchemy>=2.0,<3.0",
+  "psycopg[binary]>=3.2,<4.0",
+  "pandas>=2.2,<3.0",
+  "openpyxl>=3.1,<4.0",
+  "numpy>=2.0,<3.0",
+  "requests>=2.32,<3.0",
+  "beautifulsoup4>=4.12,<5.0",
+  "Jinja2>=3.1,<4.0",
+  "scikit-learn>=1.5,<2.0",
+  "statsmodels>=0.14,<1.0",
+  "gunicorn>=23.0,<24.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9.0",
+]
+
+[project.scripts]
+stockport-viewer = "viewer.app:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = [
+  "config",
+  "db",
+  "ingestion",
+  "features",
+  "models",
+  "gates",
+  "scoring",
+  "outputs",
+  "governance",
+  "viewer",
+  "tests",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

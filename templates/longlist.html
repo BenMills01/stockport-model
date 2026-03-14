@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block content %}
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>{{ brief.role_name if brief else "Brief" }} Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated {{ generated_at }}</div>
+    {% if brief %}
+    <div>{{ brief.archetype_primary }}{% if brief.archetype_secondary %} / {{ brief.archetype_secondary }}{% endif %}</div>
+    {% endif %}
+  </div>
+</header>
+
+<section class="panel" style="margin-bottom:18px;">
+  <h2>Action Tiers</h2>
+  <p class="muted">{{ board_score_equation }}</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Board</th>
+        <th>Composite</th>
+        <th>Action</th>
+        <th>Players</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tier in action_tier_summary %}
+      <tr>
+        <td>{{ tier.label }}</td>
+        <td>{{ "%.1f"|format(tier.board_min_score) }}+</td>
+        <td>{{ "%.1f"|format(tier.min_score) }}+</td>
+        <td>{{ tier.action }}</td>
+        <td>{{ tier.count }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Action</th>
+      <th>Board</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Model Notes</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for player in players %}
+    <tr>
+      <td>
+        <strong>{{ player.player_name }}</strong><br />
+        <span class="muted">{{ player.team or "Unknown club" }}</span>
+      </td>
+      <td>
+        <strong>{{ player.action_tier.action }}</strong><br />
+        <span class="muted">{{ player.action_tier.label }}</span>
+      </td>
+      <td>{{ "%.1f"|format(player.board_score or 0) }}</td>
+      <td>{{ "%.1f"|format(player.composite_score or 0) }}</td>
+      <td>{{ player.projection_band.p10 }} / {{ player.projection_band.p50 }} / {{ player.projection_band.p90 }}</td>
+      <td>
+        {% if player.model_warnings %}
+          <ul>{% for item in player.model_warnings[:2] %}<li>{{ item }}</li>{% endfor %}</ul>
+        {% else %}
+          <span class="muted">No model notes</span>
+        {% endif %}
+      </td>
+      <td>
+        <ul>{% for item in player.top_strengths %}<li>{{ item }}</li>{% endfor %}</ul>
+      </td>
+      <td>
+        <ul>{% for item in player.top_concerns %}<li>{{ item }}</li>{% endfor %}</ul>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,114 @@
+[
+  {
+    "league_id": 40,
+    "name": "Championship",
+    "country": "England",
+    "tier": 2,
+    "polling_priority": 1
+  },
+  {
+    "league_id": 41,
+    "name": "League One",
+    "country": "England",
+    "tier": 3,
+    "polling_priority": 1
+  },
+  {
+    "league_id": 42,
+    "name": "League Two",
+    "country": "England",
+    "tier": 4,
+    "polling_priority": 2
+  },
+  {
+    "league_id": 39,
+    "name": "Premier League",
+    "country": "England",
+    "tier": 1,
+    "polling_priority": 2
+  },
+  {
+    "league_id": 140,
+    "name": "La Liga",
+    "country": "Spain",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 135,
+    "name": "Serie A",
+    "country": "Italy",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 78,
+    "name": "Bundesliga",
+    "country": "Germany",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 79,
+    "name": "2. Bundesliga",
+    "country": "Germany",
+    "tier": 2,
+    "polling_priority": 4
+  },
+  {
+    "league_id": 61,
+    "name": "Ligue 1",
+    "country": "France",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 62,
+    "name": "Ligue 2",
+    "country": "France",
+    "tier": 2,
+    "polling_priority": 4
+  },
+  {
+    "league_id": 88,
+    "name": "Eredivisie",
+    "country": "Netherlands",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 89,
+    "name": "Eerste Divisie",
+    "country": "Netherlands",
+    "tier": 2,
+    "polling_priority": 4
+  },
+  {
+    "league_id": 144,
+    "name": "Jupiler Pro League",
+    "country": "Belgium",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 145,
+    "name": "Challenger Pro League",
+    "country": "Belgium",
+    "tier": 2,
+    "polling_priority": 4
+  },
+  {
+    "league_id": 179,
+    "name": "Premiership",
+    "country": "Scotland",
+    "tier": 1,
+    "polling_priority": 3
+  },
+  {
+    "league_id": 94,
+    "name": "Primeira Liga",
+    "country": "Portugal",
+    "tier": 1,
+    "polling_priority": 3
+  }
+]

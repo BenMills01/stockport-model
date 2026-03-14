@@ -1,0 +1,13 @@
+.DS_Store
+.claude
+.env
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+artifacts
+data
+stockport_model.egg-info
+tests

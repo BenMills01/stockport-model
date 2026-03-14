@@ -1,0 +1,47 @@
+{
+  "promotion_accelerator": {
+    "weights_pct": {
+      "tactical_fit": 25,
+      "role_fit": 20,
+      "current_performance": 25,
+      "upward_projection": 5,
+      "financial_value": 10,
+      "availability": 15
+    },
+    "availability_mode": "multiplier"
+  },
+  "championship_transition": {
+    "weights_pct": {
+      "tactical_fit": 20,
+      "role_fit": 20,
+      "current_performance": 15,
+      "upward_projection": 25,
+      "financial_value": 15,
+      "availability": 5
+    },
+    "availability_mode": "multiplier"
+  },
+  "emerging_asset": {
+    "weights_pct": {
+      "tactical_fit": 15,
+      "role_fit": 15,
+      "current_performance": 10,
+      "upward_projection": 30,
+      "financial_value": 25,
+      "availability": 5
+    },
+    "availability_mode": "multiplier"
+  },
+  "low_cost_bridge": {
+    "weights_pct": {
+      "tactical_fit": 15,
+      "role_fit": 20,
+      "current_performance": 25,
+      "upward_projection": 5,
+      "financial_value": 20,
+      "availability": 15
+    },
+    "availability_mode": "multiplier"
+  }
+}
+

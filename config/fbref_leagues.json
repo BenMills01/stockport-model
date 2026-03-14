@@ -1,0 +1,37 @@
+[
+  {
+    "league_id": 41,
+    "name": "League One",
+    "fbref_url": "https://fbref.com/en/comps/15/League-One-Stats"
+  },
+  {
+    "league_id": 40,
+    "name": "Championship",
+    "fbref_url": "https://fbref.com/en/comps/10/Championship-Stats"
+  },
+  {
+    "league_id": 42,
+    "name": "League Two",
+    "fbref_url": "https://fbref.com/en/comps/16/League-Two-Stats"
+  },
+  {
+    "league_id": 39,
+    "name": "Premier League",
+    "fbref_url": "https://fbref.com/en/comps/9/Premier-League-Stats"
+  },
+  {
+    "league_id": 79,
+    "name": "2. Bundesliga",
+    "fbref_url": "https://fbref.com/en/comps/33/2-Bundesliga-Stats"
+  },
+  {
+    "league_id": 62,
+    "name": "Ligue 2",
+    "fbref_url": "https://fbref.com/en/comps/60/Ligue-2-Stats"
+  },
+  {
+    "league_id": 179,
+    "name": "Scottish Premiership",
+    "fbref_url": "https://fbref.com/en/comps/40/Scottish-Premiership-Stats"
+  }
+]

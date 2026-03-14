@@ -1,0 +1,25 @@
+databases:
+  - name: stockport-model-db
+    databaseName: stockport_model
+    user: stockport_model
+
+services:
+  - type: web
+    name: stockport-viewer-beta
+    runtime: python
+    healthCheckPath: /health
+    buildCommand: ./scripts/render-build.sh
+    startCommand: ./scripts/render-start.sh
+    envVars:
+      - key: STOCKPORT_DATABASE_URL
+        fromDatabase:
+          name: stockport-model-db
+          property: connectionString
+      - key: STOCKPORT_VIEWER_READ_ONLY
+        value: "true"
+      - key: WEB_CONCURRENCY
+        value: "2"
+      - key: GUNICORN_THREADS
+        value: "4"
+      - key: GUNICORN_TIMEOUT
+        value: "120"

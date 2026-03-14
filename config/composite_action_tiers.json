@@ -1,0 +1,37 @@
+[
+  {
+    "label": "Tier 1",
+    "min_score": 40.0,
+    "action": "Priority shortlist",
+    "summary": "Advance immediately into shortlist review and live checks.",
+    "style": "priority"
+  },
+  {
+    "label": "Tier 2",
+    "min_score": 34.0,
+    "action": "Scout next",
+    "summary": "Prioritise the next video or live scouting cycle.",
+    "style": "strong"
+  },
+  {
+    "label": "Tier 3",
+    "min_score": 28.0,
+    "action": "Active longlist",
+    "summary": "Keep active on the board and compare against stronger names.",
+    "style": "active"
+  },
+  {
+    "label": "Tier 4",
+    "min_score": 22.0,
+    "action": "Monitor",
+    "summary": "Track form and revisit when the brief or market changes.",
+    "style": "monitor"
+  },
+  {
+    "label": "Tier 5",
+    "min_score": 0.0,
+    "action": "Park",
+    "summary": "Do not progress now unless new information changes the case.",
+    "style": "park"
+  }
+]

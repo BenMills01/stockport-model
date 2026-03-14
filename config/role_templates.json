@@ -1,0 +1,308 @@
+[
+  {
+    "role_name": "ball_playing_cb",
+    "version": "2026-Q1",
+    "role_family": "centre_back",
+    "metrics": {
+      "pass_accuracy": 0.16,
+      "progressive_passes": 0.16,
+      "passes_total": 0.10,
+      "tackles_interceptions": 0.10,
+      "tackles_total": 0.08,
+      "duels_won": 0.10,
+      "duels_total": 0.06,
+      "dribbles_past": 0.08,
+      "goals_conceded": 0.08,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "aggressive_cb",
+    "version": "2026-Q1",
+    "role_family": "centre_back",
+    "metrics": {
+      "tackles_total": 0.16,
+      "tackles_interceptions": 0.16,
+      "duels_won": 0.14,
+      "duels_total": 0.10,
+      "fouls_committed": 0.06,
+      "dribbles_past": 0.10,
+      "passes_total": 0.08,
+      "pass_accuracy": 0.06,
+      "goals_conceded": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "covering_cb",
+    "version": "2026-Q1",
+    "role_family": "centre_back",
+    "metrics": {
+      "tackles_interceptions": 0.14,
+      "duels_won": 0.14,
+      "dribbles_past": 0.14,
+      "pass_accuracy": 0.10,
+      "passes_total": 0.08,
+      "duels_total": 0.10,
+      "goals_conceded": 0.10,
+      "yellow_cards": 0.04,
+      "minutes": 0.08,
+      "progressive_passes": 0.08
+    }
+  },
+  {
+    "role_name": "attacking_fb",
+    "version": "2026-Q1",
+    "role_family": "full_back_wing_back",
+    "metrics": {
+      "passes_key": 0.14,
+      "assists": 0.10,
+      "dribbles_success": 0.14,
+      "dribbles_attempts": 0.10,
+      "progressive_carries": 0.12,
+      "progressive_passes": 0.10,
+      "passes_total": 0.08,
+      "tackles_total": 0.08,
+      "tackles_interceptions": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "inverted_fb",
+    "version": "2026-Q1",
+    "role_family": "full_back_wing_back",
+    "metrics": {
+      "progressive_passes": 0.16,
+      "pass_accuracy": 0.14,
+      "passes_total": 0.12,
+      "tackles_interceptions": 0.10,
+      "tackles_total": 0.10,
+      "progressive_carries": 0.08,
+      "passes_key": 0.08,
+      "duels_won": 0.08,
+      "dribbles_past": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "defensive_fb",
+    "version": "2026-Q1",
+    "role_family": "full_back_wing_back",
+    "metrics": {
+      "tackles_total": 0.15,
+      "tackles_interceptions": 0.15,
+      "duels_won": 0.14,
+      "duels_total": 0.10,
+      "pass_accuracy": 0.10,
+      "passes_total": 0.08,
+      "dribbles_past": 0.10,
+      "fouls_committed": 0.04,
+      "goals_conceded": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "controller",
+    "version": "2026-Q1",
+    "role_family": "midfield",
+    "metrics": {
+      "passes_total": 0.16,
+      "pass_accuracy": 0.16,
+      "progressive_passes": 0.14,
+      "passes_key": 0.10,
+      "tackles_interceptions": 0.10,
+      "tackles_total": 0.08,
+      "duels_won": 0.08,
+      "progressive_receptions": 0.08,
+      "fouls_drawn": 0.04,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "destroyer",
+    "version": "2026-Q1",
+    "role_family": "midfield",
+    "metrics": {
+      "tackles_total": 0.18,
+      "tackles_interceptions": 0.18,
+      "duels_won": 0.14,
+      "duels_total": 0.10,
+      "fouls_committed": 0.08,
+      "pass_accuracy": 0.08,
+      "passes_total": 0.08,
+      "yellow_cards": 0.04,
+      "fouls_drawn": 0.04,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "box_to_box",
+    "version": "2026-Q1",
+    "role_family": "transition_midfield",
+    "metrics": {
+      "tackles_total": 0.12,
+      "duels_won": 0.10,
+      "shots_total": 0.10,
+      "shots_on_target": 0.08,
+      "dribbles_success": 0.10,
+      "dribbles_attempts": 0.08,
+      "progressive_carries": 0.12,
+      "passes_key": 0.10,
+      "goals_scored": 0.10,
+      "minutes": 0.10
+    }
+  },
+  {
+    "role_name": "mezzala",
+    "version": "2026-Q1",
+    "role_family": "transition_midfield",
+    "metrics": {
+      "progressive_carries": 0.14,
+      "passes_key": 0.12,
+      "assists": 0.10,
+      "dribbles_success": 0.12,
+      "shots_total": 0.10,
+      "goals_scored": 0.08,
+      "progressive_passes": 0.10,
+      "fouls_drawn": 0.08,
+      "duels_won": 0.08,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "inside_forward",
+    "version": "2026-Q1",
+    "role_family": "wide_creator_runner",
+    "metrics": {
+      "goals_scored": 0.16,
+      "shots_total": 0.14,
+      "shots_on_target": 0.12,
+      "dribbles_success": 0.12,
+      "dribbles_attempts": 0.08,
+      "passes_key": 0.10,
+      "assists": 0.08,
+      "progressive_carries": 0.10,
+      "fouls_drawn": 0.04,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "traditional_winger",
+    "version": "2026-Q1",
+    "role_family": "wide_creator_runner",
+    "metrics": {
+      "assists": 0.12,
+      "passes_key": 0.14,
+      "dribbles_success": 0.12,
+      "dribbles_attempts": 0.10,
+      "progressive_carries": 0.12,
+      "progressive_receptions": 0.10,
+      "fouls_drawn": 0.08,
+      "shots_on_target": 0.06,
+      "passes_total": 0.08,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "wide_playmaker",
+    "version": "2026-Q1",
+    "role_family": "wide_creator_runner",
+    "metrics": {
+      "passes_key": 0.16,
+      "assists": 0.12,
+      "progressive_passes": 0.14,
+      "progressive_receptions": 0.10,
+      "pass_accuracy": 0.10,
+      "dribbles_success": 0.10,
+      "shots_total": 0.08,
+      "fouls_drawn": 0.06,
+      "passes_total": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "target_forward",
+    "version": "2026-Q1",
+    "role_family": "striker",
+    "metrics": {
+      "goals_scored": 0.14,
+      "shots_total": 0.12,
+      "shots_on_target": 0.12,
+      "duels_won": 0.14,
+      "duels_total": 0.10,
+      "fouls_drawn": 0.10,
+      "passes_key": 0.06,
+      "assists": 0.08,
+      "goals_minus_xg": 0.08,
+      "minutes": 0.06
+    }
+  },
+  {
+    "role_name": "pressing_forward",
+    "version": "2026-Q1",
+    "role_family": "striker",
+    "metrics": {
+      "goals_scored": 0.14,
+      "shots_total": 0.12,
+      "shots_on_target": 0.10,
+      "duels_won": 0.10,
+      "fouls_drawn": 0.08,
+      "tackles_total": 0.10,
+      "tackles_interceptions": 0.08,
+      "dribbles_success": 0.08,
+      "goals_minus_xg": 0.10,
+      "minutes": 0.10
+    }
+  },
+  {
+    "role_name": "poacher",
+    "version": "2026-Q1",
+    "role_family": "striker",
+    "metrics": {
+      "goals_scored": 0.18,
+      "shots_total": 0.16,
+      "shots_on_target": 0.14,
+      "xg_per_shot": 0.10,
+      "goals_minus_xg": 0.10,
+      "progressive_receptions": 0.08,
+      "offsides": 0.04,
+      "duels_won": 0.06,
+      "fouls_drawn": 0.06,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "complete_forward",
+    "version": "2026-Q1",
+    "role_family": "striker",
+    "metrics": {
+      "goals_scored": 0.14,
+      "assists": 0.10,
+      "shots_total": 0.12,
+      "shots_on_target": 0.10,
+      "passes_key": 0.10,
+      "duels_won": 0.10,
+      "dribbles_success": 0.10,
+      "progressive_carries": 0.08,
+      "goals_minus_xg": 0.08,
+      "minutes": 0.08
+    }
+  },
+  {
+    "role_name": "false_9",
+    "version": "2026-Q1",
+    "role_family": "striker",
+    "metrics": {
+      "assists": 0.10,
+      "passes_key": 0.14,
+      "progressive_passes": 0.12,
+      "progressive_receptions": 0.12,
+      "goals_scored": 0.12,
+      "shots_total": 0.08,
+      "dribbles_success": 0.10,
+      "fouls_drawn": 0.06,
+      "pass_accuracy": 0.08,
+      "minutes": 0.08
+    }
+  }
+]

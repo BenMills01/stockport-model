@@ -1,0 +1,42 @@
+{
+  "target_forward": {
+    "minimum_height_cm": 188,
+    "minimum_forward_label_share": 0.55,
+    "maximum_midfielder_label_share": 0.45,
+    "minimum_central_attack_share": 0.25,
+    "maximum_wide_attack_share": 0.45
+  },
+  "ball_playing_cb": {
+    "minimum_height_cm": 183
+  },
+  "aggressive_cb": {
+    "minimum_height_cm": 183
+  },
+  "covering_cb": {
+    "minimum_height_cm": 183
+  },
+  "poacher": {
+    "minimum_forward_label_share": 0.55,
+    "maximum_midfielder_label_share": 0.40,
+    "minimum_central_attack_share": 0.35,
+    "maximum_wide_attack_share": 0.35
+  },
+  "pressing_forward": {
+    "minimum_forward_label_share": 0.45,
+    "maximum_midfielder_label_share": 0.50,
+    "minimum_central_attack_share": 0.20,
+    "maximum_wide_attack_share": 0.50
+  },
+  "complete_forward": {
+    "minimum_forward_label_share": 0.50,
+    "maximum_midfielder_label_share": 0.45,
+    "minimum_central_attack_share": 0.25,
+    "maximum_wide_attack_share": 0.45
+  },
+  "false_9": {
+    "minimum_forward_label_share": 0.40,
+    "maximum_midfielder_label_share": 0.60,
+    "minimum_central_attack_share": 0.20,
+    "maximum_wide_attack_share": 0.50
+  }
+}
