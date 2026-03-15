@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-ice: #eaf4ff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.95);
+      --shadow: 0 18px 40px rgba(8, 47, 103, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 18%, #f5f9ff 100%);
+    }
+    main { width: min(1320px, calc(100vw - 30px)); margin: 26px auto 40px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(8,47,103,0.97), rgba(11,78,162,0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero h1 { margin: 10px 0 6px; font-size: 40px; }
+    .hero p { margin: 0; color: rgba(255,255,255,0.82); }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .nav { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .nav a {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .profile-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .profile-nav a {
+      text-decoration: none;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.92);
+      font-size: 13px;
+    }
+    .profile-nav a.active {
+      background: var(--county-blue);
+      color: #fff;
+      border-color: transparent;
+    }
+    .cols-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .cols-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .stat-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg,#fff,var(--county-ice));
+    }
+    .stat-box strong { display:block; font-size:28px; }
+    .muted { color: var(--muted); }
+    h2 { margin: 0 0 12px; color: var(--county-blue-deep); }
+    h3 { margin: 0 0 10px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); vertical-align: top; }
+    th { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color: var(--muted); }
+    .tier-card { border:1px solid var(--line); border-radius:18px; padding:16px; background:linear-gradient(180deg,#fff,var(--county-ice)); }
+    .league-row { display:grid; grid-template-columns:220px repeat(3,minmax(0,1fr)); gap:12px; align-items:start; margin-bottom:12px; }
+    .league-label { border:1px solid var(--line); border-radius:18px; padding:14px; background:#fff; }
+    .league-mini-title { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--county-blue); }
+    .chip-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .chip {
+      display:inline-block; padding:5px 10px; border-radius:999px;
+      background:rgba(11,78,162,.08); border:1px solid rgba(11,78,162,.16); font-size:13px;
+    }
+    @media (max-width: 1080px) { .league-row { grid-template-columns: 1fr; } }
+    @media (max-width: 860px) { .cols-3, .cols-2 { grid-template-columns: 1fr; } main { width: calc(100vw - 18px); } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="badge">Static Profile Snapshot</span>
+      <h1>{{ selected_role }}</h1>
+      <p>{{ selected_season }}{% if selected_role_family %} · {{ selected_role_family | replace("_", " ") | title }}{% endif %} · Generated {{ site_generated_at.strftime("%d %b %Y %H:%M") }}</p>
+      <div class="nav">
+        <a href="{{ site_home_href }}">← Home</a>
+        <a href="{{ site_reports_href }}">Brief Reports</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Profiles</h2>
+      <div class="profile-nav">
+        {% for profile in all_profile_links %}
+          <a href="{{ profile.href }}" class="{% if profile.active %}active{% endif %}">{{ profile.role_name }}</a>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="cols-3" style="margin-bottom:18px;">
+      <div class="stat-box"><span class="muted">Candidates</span><strong>{{ candidate_count }}</strong></div>
+      <div class="stat-box"><span class="muted">Scored</span><strong>{{ scored_count }}</strong></div>
+      <div class="stat-box"><span class="muted">Minutes Floor</span><strong>{{ minimum_minutes }}</strong></div>
+    </section>
+
+    {% if candidate_match_note %}
+      <section class="panel">
+        <h2>Profile Match Mode</h2>
+        <div class="muted">{{ candidate_match_note }}</div>
+        <div class="chip-row">
+          <span class="chip">{{ candidate_match_mode | replace("_", " ") | title }}</span>
+          {% for role_name in candidate_match_roles %}
+            <span class="chip">{{ role_name }}</span>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    <section class="panel">
+      <h2>Method</h2>
+      <div class="muted">This static board ignores availability and financial value. It ranks role-matched players only, applies the live minutes floor, and uses the softer evidence adjustment plus age-aware upside methodology from the live model.</div>
+      <div class="chip-row">
+        {% for row in overall_weights %}<span class="chip">Overall {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
+        {% for row in present_weights %}<span class="chip">Present {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
+        {% for row in upside_weights %}<span class="chip">Upside {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
+      </div>
+    </section>
+
+    {% if score_guides %}
+      <section class="panel">
+        <h2>What’s Good?</h2>
+        <div class="cols-3">
+          {% for guide in score_guides %}
+            <div class="tier-card">
+              <h3>{{ guide.label }}</h3>
+              {% for band in guide.bands %}
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>{{ band.label }}</strong>
+                    <div class="muted">{{ band.description }}</div>
+                  </div>
+                  <div><strong>{{ "%.1f"|format(band.threshold) }}+</strong></div>
+                </div>
+              {% endfor %}
+              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below {{ "%.1f"|format(guide.median) }} is below the current board median.</div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if top_players %}
+      <section class="cols-2" style="margin-bottom:18px;">
+        <div class="panel">
+          <h2>Top 10 Overall</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>League</th>
+                <th>On-Pitch</th>
+                <th>Present</th>
+                <th>Upside</th>
+                <th>Age</th>
+                <th>Minutes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in top_players %}
+                <tr>
+                  <td>
+                    <strong>{{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }}</div>
+                  </td>
+                  <td>{{ row.league_name }}</td>
+                  <td><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></td>
+                  <td>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</td>
+                  <td>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</td>
+                  <td>{{ row.age_label }}</td>
+                  <td>{{ "%.0f"|format(row.total_minutes or 0) }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="tier-card" style="margin-bottom:12px;">
+            <h2>Present Top 5</h2>
+            <div style="display:grid;gap:10px;">
+              {% for row in present_top_players %}
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }} · {{ row.league_name }} · Age {{ row.age_label }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</strong></div>
+                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="tier-card">
+            <h2>Upside Top 5</h2>
+            <div style="display:grid;gap:10px;">
+              {% for row in upside_top_players %}
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }} · {{ row.league_name }} · Age {{ row.age_label }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</strong></div>
+                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Top 5 By League</h2>
+        {% for league in combined_league_top_fives %}
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">{{ league.country }}{% if league.tier %} · Tier {{ league.tier }}{% endif %}</div>
+              <h3 style="margin-top:6px;">{{ league.league_name }}</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+              {% for row in league.on_pitch.players %}
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></div>
+                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+              {% for row in league.present.players %}
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</strong></div>
+                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+              {% for row in league.upside.players %}
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
+                    <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</strong></div>
+                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </section>
+    {% else %}
+      <section class="panel">
+        <h2>No Board Yet</h2>
+        <div class="muted">No players met the current filters for this profile in the static snapshot.</div>
+      </section>
+    {% endif %}
+  </main>
+</body>
+</html>

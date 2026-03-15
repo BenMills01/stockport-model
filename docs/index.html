@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stockport Recruitment Snapshot</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.95);
+      --shadow: 0 18px 40px rgba(8, 47, 103, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 18%, #f5f9ff 100%);
+    }
+    main { width: min(1280px, calc(100vw - 32px)); margin: 28px auto 40px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(8,47,103,0.97), rgba(11,78,162,0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 42px; }
+    .hero p { margin: 0; max-width: 72ch; color: rgba(255,255,255,0.82); }
+    .meta { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.76); }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .grid { display: grid; gap: 16px; }
+    .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fff, var(--county-ice));
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 10px 22px rgba(8, 47, 103, 0.08);
+    }
+    .card:hover { transform: translateY(-1px); }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(11,78,162,0.08);
+      color: var(--county-blue-deep);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h2 { margin: 0 0 12px; color: var(--county-blue-deep); }
+    h3 { margin: 10px 0 6px; font-size: 22px; }
+    .muted { color: var(--muted); }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
+    .kpi { border-radius: 16px; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.16); }
+    .kpi strong { display: block; font-size: 28px; }
+    .score { font-size: 30px; font-weight: 800; color: var(--county-blue-deep); }
+    .topline { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .link { color: var(--county-blue); text-decoration: none; font-weight: 700; }
+    @media (max-width: 980px) { .cards, .kpis { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .cards, .kpis { grid-template-columns: 1fr; } main { width: calc(100vw - 20px); } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="badge">Static Beta Snapshot</span>
+      <h1>Stockport Recruitment Boards</h1>
+      <p>This free public snapshot is generated from the live local model and published as a static GitHub Pages site. It focuses on on-pitch profile boards for the latest season and links through to exported brief reports.</p>
+      <div class="meta">Season 2025 · Generated 15 Mar 2026 00:15</div>
+      <div class="kpis">
+        <div class="kpi"><span>Profiles</span><strong>18</strong></div>
+        <div class="kpi"><span>Reports</span><strong>8</strong></div>
+        <div class="kpi"><span>Site Type</span><strong>Static</strong></div>
+        <div class="kpi"><span>Refresh</span><strong>Manual</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="topline">
+        <div>
+          <h2>On-Pitch Profiles</h2>
+          <div class="muted">Open any profile board for the latest public snapshot.</div>
+        </div>
+        <a class="link" href="reports/index.html">Open Brief Reports →</a>
+      </div>
+      <div class="grid cards" style="margin-top:16px;">
+          <a class="card" href="profiles/aggressive_cb.html">
+            <span class="badge">centre back</span>
+            <h3>aggressive_cb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">D. Sweeney</div>
+                <div class="muted">Stevenage · League One</div>
+                <div class="score" style="margin-top:8px;">64.4</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/ball_playing_cb.html">
+            <span class="badge">centre back</span>
+            <h3>ball_playing_cb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">M. de Roon</div>
+                <div class="muted">Atalanta · Serie A</div>
+                <div class="score" style="margin-top:8px;">54.0</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/covering_cb.html">
+            <span class="badge">centre back</span>
+            <h3>covering_cb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">T. St. Jago</div>
+                <div class="muted">KV Mechelen · Jupiler Pro League</div>
+                <div class="score" style="margin-top:8px;">58.0</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/attacking_fb.html">
+            <span class="badge">full back wing back</span>
+            <h3>attacking_fb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">M. Conway</div>
+                <div class="muted">Bolton · League One</div>
+                <div class="score" style="margin-top:8px;">57.7</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/defensive_fb.html">
+            <span class="badge">full back wing back</span>
+            <h3>defensive_fb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">O. Agougil</div>
+                <div class="muted">Jong Utrecht · Eerste Divisie</div>
+                <div class="score" style="margin-top:8px;">67.2</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact defensive_fb labels cleared the current 2025 filters, so this board is using the wider full back wing back family and then scoring those players against the defensive_fb template.</div>
+          </a>
+          <a class="card" href="profiles/inverted_fb.html">
+            <span class="badge">full back wing back</span>
+            <h3>inverted_fb</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">O. Agougil</div>
+                <div class="muted">Jong Utrecht · Eerste Divisie</div>
+                <div class="score" style="margin-top:8px;">59.3</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact inverted_fb labels cleared the current 2025 filters, so this board is using the wider full back wing back family and then scoring those players against the inverted_fb template.</div>
+          </a>
+          <a class="card" href="profiles/controller.html">
+            <span class="badge">midfield</span>
+            <h3>controller</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">A. Morris</div>
+                <div class="muted">Middlesbrough · Championship</div>
+                <div class="score" style="margin-top:8px;">54.2</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/destroyer.html">
+            <span class="badge">midfield</span>
+            <h3>destroyer</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">José María Andrés Baixauli</div>
+                <div class="muted">VfB Stuttgart · Bundesliga</div>
+                <div class="score" style="margin-top:8px;">60.9</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/complete_forward.html">
+            <span class="badge">striker</span>
+            <h3>complete_forward</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">Lamine Yamal</div>
+                <div class="muted">Barcelona · La Liga</div>
+                <div class="score" style="margin-top:8px;">65.5</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact complete_forward labels cleared the current 2025 filters, so this board is using the wider striker family and then scoring those players against the complete_forward template.</div>
+          </a>
+          <a class="card" href="profiles/false_9.html">
+            <span class="badge">striker</span>
+            <h3>false_9</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">Lamine Yamal</div>
+                <div class="muted">Barcelona · La Liga</div>
+                <div class="score" style="margin-top:8px;">59.7</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact false_9 labels cleared the current 2025 filters, so this board is using the wider striker family and then scoring those players against the false_9 template.</div>
+          </a>
+          <a class="card" href="profiles/poacher.html">
+            <span class="badge">striker</span>
+            <h3>poacher</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">S. Braken</div>
+                <div class="muted">MVV · Eerste Divisie</div>
+                <div class="score" style="margin-top:8px;">48.4</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/pressing_forward.html">
+            <span class="badge">striker</span>
+            <h3>pressing_forward</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">I. Said</div>
+                <div class="muted">Motherwell · Premiership</div>
+                <div class="score" style="margin-top:8px;">68.1</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact pressing_forward labels cleared the current 2025 filters, so this board is using the wider striker family and then scoring those players against the pressing_forward template.</div>
+          </a>
+          <a class="card" href="profiles/target_forward.html">
+            <span class="badge">striker</span>
+            <h3>target_forward</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">I. Matanović</div>
+                <div class="muted">SC Freiburg · Bundesliga</div>
+                <div class="score" style="margin-top:8px;">58.3</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/box_to_box.html">
+            <span class="badge">transition midfield</span>
+            <h3>box_to_box</h3>
+            <div class="muted">130 candidates · 130 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">S. Serdar</div>
+                <div class="muted">Hellas Verona · Serie A</div>
+                <div class="score" style="margin-top:8px;">55.3</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/mezzala.html">
+            <span class="badge">transition midfield</span>
+            <h3>mezzala</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">M. Olise</div>
+                <div class="muted">Bayern München · Bundesliga</div>
+                <div class="score" style="margin-top:8px;">60.6</div>
+              </div>
+          </a>
+          <a class="card" href="profiles/inside_forward.html">
+            <span class="badge">wide creator runner</span>
+            <h3>inside_forward</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">H. Hackney</div>
+                <div class="muted">Middlesbrough · Championship</div>
+                <div class="score" style="margin-top:8px;">69.6</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact inside_forward labels cleared the current 2025 filters, so this board is using the wider wide creator runner family and then scoring those players against the inside_forward template.</div>
+          </a>
+          <a class="card" href="profiles/traditional_winger.html">
+            <span class="badge">wide creator runner</span>
+            <h3>traditional_winger</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">H. Hackney</div>
+                <div class="muted">Middlesbrough · Championship</div>
+                <div class="score" style="margin-top:8px;">63.5</div>
+              </div>
+              <div class="muted" style="margin-top:12px;">No exact traditional_winger labels cleared the current 2025 filters, so this board is using the wider wide creator runner family and then scoring those players against the traditional_winger template.</div>
+          </a>
+          <a class="card" href="profiles/wide_playmaker.html">
+            <span class="badge">wide creator runner</span>
+            <h3>wide_playmaker</h3>
+            <div class="muted">250 candidates · 250 scored</div>
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">Léo Scienza</div>
+                <div class="muted">1. FC Heidenheim · Bundesliga</div>
+                <div class="score" style="margin-top:8px;">51.6</div>
+              </div>
+          </a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Brief Reports</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Brief</th>
+              <th>File</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <td>Brief 10</td>
+                <td><a class="link" href="reports/longlist_brief_10.html">longlist_brief_10.html</a></td>
+                <td>14 Mar 2026 19:41</td>
+              </tr>
+              <tr>
+                <td>Brief 11</td>
+                <td><a class="link" href="reports/longlist_brief_11.html">longlist_brief_11.html</a></td>
+                <td>13 Mar 2026 02:39</td>
+              </tr>
+              <tr>
+                <td>Brief 12</td>
+                <td><a class="link" href="reports/longlist_brief_12.html">longlist_brief_12.html</a></td>
+                <td>13 Mar 2026 02:41</td>
+              </tr>
+              <tr>
+                <td>Brief 13</td>
+                <td><a class="link" href="reports/longlist_brief_13.html">longlist_brief_13.html</a></td>
+                <td>13 Mar 2026 02:43</td>
+              </tr>
+              <tr>
+                <td>Brief 14</td>
+                <td><a class="link" href="reports/longlist_brief_14.html">longlist_brief_14.html</a></td>
+                <td>14 Mar 2026 19:42</td>
+              </tr>
+              <tr>
+                <td>Brief 4</td>
+                <td><a class="link" href="reports/longlist_brief_4.html">longlist_brief_4.html</a></td>
+                <td>13 Mar 2026 00:53</td>
+              </tr>
+              <tr>
+                <td>Brief 6</td>
+                <td><a class="link" href="reports/longlist_brief_6.html">longlist_brief_6.html</a></td>
+                <td>13 Mar 2026 01:01</td>
+              </tr>
+              <tr>
+                <td>Brief 7</td>
+                <td><a class="link" href="reports/longlist_brief_7.html">longlist_brief_7.html</a></td>
+                <td>13 Mar 2026 01:20</td>
+              </tr>
+          </tbody>
+        </table>
+    </section>
+  </main>
+</body>
+</html>

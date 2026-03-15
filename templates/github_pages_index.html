@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.95);
+      --shadow: 0 18px 40px rgba(8, 47, 103, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 18%, #f5f9ff 100%);
+    }
+    main { width: min(1280px, calc(100vw - 32px)); margin: 28px auto 40px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(8,47,103,0.97), rgba(11,78,162,0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 42px; }
+    .hero p { margin: 0; max-width: 72ch; color: rgba(255,255,255,0.82); }
+    .meta { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.76); }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .grid { display: grid; gap: 16px; }
+    .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      background: linear-gradient(180deg, #fff, var(--county-ice));
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 10px 22px rgba(8, 47, 103, 0.08);
+    }
+    .card:hover { transform: translateY(-1px); }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(11,78,162,0.08);
+      color: var(--county-blue-deep);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    h2 { margin: 0 0 12px; color: var(--county-blue-deep); }
+    h3 { margin: 10px 0 6px; font-size: 22px; }
+    .muted { color: var(--muted); }
+    .kpis { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-top: 16px; }
+    .kpi { border-radius: 16px; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.16); }
+    .kpi strong { display: block; font-size: 28px; }
+    .score { font-size: 30px; font-weight: 800; color: var(--county-blue-deep); }
+    .topline { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); }
+    th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+    .link { color: var(--county-blue); text-decoration: none; font-weight: 700; }
+    @media (max-width: 980px) { .cards, .kpis { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 720px) { .cards, .kpis { grid-template-columns: 1fr; } main { width: calc(100vw - 20px); } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="badge">Static Beta Snapshot</span>
+      <h1>Stockport Recruitment Boards</h1>
+      <p>This free public snapshot is generated from the live local model and published as a static GitHub Pages site. It focuses on on-pitch profile boards for the latest season and links through to exported brief reports.</p>
+      <div class="meta">Season {{ selected_season }} · Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+      <div class="kpis">
+        <div class="kpi"><span>Profiles</span><strong>{{ profiles|length }}</strong></div>
+        <div class="kpi"><span>Reports</span><strong>{{ reports|length }}</strong></div>
+        <div class="kpi"><span>Site Type</span><strong>Static</strong></div>
+        <div class="kpi"><span>Refresh</span><strong>Manual</strong></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="topline">
+        <div>
+          <h2>On-Pitch Profiles</h2>
+          <div class="muted">Open any profile board for the latest public snapshot.</div>
+        </div>
+        <a class="link" href="{{ reports_href }}">Open Brief Reports →</a>
+      </div>
+      <div class="grid cards" style="margin-top:16px;">
+        {% for profile in profiles %}
+          <a class="card" href="{{ profile.href }}">
+            <span class="badge">{{ profile.role_family | replace("_", " ") if profile.role_family else "Profile" }}</span>
+            <h3>{{ profile.role_name }}</h3>
+            <div class="muted">{{ profile.candidate_count }} candidates · {{ profile.scored_count }} scored</div>
+            {% if profile.top_player %}
+              <div style="margin-top:14px;">
+                <div class="muted">Top on-pitch player</div>
+                <div style="font-weight:800;font-size:20px;">{{ profile.top_player.player_name }}</div>
+                <div class="muted">{{ profile.top_player.current_team }} · {{ profile.top_player.league_name }}</div>
+                <div class="score" style="margin-top:8px;">{{ "%.1f"|format(profile.top_player.on_pitch_score or 0) }}</div>
+              </div>
+            {% endif %}
+            {% if profile.fallback_note %}
+              <div class="muted" style="margin-top:12px;">{{ profile.fallback_note }}</div>
+            {% endif %}
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Recent Brief Reports</h2>
+      {% if reports %}
+        <table>
+          <thead>
+            <tr>
+              <th>Brief</th>
+              <th>File</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for report in reports %}
+              <tr>
+                <td>{% if report.brief_id %}Brief {{ report.brief_id }}{% else %}Report{% endif %}</td>
+                <td><a class="link" href="{{ reports_href | replace('index.html', '') }}{{ report.filename }}">{{ report.filename }}</a></td>
+                <td>{{ report.updated_at.strftime("%d %b %Y %H:%M") }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div class="muted">No exported brief reports were available when this snapshot was built.</div>
+      {% endif %}
+    </section>
+  </main>
+</body>
+</html>

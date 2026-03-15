@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stockport Recruitment Model</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-soft: rgba(234, 244, 255, 0.92);
+      --accent: #0b4ea2;
+      --accent-soft: #d8ebff;
+      --warn: #b1532d;
+      --success: #0e7f64;
+      --page: #eef5ff;
+      --shadow: 0 24px 60px rgba(8, 47, 103, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        radial-gradient(circle at top right, rgba(11, 78, 162, 0.28), transparent 24%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 14%, var(--page) 46%, #f5f9ff 100%);
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0%, transparent 48%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.2) 52%, transparent 52%, transparent 100%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 136px);
+      opacity: 0.7;
+    }
+    main {
+      width: min(1320px, calc(100vw - 36px));
+      margin: 26px auto 52px;
+      background: rgba(248, 251, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 28px;
+      padding: 22px 22px 34px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--county-blue-deep), var(--county-blue), var(--county-sky));
+    }
+    .site-rail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(8, 47, 103, 0.96), rgba(11, 78, 162, 0.92));
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-rail::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      top: -58px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.06) 38%, transparent 72%);
+    }
+    .site-brand {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .site-subtitle {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 56ch;
+    }
+    .site-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: end;
+      position: relative;
+      z-index: 1;
+    }
+    .site-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-family: "Baskerville", "Iowan Old Style", "Georgia", serif;
+      font-size: 40px;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      color: var(--county-blue-deep);
+    }
+    p, li, td, th, div, span {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      text-align: right;
+      font-size: 13px;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(8, 47, 103, 0.08);
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--accent-soft) 100%);
+      color: var(--county-blue-deep);
+      border: 1px solid rgba(11, 78, 162, 0.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: rgba(11, 78, 162, 0.05);
+    }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.42); }
+    tbody tr:hover { background: rgba(216, 235, 255, 0.46); }
+    .muted { color: var(--muted); }
+    .warn { color: var(--warn); }
+    .success { color: var(--success); }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    textarea { min-height: 120px; }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .button, button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--county-blue-deep), var(--county-blue));
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 12px 24px rgba(11, 78, 162, 0.18);
+    }
+    .button.secondary, button.secondary {
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--county-blue-deep);
+      border-color: rgba(11, 78, 162, 0.18);
+      box-shadow: none;
+    }
+    .message-banner {
+      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .message-banner.error {
+      border-color: #e0c7bc;
+      background: #fff5f0;
+      color: var(--warn);
+    }
+    @media (max-width: 860px) {
+      main {
+        width: min(100vw - 20px, 100%);
+        margin: 10px auto 26px;
+        padding: 16px 16px 24px;
+        border-radius: 22px;
+      }
+      .site-rail, header {
+        flex-direction: column;
+        align-items: start;
+      }
+      .meta, .site-links {
+        text-align: left;
+        justify-content: start;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="site-rail">
+      <div>
+        <a class="site-brand" href="/">Stockport County Recruitment Hub</a>
+        <div class="site-subtitle">Live data coverage, recruitment briefs, longlists, and Wyscout review in one local workspace.</div>
+      </div>
+      <div class="site-links">
+        <a class="site-link" href="/">Dashboard</a>
+        <a class="site-link" href="/wyscout-review">Wyscout Review</a>
+      </div>
+    </div>
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>box_to_box Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated 2026-03-13 02:41:09.137099</div>
+    <div>promotion_accelerator / championship_transition</div>
+  </div>
+</header>
+
+<section class="panel" style="margin-bottom:18px;">
+  <h2>Action Tiers</h2>
+  <p class="muted">Board Score = 100 x (Composite / 55)^0.70, capped between 0 and 100.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Board</th>
+        <th>Composite</th>
+        <th>Action</th>
+        <th>Players</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tier 1</td>
+        <td>80.0+</td>
+        <td>40.0+</td>
+        <td>Priority shortlist</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Tier 2</td>
+        <td>71.4+</td>
+        <td>34.0+</td>
+        <td>Scout next</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>Tier 3</td>
+        <td>62.3+</td>
+        <td>28.0+</td>
+        <td>Active longlist</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <td>Tier 4</td>
+        <td>52.7+</td>
+        <td>22.0+</td>
+        <td>Monitor</td>
+        <td>3</td>
+      </tr>
+      <tr>
+        <td>Tier 5</td>
+        <td>0.0+</td>
+        <td>0.0+</td>
+        <td>Park</td>
+        <td>27</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Action</th>
+      <th>Board</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>Ethan Hamilton</strong><br />
+        <span class="muted">Dundee</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>78.7</td>
+      <td>39.0</td>
+      <td>2.4915339665278307 / 3.3220452887037744 / 4.160451347721823</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Apter</strong><br />
+        <span class="muted">Bolton</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>74.9</td>
+      <td>36.4</td>
+      <td>2.1844453226954017 / 2.917695333307627 / 3.6588400807619577</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Williams</strong><br />
+        <span class="muted">Reading</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>72.9</td>
+      <td>35.0</td>
+      <td>2.059521130516744 / 2.748338115542793 / 3.4450498374109477</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. De Havilland</strong><br />
+        <span class="muted">Bristol Rovers</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>70.7</td>
+      <td>33.5</td>
+      <td>1.899102116247675 / 2.5321361549969 / 3.1809596674303355</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Vale</strong><br />
+        <span class="muted">QPR</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>68.4</td>
+      <td>31.9</td>
+      <td>2.7485812518247976 / 3.6679153816532275 / 4.5925126693763945</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>B. Woods</strong><br />
+        <span class="muted">Accrington ST</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>66.0</td>
+      <td>30.4</td>
+      <td>2.764244466937038 / 3.68718999100377 / 4.618030251912607</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Jamie Carson McDonnell</strong><br />
+        <span class="muted">Mansfield Town</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>65.8</td>
+      <td>30.2</td>
+      <td>2.686264276439375 / 3.582981248477871 / 4.487592957358473</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Chauke</strong><br />
+        <span class="muted">Burton Albion</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>65.2</td>
+      <td>29.8</td>
+      <td>1.8882997439531348 / 2.5203136370988033 / 3.1628538460339457</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Houghton</strong><br />
+        <span class="muted">Stevenage</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>60.0</td>
+      <td>26.5</td>
+      <td>2.165893000177891 / 2.8893455368373093 / 3.624467764966782</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Tobias Brenan</strong><br />
+        <span class="muted">Harrogate Town</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>55.8</td>
+      <td>23.9</td>
+      <td>2.4058160425705233 / 3.2077547234273642 / 4.017588141126311</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Rankin-Costello</strong><br />
+        <span class="muted">Charlton</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>55.8</td>
+      <td>23.9</td>
+      <td>4.89763865256412 / 6.530184870085494 / 8.170625824448972</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Kai Payne</strong><br />
+        <span class="muted">Oldham</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>51.6</td>
+      <td>21.4</td>
+      <td>1.7652326454399592 / 2.3560996676041563 / 2.9548614266104583</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Plant</strong><br />
+        <span class="muted">Tranmere</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>50.2</td>
+      <td>20.6</td>
+      <td>2.0773250703042536 / 2.7700998966169865 / 3.4707694597718244</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Hawkes</strong><br />
+        <span class="muted">Oldham</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>50.0</td>
+      <td>20.4</td>
+      <td>2.061772017800716 / 2.749029357067621 / 3.4441814331766314</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Sutton</strong><br />
+        <span class="muted">Harrogate Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>47.6</td>
+      <td>19.1</td>
+      <td>2.769702872034979 / 3.693460288710115 / 4.630375600122094</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Gibbs</strong><br />
+        <span class="muted">Norwich</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>46.4</td>
+      <td>18.4</td>
+      <td>2.926197376599766 / 3.903480842613854 / 4.891290624417414</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Smith</strong><br />
+        <span class="muted">Gillingham</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>46.0</td>
+      <td>18.1</td>
+      <td>2.063725513377426 / 2.751634017836569 / 3.4553319959799214</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Rankine</strong><br />
+        <span class="muted">Crewe</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>37.4</td>
+      <td>13.5</td>
+      <td>1.994785587888006 / 2.659714117184008 / 3.348326857006326</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Sutton</strong><br />
+        <span class="muted">Harrogate Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>37.3</td>
+      <td>13.4</td>
+      <td>1.7889892344497609 / 2.385318979266348 / 2.9948066188197764</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Daniel Vost</strong><br />
+        <span class="muted">Huddersfield</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>36.8</td>
+      <td>13.2</td>
+      <td>10.404135338345863 / 13.872180451127818 / 17.3796992481203</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Stepien-Iwumene</strong><br />
+        <span class="muted">Bromley</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>36.8</td>
+      <td>13.2</td>
+      <td>14.210526315789474 / 18.94736842105263 / 23.723684210526315</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Ramsey</strong><br />
+        <span class="muted">Leicester</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>36.5</td>
+      <td>13.1</td>
+      <td>3.1005173968083475 / 4.134023195744463 / 5.185950047312159</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Wilson</strong><br />
+        <span class="muted">Milton Keynes Dons</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>32.5</td>
+      <td>11.1</td>
+      <td>0.7105263157894736 / 0.9473684210526315 / 1.2131578947368422</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Harry Whitwell</strong><br />
+        <span class="muted">West Brom</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>32.4</td>
+      <td>11.0</td>
+      <td>2.1315789473684212 / 2.8421052631578947 / 3.5894736842105264</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>B. Powell</strong><br />
+        <span class="muted">Barrow</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>31.9</td>
+      <td>10.7</td>
+      <td>1.6010201874549386 / 2.1346935832732514 / 2.6815248738284065</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Harvey</strong><br />
+        <span class="muted">Colchester</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>31.7</td>
+      <td>10.6</td>
+      <td>1.7052631578947368 / 2.2736842105263158 / 2.881578947368421</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Daniel Kelly</strong><br />
+        <span class="muted">Celtic</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>31.0</td>
+      <td>10.3</td>
+      <td>1.890017162471396 / 2.5200228832951943 / 3.186870709382151</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Hall</strong><br />
+        <span class="muted">Accrington ST</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>30.6</td>
+      <td>10.1</td>
+      <td>1.6232793522267206 / 2.1643724696356275 / 2.744939271255061</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Moore</strong><br />
+        <span class="muted">Crewe</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>30.5</td>
+      <td>10.1</td>
+      <td>1.5290526315789474 / 2.038736842105263 / 2.5799999999999996</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Orford</strong><br />
+        <span class="muted">Stevenage</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>29.9</td>
+      <td>9.8</td>
+      <td>0.5462171052631578 / 0.7282894736842105 / 0.9577302631578947</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Joshua Laqueretabua</strong><br />
+        <span class="muted">Charlton</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>29.7</td>
+      <td>9.7</td>
+      <td>0.39473684210526316 / 0.5263157894736842 / 0.7052631578947368</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Nathan Tinsdale</strong><br />
+        <span class="muted">Hull City</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>29.7</td>
+      <td>9.7</td>
+      <td>0.3229665071770335 / 0.43062200956937796 / 0.5856459330143541</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Martin</strong><br />
+        <span class="muted">Accrington ST</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>28.9</td>
+      <td>9.4</td>
+      <td>1.815763069882063 / 2.421017426509417 / 3.0446928357683505</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Sbarra</strong><br />
+        <span class="muted">Doncaster</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>28.6</td>
+      <td>9.2</td>
+      <td>1.236542107533718 / 1.6487228100449571 / 2.087219302029881</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Kadan Young</strong><br />
+        <span class="muted">Antwerp</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>26.7</td>
+      <td>8.4</td>
+      <td>1.5469073345154816 / 2.0625431126873086 / 2.5965999434907148</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Rinomhota</strong><br />
+        <span class="muted">Reading</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>26.5</td>
+      <td>8.2</td>
+      <td>0.8739473684210527 / 1.1652631578947368 / 1.4986842105263156</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>N. Mawene</strong><br />
+        <span class="muted">Preston</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>26.2</td>
+      <td>8.1</td>
+      <td>3.5526315789473686 / 4.7368421052631575 / 5.968421052631579</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Hazlehurst</strong><br />
+        <span class="muted">Burton Albion</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>22.6</td>
+      <td>6.6</td>
+      <td>0.6473684210526315 / 0.863157894736842 / 1.1263157894736842</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  </main>
+</body>
+</html>

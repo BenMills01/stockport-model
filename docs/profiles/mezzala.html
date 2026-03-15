@@ -1,0 +1,3195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>mezzala · On-Pitch Snapshot</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-ice: #eaf4ff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.95);
+      --shadow: 0 18px 40px rgba(8, 47, 103, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 18%, #f5f9ff 100%);
+    }
+    main { width: min(1320px, calc(100vw - 30px)); margin: 26px auto 40px; }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(8,47,103,0.97), rgba(11,78,162,0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .hero h1 { margin: 10px 0 6px; font-size: 40px; }
+    .hero p { margin: 0; color: rgba(255,255,255,0.82); }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.14);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .nav { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .nav a {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .profile-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .profile-nav a {
+      text-decoration: none;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.92);
+      font-size: 13px;
+    }
+    .profile-nav a.active {
+      background: var(--county-blue);
+      color: #fff;
+      border-color: transparent;
+    }
+    .cols-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+    .cols-2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; }
+    .stat-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      background: linear-gradient(180deg,#fff,var(--county-ice));
+    }
+    .stat-box strong { display:block; font-size:28px; }
+    .muted { color: var(--muted); }
+    h2 { margin: 0 0 12px; color: var(--county-blue-deep); }
+    h3 { margin: 0 0 10px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--line); vertical-align: top; }
+    th { font-size:12px; text-transform:uppercase; letter-spacing:.08em; color: var(--muted); }
+    .tier-card { border:1px solid var(--line); border-radius:18px; padding:16px; background:linear-gradient(180deg,#fff,var(--county-ice)); }
+    .league-row { display:grid; grid-template-columns:220px repeat(3,minmax(0,1fr)); gap:12px; align-items:start; margin-bottom:12px; }
+    .league-label { border:1px solid var(--line); border-radius:18px; padding:14px; background:#fff; }
+    .league-mini-title { margin:0 0 8px; font-size:13px; text-transform:uppercase; letter-spacing:.08em; color:var(--county-blue); }
+    .chip-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .chip {
+      display:inline-block; padding:5px 10px; border-radius:999px;
+      background:rgba(11,78,162,.08); border:1px solid rgba(11,78,162,.16); font-size:13px;
+    }
+    @media (max-width: 1080px) { .league-row { grid-template-columns: 1fr; } }
+    @media (max-width: 860px) { .cols-3, .cols-2 { grid-template-columns: 1fr; } main { width: calc(100vw - 18px); } }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="badge">Static Profile Snapshot</span>
+      <h1>mezzala</h1>
+      <p>2025 · Transition Midfield · Generated 15 Mar 2026 00:15</p>
+      <div class="nav">
+        <a href="../index.html">← Home</a>
+        <a href="../reports/index.html">Brief Reports</a>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Profiles</h2>
+      <div class="profile-nav">
+          <a href="aggressive_cb.html" class="">aggressive_cb</a>
+          <a href="ball_playing_cb.html" class="">ball_playing_cb</a>
+          <a href="covering_cb.html" class="">covering_cb</a>
+          <a href="attacking_fb.html" class="">attacking_fb</a>
+          <a href="defensive_fb.html" class="">defensive_fb</a>
+          <a href="inverted_fb.html" class="">inverted_fb</a>
+          <a href="controller.html" class="">controller</a>
+          <a href="destroyer.html" class="">destroyer</a>
+          <a href="complete_forward.html" class="">complete_forward</a>
+          <a href="false_9.html" class="">false_9</a>
+          <a href="poacher.html" class="">poacher</a>
+          <a href="pressing_forward.html" class="">pressing_forward</a>
+          <a href="target_forward.html" class="">target_forward</a>
+          <a href="box_to_box.html" class="">box_to_box</a>
+          <a href="mezzala.html" class="active">mezzala</a>
+          <a href="inside_forward.html" class="">inside_forward</a>
+          <a href="traditional_winger.html" class="">traditional_winger</a>
+          <a href="wide_playmaker.html" class="">wide_playmaker</a>
+      </div>
+    </section>
+
+    <section class="cols-3" style="margin-bottom:18px;">
+      <div class="stat-box"><span class="muted">Candidates</span><strong>250</strong></div>
+      <div class="stat-box"><span class="muted">Scored</span><strong>250</strong></div>
+      <div class="stat-box"><span class="muted">Minutes Floor</span><strong>180</strong></div>
+    </section>
+
+
+    <section class="panel">
+      <h2>Method</h2>
+      <div class="muted">This static board ignores availability and financial value. It ranks role-matched players only, applies the live minutes floor, and uses the softer evidence adjustment plus age-aware upside methodology from the live model.</div>
+      <div class="chip-row">
+<span class="chip">Overall Role Fit 40.0%</span><span class="chip">Overall Current 35.0%</span><span class="chip">Overall Projection 25.0%</span><span class="chip">Present Role Fit 55.0%</span><span class="chip">Present Current 45.0%</span><span class="chip">Upside Role Fit 30.0%</span><span class="chip">Upside Projection 45.0%</span><span class="chip">Upside Age 25.0%</span>      </div>
+    </section>
+
+      <section class="panel">
+        <h2>What’s Good?</h2>
+        <div class="cols-3">
+            <div class="tier-card">
+              <h3>On-Pitch</h3>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Excellent</strong>
+                    <div class="muted">Top 10% of this board</div>
+                  </div>
+                  <div><strong>50.9+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Strong</strong>
+                    <div class="muted">Top 25% of this board</div>
+                  </div>
+                  <div><strong>48.0+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Good</strong>
+                    <div class="muted">At or above the board median</div>
+                  </div>
+                  <div><strong>45.0+</strong></div>
+                </div>
+              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below 45.0 is below the current board median.</div>
+            </div>
+            <div class="tier-card">
+              <h3>Present</h3>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Excellent</strong>
+                    <div class="muted">Top 10% of this board</div>
+                  </div>
+                  <div><strong>48.2+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Strong</strong>
+                    <div class="muted">Top 25% of this board</div>
+                  </div>
+                  <div><strong>44.9+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Good</strong>
+                    <div class="muted">At or above the board median</div>
+                  </div>
+                  <div><strong>41.6+</strong></div>
+                </div>
+              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below 41.6 is below the current board median.</div>
+            </div>
+            <div class="tier-card">
+              <h3>Upside</h3>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Excellent</strong>
+                    <div class="muted">Top 10% of this board</div>
+                  </div>
+                  <div><strong>65.3+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Strong</strong>
+                    <div class="muted">Top 25% of this board</div>
+                  </div>
+                  <div><strong>62.0+</strong></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>Good</strong>
+                    <div class="muted">At or above the board median</div>
+                  </div>
+                  <div><strong>58.1+</strong></div>
+                </div>
+              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below 58.1 is below the current board median.</div>
+            </div>
+        </div>
+      </section>
+
+      <section class="cols-2" style="margin-bottom:18px;">
+        <div class="panel">
+          <h2>Top 10 Overall</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Player</th>
+                <th>League</th>
+                <th>On-Pitch</th>
+                <th>Present</th>
+                <th>Upside</th>
+                <th>Age</th>
+                <th>Minutes</th>
+              </tr>
+            </thead>
+            <tbody>
+                <tr>
+                  <td>
+                    <strong>M. Olise</strong>
+                    <div class="muted">Bayern München</div>
+                  </td>
+                  <td>Bundesliga</td>
+                  <td><strong>60.6</strong></td>
+                  <td>58.0</td>
+                  <td>73.3</td>
+                  <td>24.3</td>
+                  <td>1791</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Pedri</strong>
+                    <div class="muted">Barcelona</div>
+                  </td>
+                  <td>La Liga</td>
+                  <td><strong>56.8</strong></td>
+                  <td>49.1</td>
+                  <td>75.0</td>
+                  <td>23.3</td>
+                  <td>1318</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>H. Mkhitaryan</strong>
+                    <div class="muted">Inter</div>
+                  </td>
+                  <td>Serie A</td>
+                  <td><strong>55.3</strong></td>
+                  <td>50.8</td>
+                  <td>47.0</td>
+                  <td>37.1</td>
+                  <td>1160</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>M. Damsgaard</strong>
+                    <div class="muted">Brentford</div>
+                  </td>
+                  <td>Premier League</td>
+                  <td><strong>54.7</strong></td>
+                  <td>52.2</td>
+                  <td>67.7</td>
+                  <td>25.7</td>
+                  <td>1516</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Fermín</strong>
+                    <div class="muted">Barcelona</div>
+                  </td>
+                  <td>La Liga</td>
+                  <td><strong>54.1</strong></td>
+                  <td>49.5</td>
+                  <td>70.0</td>
+                  <td>22.8</td>
+                  <td>1212</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>L. Mandeville</strong>
+                    <div class="muted">Chesterfield</div>
+                  </td>
+                  <td>League Two</td>
+                  <td><strong>53.9</strong></td>
+                  <td>51.2</td>
+                  <td>64.4</td>
+                  <td>29.1</td>
+                  <td>1963</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>T. Lemar</strong>
+                    <div class="muted">Girona</div>
+                  </td>
+                  <td>La Liga</td>
+                  <td><strong>53.8</strong></td>
+                  <td>49.1</td>
+                  <td>63.9</td>
+                  <td>30.3</td>
+                  <td>979</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>H. Nicolussi</strong>
+                    <div class="muted">Fiorentina</div>
+                  </td>
+                  <td>Serie A</td>
+                  <td><strong>52.5</strong></td>
+                  <td>48.5</td>
+                  <td>67.0</td>
+                  <td>25.7</td>
+                  <td>826</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>R. Robbemond</strong>
+                    <div class="muted">Jong AZ</div>
+                  </td>
+                  <td>Eerste Divisie</td>
+                  <td><strong>52.2</strong></td>
+                  <td>48.0</td>
+                  <td>68.1</td>
+                  <td>21.2</td>
+                  <td>1190</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>E. Zabi</strong>
+                    <div class="muted">Reims</div>
+                  </td>
+                  <td>Ligue 2</td>
+                  <td><strong>52.2</strong></td>
+                  <td>47.5</td>
+                  <td>68.5</td>
+                  <td>19.5</td>
+                  <td>1311</td>
+                </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <div class="tier-card" style="margin-bottom:12px;">
+            <h2>Present Top 5</h2>
+            <div style="display:grid;gap:10px;">
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>1. M. Olise</strong>
+                    <div class="muted">Bayern München · Bundesliga · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>58.0</strong></div>
+                    <div class="muted">1791m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>2. M. Damsgaard</strong>
+                    <div class="muted">Brentford · Premier League · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.2</strong></div>
+                    <div class="muted">1516m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>3. T. Lund Jensen</strong>
+                    <div class="muted">Club Brugge II · Challenger Pro League · Age 20.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.1</strong></div>
+                    <div class="muted">1379m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>4. M. Rivera</strong>
+                    <div class="muted">Heerenveen · Eredivisie · Age 23.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.5</strong></div>
+                    <div class="muted">1761m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>5. B. Conté</strong>
+                    <div class="muted">SV Elversberg · 2. Bundesliga · Age 22.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.3</strong></div>
+                    <div class="muted">1720m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          <div class="tier-card">
+            <h2>Upside Top 5</h2>
+            <div style="display:grid;gap:10px;">
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>1. Pedri</strong>
+                    <div class="muted">Barcelona · La Liga · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>75.0</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>2. M. Olise</strong>
+                    <div class="muted">Bayern München · Bundesliga · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>73.3</strong></div>
+                    <div class="muted">1791m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>3. Fermín</strong>
+                    <div class="muted">Barcelona · La Liga · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>70.0</strong></div>
+                    <div class="muted">1212m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>4. E. Zabi</strong>
+                    <div class="muted">Reims · Ligue 2 · Age 19.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>68.5</strong></div>
+                    <div class="muted">1311m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;">
+                  <div>
+                    <strong>5. R. Robbemond</strong>
+                    <div class="muted">Jong AZ · Eerste Divisie · Age 21.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>68.1</strong></div>
+                    <div class="muted">1190m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Top 5 By League</h2>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">England · Tier 2</div>
+              <h3 style="margin-top:6px;">Championship</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. J. Rudoni</strong>
+                    <div class="muted">Coventry · Age 24.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.7</strong></div>
+                    <div class="muted">1814m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. V. Torp</strong>
+                    <div class="muted">Coventry · Age 26.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">2075m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Núñez</strong>
+                    <div class="muted">Norwich · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.2</strong></div>
+                    <div class="muted">1797m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Jacob Wright</strong>
+                    <div class="muted">Norwich · Age 20.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.0</strong></div>
+                    <div class="muted">1066m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. P. Roberts</strong>
+                    <div class="muted">Birmingham · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.9</strong></div>
+                    <div class="muted">2062m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. J. Rudoni</strong>
+                    <div class="muted">Coventry · Age 24.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.9</strong></div>
+                    <div class="muted">1814m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. V. Torp</strong>
+                    <div class="muted">Coventry · Age 26.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.9</strong></div>
+                    <div class="muted">2075m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Núñez</strong>
+                    <div class="muted">Norwich · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.3</strong></div>
+                    <div class="muted">1797m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. P. Roberts</strong>
+                    <div class="muted">Birmingham · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.9</strong></div>
+                    <div class="muted">2062m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. A. Ben Slimane</strong>
+                    <div class="muted">Norwich · Age 25.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.5</strong></div>
+                    <div class="muted">713m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Jacob Wright</strong>
+                    <div class="muted">Norwich · Age 20.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.6</strong></div>
+                    <div class="muted">1066m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Rudoni</strong>
+                    <div class="muted">Coventry · Age 24.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.2</strong></div>
+                    <div class="muted">1814m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Núñez</strong>
+                    <div class="muted">Norwich · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.0</strong></div>
+                    <div class="muted">1797m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. V. Torp</strong>
+                    <div class="muted">Coventry · Age 26.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.5</strong></div>
+                    <div class="muted">2075m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. A. Ben Slimane</strong>
+                    <div class="muted">Norwich · Age 25.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.2</strong></div>
+                    <div class="muted">713m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">England · Tier 3</div>
+              <h3 style="margin-top:6px;">League One</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. J. Sheehan</strong>
+                    <div class="muted">Bolton · Age 31.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.7</strong></div>
+                    <div class="muted">1899m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. H. Kane</strong>
+                    <div class="muted">Huddersfield · Age 27.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.5</strong></div>
+                    <div class="muted">830m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. D. Turnbull</strong>
+                    <div class="muted">Cardiff · Age 26.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.7</strong></div>
+                    <div class="muted">1436m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. C. Maycock</strong>
+                    <div class="muted">AFC Wimbledon · Age 28.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.2</strong></div>
+                    <div class="muted">1317m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. E. Henderson</strong>
+                    <div class="muted">Wycombe · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.0</strong></div>
+                    <div class="muted">1308m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. H. Kane</strong>
+                    <div class="muted">Huddersfield · Age 27.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">830m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Sheehan</strong>
+                    <div class="muted">Bolton · Age 31.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.2</strong></div>
+                    <div class="muted">1899m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. C. Maycock</strong>
+                    <div class="muted">AFC Wimbledon · Age 28.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.0</strong></div>
+                    <div class="muted">1317m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. G. Middleton</strong>
+                    <div class="muted">Doncaster · Age 26.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.8</strong></div>
+                    <div class="muted">1219m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. D. Turnbull</strong>
+                    <div class="muted">Cardiff · Age 26.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.8</strong></div>
+                    <div class="muted">1436m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. D. Turnbull</strong>
+                    <div class="muted">Cardiff · Age 26.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.1</strong></div>
+                    <div class="muted">1436m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. H. Kane</strong>
+                    <div class="muted">Huddersfield · Age 27.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.6</strong></div>
+                    <div class="muted">830m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. E. Henderson</strong>
+                    <div class="muted">Wycombe · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.4</strong></div>
+                    <div class="muted">1308m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Patrick Kelly</strong>
+                    <div class="muted">Barnsley · Age 21.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.1</strong></div>
+                    <div class="muted">1898m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. B. Khela</strong>
+                    <div class="muted">Peterborough · Age 21.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>59.7</strong></div>
+                    <div class="muted">1859m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">England · Tier 1</div>
+              <h3 style="margin-top:6px;">Premier League</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Damsgaard</strong>
+                    <div class="muted">Brentford · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>54.7</strong></div>
+                    <div class="muted">1516m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. T. Reijnders</strong>
+                    <div class="muted">Manchester City · Age 27.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.4</strong></div>
+                    <div class="muted">1488m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Ødegaard</strong>
+                    <div class="muted">Arsenal · Age 27.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.1</strong></div>
+                    <div class="muted">1078m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Y. Tielemans</strong>
+                    <div class="muted">Aston Villa · Age 28.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.8</strong></div>
+                    <div class="muted">1299m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Jensen</strong>
+                    <div class="muted">Brentford · Age 30.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.4</strong></div>
+                    <div class="muted">1501m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Damsgaard</strong>
+                    <div class="muted">Brentford · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.2</strong></div>
+                    <div class="muted">1516m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. T. Reijnders</strong>
+                    <div class="muted">Manchester City · Age 27.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.1</strong></div>
+                    <div class="muted">1488m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Jensen</strong>
+                    <div class="muted">Brentford · Age 30.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.4</strong></div>
+                    <div class="muted">1501m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Y. Tielemans</strong>
+                    <div class="muted">Aston Villa · Age 28.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.0</strong></div>
+                    <div class="muted">1299m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Ødegaard</strong>
+                    <div class="muted">Arsenal · Age 27.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.9</strong></div>
+                    <div class="muted">1078m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Ødegaard</strong>
+                    <div class="muted">Arsenal · Age 27.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>68.0</strong></div>
+                    <div class="muted">1078m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. M. Damsgaard</strong>
+                    <div class="muted">Brentford · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>67.7</strong></div>
+                    <div class="muted">1516m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. T. Reijnders</strong>
+                    <div class="muted">Manchester City · Age 27.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>67.2</strong></div>
+                    <div class="muted">1488m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Y. Ayari</strong>
+                    <div class="muted">Brighton · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.3</strong></div>
+                    <div class="muted">1713m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Y. Tielemans</strong>
+                    <div class="muted">Aston Villa · Age 28.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.4</strong></div>
+                    <div class="muted">1299m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">England · Tier 4</div>
+              <h3 style="margin-top:6px;">League Two</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. L. Mandeville</strong>
+                    <div class="muted">Chesterfield · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>53.9</strong></div>
+                    <div class="muted">1963m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. D. Duffy</strong>
+                    <div class="muted">Chesterfield · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.9</strong></div>
+                    <div class="muted">1442m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. K. Whitmore</strong>
+                    <div class="muted">Newport County · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.1</strong></div>
+                    <div class="muted">1054m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. T. Naylor</strong>
+                    <div class="muted">Chesterfield · Age 34.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.2</strong></div>
+                    <div class="muted">2287m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. E. Khouri</strong>
+                    <div class="muted">Grimsby · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.0</strong></div>
+                    <div class="muted">2021m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. D. Duffy</strong>
+                    <div class="muted">Chesterfield · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.2</strong></div>
+                    <div class="muted">1442m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. L. Mandeville</strong>
+                    <div class="muted">Chesterfield · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.2</strong></div>
+                    <div class="muted">1963m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. K. Whitmore</strong>
+                    <div class="muted">Newport County · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.6</strong></div>
+                    <div class="muted">1054m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. E. Khouri</strong>
+                    <div class="muted">Grimsby · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.9</strong></div>
+                    <div class="muted">2021m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. T. Naylor</strong>
+                    <div class="muted">Chesterfield · Age 34.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.8</strong></div>
+                    <div class="muted">2287m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Ben Winterburn</strong>
+                    <div class="muted">Barnet · Age 21.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.6</strong></div>
+                    <div class="muted">769m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. L. Mandeville</strong>
+                    <div class="muted">Chesterfield · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.4</strong></div>
+                    <div class="muted">1963m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. D. Duffy</strong>
+                    <div class="muted">Chesterfield · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.3</strong></div>
+                    <div class="muted">1442m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. E. Khouri</strong>
+                    <div class="muted">Grimsby · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.2</strong></div>
+                    <div class="muted">2021m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. B. Woods</strong>
+                    <div class="muted">Accrington ST · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.5</strong></div>
+                    <div class="muted">1042m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Belgium · Tier 1</div>
+              <h3 style="margin-top:6px;">Jupiler Pro League</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. R. Yamamoto</strong>
+                    <div class="muted">St. Truiden · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.4</strong></div>
+                    <div class="muted">2345m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. P. Hrošovský</strong>
+                    <div class="muted">Genk · Age 33.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.8</strong></div>
+                    <div class="muted">1002m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. R. Ito</strong>
+                    <div class="muted">St. Truiden · Age 28.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.1</strong></div>
+                    <div class="muted">2086m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. A. Jashari</strong>
+                    <div class="muted">Club Brugge KV · Age 23.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.5</strong></div>
+                    <div class="muted">375m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. O. Niang</strong>
+                    <div class="muted">Union St. Gilloise · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.0</strong></div>
+                    <div class="muted">1378m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. R. Yamamoto</strong>
+                    <div class="muted">St. Truiden · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.0</strong></div>
+                    <div class="muted">2345m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. O. Niang</strong>
+                    <div class="muted">Union St. Gilloise · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.4</strong></div>
+                    <div class="muted">1378m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. I. Sakamoto</strong>
+                    <div class="muted">KVC Westerlo · Age 22.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.8</strong></div>
+                    <div class="muted">2211m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. M. Doumbia</strong>
+                    <div class="muted">Antwerp · Age 21.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.2</strong></div>
+                    <div class="muted">528m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. R. Ito</strong>
+                    <div class="muted">St. Truiden · Age 28.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.7</strong></div>
+                    <div class="muted">2086m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. A. Jashari</strong>
+                    <div class="muted">Club Brugge KV · Age 23.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.5</strong></div>
+                    <div class="muted">375m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. R. Ito</strong>
+                    <div class="muted">St. Truiden · Age 28.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.4</strong></div>
+                    <div class="muted">2086m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. R. Yamamoto</strong>
+                    <div class="muted">St. Truiden · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.3</strong></div>
+                    <div class="muted">2345m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. E. Diop</strong>
+                    <div class="muted">Cercle Brugge · Age 21.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.6</strong></div>
+                    <div class="muted">2047m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. O. Niang</strong>
+                    <div class="muted">Union St. Gilloise · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>58.8</strong></div>
+                    <div class="muted">1378m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">France · Tier 1</div>
+              <h3 style="margin-top:6px;">Ligue 1</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. A. Vossah</strong>
+                    <div class="muted">Toulouse · Age 18.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.2</strong></div>
+                    <div class="muted">700m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. M. Sanson</strong>
+                    <div class="muted">Nice · Age 31.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.7</strong></div>
+                    <div class="muted">1171m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. Vitinha</strong>
+                    <div class="muted">Paris Saint Germain · Age 26.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.2</strong></div>
+                    <div class="muted">1856m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. A. Thomasson</strong>
+                    <div class="muted">Lens · Age 32.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.4</strong></div>
+                    <div class="muted">2085m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Fabián Ruiz</strong>
+                    <div class="muted">Paris Saint Germain · Age 29.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.5</strong></div>
+                    <div class="muted">795m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. A. Vossah</strong>
+                    <div class="muted">Toulouse · Age 18.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.1</strong></div>
+                    <div class="muted">700m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. M. Sanson</strong>
+                    <div class="muted">Nice · Age 31.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.8</strong></div>
+                    <div class="muted">1171m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. A. Thomasson</strong>
+                    <div class="muted">Lens · Age 32.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.5</strong></div>
+                    <div class="muted">2085m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Vitinha</strong>
+                    <div class="muted">Paris Saint Germain · Age 26.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.8</strong></div>
+                    <div class="muted">1856m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. K. Doumbia</strong>
+                    <div class="muted">Stade Brestois 29 · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>42.6</strong></div>
+                    <div class="muted">1438m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Vitinha</strong>
+                    <div class="muted">Paris Saint Germain · Age 26.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>67.7</strong></div>
+                    <div class="muted">1856m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. A. Vossah</strong>
+                    <div class="muted">Toulouse · Age 18.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.0</strong></div>
+                    <div class="muted">700m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. Fabián Ruiz</strong>
+                    <div class="muted">Paris Saint Germain · Age 29.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.7</strong></div>
+                    <div class="muted">795m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. K. Doumbia</strong>
+                    <div class="muted">Stade Brestois 29 · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.5</strong></div>
+                    <div class="muted">1438m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. H. Boudaoui</strong>
+                    <div class="muted">Nice · Age 26.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>58.2</strong></div>
+                    <div class="muted">1020m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Germany · Tier 1</div>
+              <h3 style="margin-top:6px;">Bundesliga</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Olise</strong>
+                    <div class="muted">Bayern München · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.6</strong></div>
+                    <div class="muted">1791m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Manzambi</strong>
+                    <div class="muted">SC Freiburg · Age 20.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.0</strong></div>
+                    <div class="muted">1459m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. L. Majer</strong>
+                    <div class="muted">VfL Wolfsburg · Age 28.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.8</strong></div>
+                    <div class="muted">1269m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. J. Kimmich</strong>
+                    <div class="muted">Bayern München · Age 31.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.5</strong></div>
+                    <div class="muted">1636m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. W. Burger</strong>
+                    <div class="muted">1899 Hoffenheim · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.0</strong></div>
+                    <div class="muted">1751m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Olise</strong>
+                    <div class="muted">Bayern München · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>58.0</strong></div>
+                    <div class="muted">1791m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Manzambi</strong>
+                    <div class="muted">SC Freiburg · Age 20.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.3</strong></div>
+                    <div class="muted">1459m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. L. Majer</strong>
+                    <div class="muted">VfL Wolfsburg · Age 28.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.7</strong></div>
+                    <div class="muted">1269m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. C. Baumgartner</strong>
+                    <div class="muted">RB Leipzig · Age 26.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.0</strong></div>
+                    <div class="muted">1983m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. J. Kimmich</strong>
+                    <div class="muted">Bayern München · Age 31.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>42.2</strong></div>
+                    <div class="muted">1636m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Olise</strong>
+                    <div class="muted">Bayern München · Age 24.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>73.3</strong></div>
+                    <div class="muted">1791m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Manzambi</strong>
+                    <div class="muted">SC Freiburg · Age 20.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.6</strong></div>
+                    <div class="muted">1459m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. W. Burger</strong>
+                    <div class="muted">1899 Hoffenheim · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.4</strong></div>
+                    <div class="muted">1751m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. L. Majer</strong>
+                    <div class="muted">VfL Wolfsburg · Age 28.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.4</strong></div>
+                    <div class="muted">1269m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Í. Bergmann Jóhannesson</strong>
+                    <div class="muted">1. FC Köln · Age 23.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.7</strong></div>
+                    <div class="muted">1277m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Italy · Tier 1</div>
+              <h3 style="margin-top:6px;">Serie A</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. H. Mkhitaryan</strong>
+                    <div class="muted">Inter · Age 37.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>55.3</strong></div>
+                    <div class="muted">1160m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. H. Nicolussi</strong>
+                    <div class="muted">Fiorentina · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.5</strong></div>
+                    <div class="muted">826m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. S. Ricci</strong>
+                    <div class="muted">AC Milan · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.7</strong></div>
+                    <div class="muted">1026m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. H. Çalhanoğlu</strong>
+                    <div class="muted">Inter · Age 32.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.5</strong></div>
+                    <div class="muted">1339m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. P. Zieliński</strong>
+                    <div class="muted">Inter · Age 31.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.2</strong></div>
+                    <div class="muted">1455m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. H. Mkhitaryan</strong>
+                    <div class="muted">Inter · Age 37.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.8</strong></div>
+                    <div class="muted">1160m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. S. Ricci</strong>
+                    <div class="muted">AC Milan · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.7</strong></div>
+                    <div class="muted">1026m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. H. Nicolussi</strong>
+                    <div class="muted">Fiorentina · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">826m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. S. McTominay</strong>
+                    <div class="muted">Napoli · Age 29.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.0</strong></div>
+                    <div class="muted">1938m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. R. Mandragora</strong>
+                    <div class="muted">Fiorentina · Age 28.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.5</strong></div>
+                    <div class="muted">1928m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. H. Nicolussi</strong>
+                    <div class="muted">Fiorentina · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>67.0</strong></div>
+                    <div class="muted">826m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. S. Ricci</strong>
+                    <div class="muted">AC Milan · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.9</strong></div>
+                    <div class="muted">1026m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. N. Fagioli</strong>
+                    <div class="muted">Fiorentina · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.8</strong></div>
+                    <div class="muted">1897m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. W. Bondo</strong>
+                    <div class="muted">AC Milan · Age 22.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.5</strong></div>
+                    <div class="muted">1437m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. N. Barella</strong>
+                    <div class="muted">Inter · Age 29.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.2</strong></div>
+                    <div class="muted">1839m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Netherlands · Tier 1</div>
+              <h3 style="margin-top:6px;">Eredivisie</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Rivera</strong>
+                    <div class="muted">Heerenveen · Age 23.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.4</strong></div>
+                    <div class="muted">1761m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. S. Resink</strong>
+                    <div class="muted">Groningen · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.8</strong></div>
+                    <div class="muted">2095m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. L. Valente</strong>
+                    <div class="muted">Feyenoord · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.8</strong></div>
+                    <div class="muted">1837m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. L. Brouwers</strong>
+                    <div class="muted">Heerenveen · Age 27.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.7</strong></div>
+                    <div class="muted">1739m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. S. Mijnans</strong>
+                    <div class="muted">AZ Alkmaar · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.2</strong></div>
+                    <div class="muted">1631m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Rivera</strong>
+                    <div class="muted">Heerenveen · Age 23.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.5</strong></div>
+                    <div class="muted">1761m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. L. Brouwers</strong>
+                    <div class="muted">Heerenveen · Age 27.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.5</strong></div>
+                    <div class="muted">1739m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. S. Mijnans</strong>
+                    <div class="muted">AZ Alkmaar · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.2</strong></div>
+                    <div class="muted">1631m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. P. Clement</strong>
+                    <div class="muted">Sparta Rotterdam · Age 29.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.1</strong></div>
+                    <div class="muted">1453m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. S. Resink</strong>
+                    <div class="muted">Groningen · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.2</strong></div>
+                    <div class="muted">2095m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. S. Resink</strong>
+                    <div class="muted">Groningen · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.1</strong></div>
+                    <div class="muted">2095m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. L. Valente</strong>
+                    <div class="muted">Feyenoord · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.3</strong></div>
+                    <div class="muted">1837m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. M. Rivera</strong>
+                    <div class="muted">Heerenveen · Age 23.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.0</strong></div>
+                    <div class="muted">1761m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. S. Mijnans</strong>
+                    <div class="muted">AZ Alkmaar · Age 26.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.7</strong></div>
+                    <div class="muted">1631m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. T. van den Belt</strong>
+                    <div class="muted">Twente · Age 24.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.1</strong></div>
+                    <div class="muted">1729m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Portugal · Tier 1</div>
+              <h3 style="margin-top:6px;">Primeira Liga</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Geny Catamo</strong>
+                    <div class="muted">Sporting CP · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.9</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. Geovany Tcherno Quenda</strong>
+                    <div class="muted">Sporting CP · Age 18.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.9</strong></div>
+                    <div class="muted">663m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. H. Sudakov</strong>
+                    <div class="muted">Benfica · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.8</strong></div>
+                    <div class="muted">1307m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Gonçalo Nogueira</strong>
+                    <div class="muted">Guimaraes · Age 22.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.6</strong></div>
+                    <div class="muted">855m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. João Simões</strong>
+                    <div class="muted">Sporting CP · Age 19.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">739m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Geovany Tcherno Quenda</strong>
+                    <div class="muted">Sporting CP · Age 18.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.8</strong></div>
+                    <div class="muted">663m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. Geny Catamo</strong>
+                    <div class="muted">Sporting CP · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.5</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. H. Sudakov</strong>
+                    <div class="muted">Benfica · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.5</strong></div>
+                    <div class="muted">1307m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Gonçalo Nogueira</strong>
+                    <div class="muted">Guimaraes · Age 22.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.1</strong></div>
+                    <div class="muted">855m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Lee Hyun-Ju</strong>
+                    <div class="muted">Arouca · Age 23.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.5</strong></div>
+                    <div class="muted">1501m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. H. Sudakov</strong>
+                    <div class="muted">Benfica · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.0</strong></div>
+                    <div class="muted">1307m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. João Simões</strong>
+                    <div class="muted">Sporting CP · Age 19.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.6</strong></div>
+                    <div class="muted">739m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. Gonçalo Nogueira</strong>
+                    <div class="muted">Guimaraes · Age 22.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.1</strong></div>
+                    <div class="muted">855m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Geny Catamo</strong>
+                    <div class="muted">Sporting CP · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.7</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Dorgeles</strong>
+                    <div class="muted">SC Braga · Age 21.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.1</strong></div>
+                    <div class="muted">674m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Scotland · Tier 1</div>
+              <h3 style="margin-top:6px;">Premiership</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. N. Raskin</strong>
+                    <div class="muted">Rangers · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">2260m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. L. Clarkson</strong>
+                    <div class="muted">Aberdeen · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.2</strong></div>
+                    <div class="muted">774m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. A. Engels</strong>
+                    <div class="muted">Celtic · Age 22.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.4</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. B. Spittal</strong>
+                    <div class="muted">Heart Of Midlothian · Age 30.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.0</strong></div>
+                    <div class="muted">677m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. C. Barron</strong>
+                    <div class="muted">Rangers · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.0</strong></div>
+                    <div class="muted">1201m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. L. Clarkson</strong>
+                    <div class="muted">Aberdeen · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.8</strong></div>
+                    <div class="muted">774m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. A. Engels</strong>
+                    <div class="muted">Celtic · Age 22.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.5</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. N. Raskin</strong>
+                    <div class="muted">Rangers · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.2</strong></div>
+                    <div class="muted">2260m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. C. Barron</strong>
+                    <div class="muted">Rangers · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>40.3</strong></div>
+                    <div class="muted">1201m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. B. Spittal</strong>
+                    <div class="muted">Heart Of Midlothian · Age 30.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>40.1</strong></div>
+                    <div class="muted">677m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. N. Raskin</strong>
+                    <div class="muted">Rangers · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.3</strong></div>
+                    <div class="muted">2260m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. A. Engels</strong>
+                    <div class="muted">Celtic · Age 22.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.6</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. L. Clarkson</strong>
+                    <div class="muted">Aberdeen · Age 24.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.5</strong></div>
+                    <div class="muted">774m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. C. Barron</strong>
+                    <div class="muted">Rangers · Age 23.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.3</strong></div>
+                    <div class="muted">1201m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. B. Spittal</strong>
+                    <div class="muted">Heart Of Midlothian · Age 30.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>57.6</strong></div>
+                    <div class="muted">677m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Spain · Tier 1</div>
+              <h3 style="margin-top:6px;">La Liga</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Pedri</strong>
+                    <div class="muted">Barcelona · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>56.8</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. Fermín</strong>
+                    <div class="muted">Barcelona · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>54.1</strong></div>
+                    <div class="muted">1212m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. T. Lemar</strong>
+                    <div class="muted">Girona · Age 30.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>53.8</strong></div>
+                    <div class="muted">979m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Álex Baena</strong>
+                    <div class="muted">Atletico Madrid · Age 24.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.8</strong></div>
+                    <div class="muted">986m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. G. Lo Celso</strong>
+                    <div class="muted">Real Betis · Age 29.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.5</strong></div>
+                    <div class="muted">1098m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Fermín</strong>
+                    <div class="muted">Barcelona · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.5</strong></div>
+                    <div class="muted">1212m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. Pedri</strong>
+                    <div class="muted">Barcelona · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.1</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. T. Lemar</strong>
+                    <div class="muted">Girona · Age 30.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.1</strong></div>
+                    <div class="muted">979m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Álex Baena</strong>
+                    <div class="muted">Atletico Madrid · Age 24.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.6</strong></div>
+                    <div class="muted">986m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. G. Lo Celso</strong>
+                    <div class="muted">Real Betis · Age 29.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.8</strong></div>
+                    <div class="muted">1098m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. Pedri</strong>
+                    <div class="muted">Barcelona · Age 23.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>75.0</strong></div>
+                    <div class="muted">1318m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. Fermín</strong>
+                    <div class="muted">Barcelona · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>70.0</strong></div>
+                    <div class="muted">1212m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. Álex Baena</strong>
+                    <div class="muted">Atletico Madrid · Age 24.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.3</strong></div>
+                    <div class="muted">986m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. T. Lemar</strong>
+                    <div class="muted">Girona · Age 30.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.9</strong></div>
+                    <div class="muted">979m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Javi Guerra</strong>
+                    <div class="muted">Valencia · Age 22.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.6</strong></div>
+                    <div class="muted">1356m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Belgium · Tier 2</div>
+              <h3 style="margin-top:6px;">Challenger Pro League</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. T. Lund Jensen</strong>
+                    <div class="muted">Club Brugge II · Age 20.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.8</strong></div>
+                    <div class="muted">1379m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. M. Müller</strong>
+                    <div class="muted">AS Eupen · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.9</strong></div>
+                    <div class="muted">904m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. N. Sattlberger</strong>
+                    <div class="muted">KRC Genk II · Age 22.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.4</strong></div>
+                    <div class="muted">915m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Alejandro Granados</strong>
+                    <div class="muted">Club Brugge II · Age 19.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.4</strong></div>
+                    <div class="muted">1003m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. A. Yokoyama</strong>
+                    <div class="muted">KRC Genk II · Age 23.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.1</strong></div>
+                    <div class="muted">720m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. T. Lund Jensen</strong>
+                    <div class="muted">Club Brugge II · Age 20.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.1</strong></div>
+                    <div class="muted">1379m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. M. Müller</strong>
+                    <div class="muted">AS Eupen · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.2</strong></div>
+                    <div class="muted">904m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. A. Yokoyama</strong>
+                    <div class="muted">KRC Genk II · Age 23.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.0</strong></div>
+                    <div class="muted">720m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Alejandro Granados</strong>
+                    <div class="muted">Club Brugge II · Age 19.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.1</strong></div>
+                    <div class="muted">1003m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. A. Maurer</strong>
+                    <div class="muted">RWDM · Age 21.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.1</strong></div>
+                    <div class="muted">1218m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. M. Müller</strong>
+                    <div class="muted">AS Eupen · Age 24.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>67.0</strong></div>
+                    <div class="muted">904m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. N. Sattlberger</strong>
+                    <div class="muted">KRC Genk II · Age 22.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.3</strong></div>
+                    <div class="muted">915m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. Alejandro Granados</strong>
+                    <div class="muted">Club Brugge II · Age 19.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>65.7</strong></div>
+                    <div class="muted">1003m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. T. Lund Jensen</strong>
+                    <div class="muted">Club Brugge II · Age 20.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>63.3</strong></div>
+                    <div class="muted">1379m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. L. Delorge</strong>
+                    <div class="muted">Club Brugge II · Age 18.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.8</strong></div>
+                    <div class="muted">667m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">France · Tier 2</div>
+              <h3 style="margin-top:6px;">Ligue 2</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. E. Zabi</strong>
+                    <div class="muted">Reims · Age 19.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.2</strong></div>
+                    <div class="muted">1311m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. K. Sidibé</strong>
+                    <div class="muted">Guingamp · Age 27.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.1</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. J. Eickmayer</strong>
+                    <div class="muted">RED Star FC 93 · Age 33.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.2</strong></div>
+                    <div class="muted">1184m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. R. Touzghar</strong>
+                    <div class="muted">PAU · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.7</strong></div>
+                    <div class="muted">1935m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. J. Martin</strong>
+                    <div class="muted">Boulogne · Age 35.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.0</strong></div>
+                    <div class="muted">560m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. J. Eickmayer</strong>
+                    <div class="muted">RED Star FC 93 · Age 33.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.2</strong></div>
+                    <div class="muted">1184m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. K. Sidibé</strong>
+                    <div class="muted">Guingamp · Age 27.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.5</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. E. Zabi</strong>
+                    <div class="muted">Reims · Age 19.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.5</strong></div>
+                    <div class="muted">1311m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. R. Touzghar</strong>
+                    <div class="muted">PAU · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.7</strong></div>
+                    <div class="muted">1935m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. S. Benchamma</strong>
+                    <div class="muted">Rodez · Age 25.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.9</strong></div>
+                    <div class="muted">1397m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. E. Zabi</strong>
+                    <div class="muted">Reims · Age 19.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>68.5</strong></div>
+                    <div class="muted">1311m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. K. Sidibé</strong>
+                    <div class="muted">Guingamp · Age 27.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>66.5</strong></div>
+                    <div class="muted">1533m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. R. Touzghar</strong>
+                    <div class="muted">PAU · Age 22.4</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.1</strong></div>
+                    <div class="muted">1935m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. T. Chennahi</strong>
+                    <div class="muted">Montpellier · Age 21.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>57.7</strong></div>
+                    <div class="muted">1509m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. E. Bardeli</strong>
+                    <div class="muted">Dunkerque · Age 24.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>57.7</strong></div>
+                    <div class="muted">2207m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Germany · Tier 2</div>
+              <h3 style="margin-top:6px;">2. Bundesliga</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. B. Conté</strong>
+                    <div class="muted">SV Elversberg · Age 22.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>50.9</strong></div>
+                    <div class="muted">1720m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. N. Aséko Nkili</strong>
+                    <div class="muted">Hannover 96 · Age 20.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.7</strong></div>
+                    <div class="muted">1650m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. K. Miyoshi</strong>
+                    <div class="muted">VfL Bochum · Age 29.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.4</strong></div>
+                    <div class="muted">588m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. M. Wanitzek</strong>
+                    <div class="muted">Karlsruher SC · Age 32.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>47.5</strong></div>
+                    <div class="muted">2250m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Mehlem</strong>
+                    <div class="muted">Arminia Bielefeld · Age 28.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.8</strong></div>
+                    <div class="muted">934m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. B. Conté</strong>
+                    <div class="muted">SV Elversberg · Age 22.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.3</strong></div>
+                    <div class="muted">1720m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. N. Aséko Nkili</strong>
+                    <div class="muted">Hannover 96 · Age 20.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>51.0</strong></div>
+                    <div class="muted">1650m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. K. Miyoshi</strong>
+                    <div class="muted">VfL Bochum · Age 29.0</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>49.5</strong></div>
+                    <div class="muted">588m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. M. Wanitzek</strong>
+                    <div class="muted">Karlsruher SC · Age 32.9</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.7</strong></div>
+                    <div class="muted">2250m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Mehlem</strong>
+                    <div class="muted">Arminia Bielefeld · Age 28.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.4</strong></div>
+                    <div class="muted">934m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. B. Conté</strong>
+                    <div class="muted">SV Elversberg · Age 22.7</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>62.7</strong></div>
+                    <div class="muted">1720m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. P. Diop</strong>
+                    <div class="muted">1. FC Nürnberg · Age 22.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>61.7</strong></div>
+                    <div class="muted">1312m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. N. Aséko Nkili</strong>
+                    <div class="muted">Hannover 96 · Age 20.3</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.5</strong></div>
+                    <div class="muted">1650m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Z. Sertdemir</strong>
+                    <div class="muted">Preußen Münster · Age 21.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.3</strong></div>
+                    <div class="muted">1016m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. M. Mehlem</strong>
+                    <div class="muted">Arminia Bielefeld · Age 28.5</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>59.4</strong></div>
+                    <div class="muted">934m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="league-row">
+            <div class="league-label">
+              <div class="muted" style="font-size:12px;">Netherlands · Tier 2</div>
+              <h3 style="margin-top:6px;">Eerste Divisie</h3>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">On-Pitch</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. R. Robbemond</strong>
+                    <div class="muted">Jong AZ · Age 21.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>52.2</strong></div>
+                    <div class="muted">1190m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. D. Kwakman</strong>
+                    <div class="muted">Jong AZ · Age 21.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.0</strong></div>
+                    <div class="muted">1177m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. D. Nunumete</strong>
+                    <div class="muted">Emmen · Age 24.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.1</strong></div>
+                    <div class="muted">967m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. J. Hawkins</strong>
+                    <div class="muted">Emmen · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.6</strong></div>
+                    <div class="muted">497m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. Mathijs Marschalk</strong>
+                    <div class="muted">Vitesse · Age 21.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>44.0</strong></div>
+                    <div class="muted">2230m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Present</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. R. Robbemond</strong>
+                    <div class="muted">Jong AZ · Age 21.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>48.0</strong></div>
+                    <div class="muted">1190m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. J. Hawkins</strong>
+                    <div class="muted">Emmen · Age 25.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>46.6</strong></div>
+                    <div class="muted">497m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. J. Schwirten</strong>
+                    <div class="muted">Roda · Age 24.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>45.1</strong></div>
+                    <div class="muted">633m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. D. Nunumete</strong>
+                    <div class="muted">Emmen · Age 24.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.8</strong></div>
+                    <div class="muted">967m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. D. Kwakman</strong>
+                    <div class="muted">Jong AZ · Age 21.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>43.6</strong></div>
+                    <div class="muted">1177m</div>
+                  </div>
+                </div>
+            </div>
+
+            <div class="tier-card">
+              <div class="league-mini-title">Upside</div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>1. R. Robbemond</strong>
+                    <div class="muted">Jong AZ · Age 21.2</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>68.1</strong></div>
+                    <div class="muted">1190m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>2. D. Kwakman</strong>
+                    <div class="muted">Jong AZ · Age 21.6</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>64.8</strong></div>
+                    <div class="muted">1177m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>3. D. Nunumete</strong>
+                    <div class="muted">Emmen · Age 24.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>60.3</strong></div>
+                    <div class="muted">967m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>4. Mathijs Marschalk</strong>
+                    <div class="muted">Vitesse · Age 21.1</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>59.4</strong></div>
+                    <div class="muted">2230m</div>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
+                  <div>
+                    <strong>5. J. Kalisvaart</strong>
+                    <div class="muted">Almere City FC · Age 21.8</div>
+                  </div>
+                  <div style="text-align:right;">
+                    <div><strong>58.8</strong></div>
+                    <div class="muted">1425m</div>
+                  </div>
+                </div>
+            </div>
+          </div>
+      </section>
+  </main>
+</body>
+</html>

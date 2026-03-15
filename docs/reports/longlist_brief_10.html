@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stockport Recruitment Model</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-soft: rgba(234, 244, 255, 0.92);
+      --accent: #0b4ea2;
+      --accent-soft: #d8ebff;
+      --warn: #b1532d;
+      --success: #0e7f64;
+      --page: #eef5ff;
+      --shadow: 0 24px 60px rgba(8, 47, 103, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        radial-gradient(circle at top right, rgba(11, 78, 162, 0.28), transparent 24%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 14%, var(--page) 46%, #f5f9ff 100%);
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0%, transparent 48%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.2) 52%, transparent 52%, transparent 100%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 136px);
+      opacity: 0.7;
+    }
+    main {
+      width: min(1320px, calc(100vw - 36px));
+      margin: 26px auto 52px;
+      background: rgba(248, 251, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 28px;
+      padding: 22px 22px 34px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--county-blue-deep), var(--county-blue), var(--county-sky));
+    }
+    .site-rail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(8, 47, 103, 0.96), rgba(11, 78, 162, 0.92));
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-rail::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      top: -58px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.06) 38%, transparent 72%);
+    }
+    .site-brand {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .site-subtitle {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 56ch;
+    }
+    .site-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: end;
+      position: relative;
+      z-index: 1;
+    }
+    .site-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-family: "Baskerville", "Iowan Old Style", "Georgia", serif;
+      font-size: 40px;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      color: var(--county-blue-deep);
+    }
+    p, li, td, th, div, span {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      text-align: right;
+      font-size: 13px;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(8, 47, 103, 0.08);
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--accent-soft) 100%);
+      color: var(--county-blue-deep);
+      border: 1px solid rgba(11, 78, 162, 0.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: rgba(11, 78, 162, 0.05);
+    }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.42); }
+    tbody tr:hover { background: rgba(216, 235, 255, 0.46); }
+    .muted { color: var(--muted); }
+    .warn { color: var(--warn); }
+    .success { color: var(--success); }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    textarea { min-height: 120px; }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .button, button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--county-blue-deep), var(--county-blue));
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 12px 24px rgba(11, 78, 162, 0.18);
+    }
+    .button.secondary, button.secondary {
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--county-blue-deep);
+      border-color: rgba(11, 78, 162, 0.18);
+      box-shadow: none;
+    }
+    .message-banner {
+      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .message-banner.error {
+      border-color: #e0c7bc;
+      background: #fff5f0;
+      color: var(--warn);
+    }
+    @media (max-width: 860px) {
+      main {
+        width: min(100vw - 20px, 100%);
+        margin: 10px auto 26px;
+        padding: 16px 16px 24px;
+        border-radius: 22px;
+      }
+      .site-rail, header {
+        flex-direction: column;
+        align-items: start;
+      }
+      .meta, .site-links {
+        text-align: left;
+        justify-content: start;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="site-rail">
+      <div>
+        <a class="site-brand" href="/">Stockport County Recruitment Hub</a>
+        <div class="site-subtitle">Live data coverage, recruitment briefs, longlists, and Wyscout review in one local workspace.</div>
+      </div>
+      <div class="site-links">
+        <a class="site-link" href="/">Dashboard</a>
+        <a class="site-link" href="/wyscout-review">Wyscout Review</a>
+      </div>
+    </div>
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>traditional_winger Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated 2026-03-14 19:41:23.660014+00:00</div>
+    <div>championship_transition / promotion_accelerator</div>
+  </div>
+</header>
+
+<section class="panel" style="margin-bottom:18px;">
+  <h2>Action Tiers</h2>
+  <p class="muted">Board Score = 100 x (1 - exp(-Composite / 19)), capped between 0 and 100.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Board</th>
+        <th>Composite</th>
+        <th>Action</th>
+        <th>Players</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tier 1</td>
+        <td>87.8+</td>
+        <td>40.0+</td>
+        <td>Priority shortlist</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Tier 2</td>
+        <td>83.3+</td>
+        <td>34.0+</td>
+        <td>Scout next</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Tier 3</td>
+        <td>77.1+</td>
+        <td>28.0+</td>
+        <td>Active longlist</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Tier 4</td>
+        <td>68.6+</td>
+        <td>22.0+</td>
+        <td>Monitor</td>
+        <td>0</td>
+      </tr>
+      <tr>
+        <td>Tier 5</td>
+        <td>0.0+</td>
+        <td>0.0+</td>
+        <td>Park</td>
+        <td>0</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Action</th>
+      <th>Board</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Model Notes</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+  </main>
+</body>
+</html>

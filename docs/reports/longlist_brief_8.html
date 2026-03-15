@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stockport Recruitment Model</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-soft: rgba(234, 244, 255, 0.92);
+      --accent: #0b4ea2;
+      --accent-soft: #d8ebff;
+      --warn: #b1532d;
+      --success: #0e7f64;
+      --page: #eef5ff;
+      --shadow: 0 24px 60px rgba(8, 47, 103, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        radial-gradient(circle at top right, rgba(11, 78, 162, 0.28), transparent 24%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 14%, var(--page) 46%, #f5f9ff 100%);
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0%, transparent 48%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.2) 52%, transparent 52%, transparent 100%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 136px);
+      opacity: 0.7;
+    }
+    main {
+      width: min(1320px, calc(100vw - 36px));
+      margin: 26px auto 52px;
+      background: rgba(248, 251, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 28px;
+      padding: 22px 22px 34px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--county-blue-deep), var(--county-blue), var(--county-sky));
+    }
+    .site-rail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(8, 47, 103, 0.96), rgba(11, 78, 162, 0.92));
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-rail::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      top: -58px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.06) 38%, transparent 72%);
+    }
+    .site-brand {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .site-subtitle {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 56ch;
+    }
+    .site-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: end;
+      position: relative;
+      z-index: 1;
+    }
+    .site-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-family: "Baskerville", "Iowan Old Style", "Georgia", serif;
+      font-size: 40px;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      color: var(--county-blue-deep);
+    }
+    p, li, td, th, div, span {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      text-align: right;
+      font-size: 13px;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(8, 47, 103, 0.08);
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--accent-soft) 100%);
+      color: var(--county-blue-deep);
+      border: 1px solid rgba(11, 78, 162, 0.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: rgba(11, 78, 162, 0.05);
+    }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.42); }
+    tbody tr:hover { background: rgba(216, 235, 255, 0.46); }
+    .muted { color: var(--muted); }
+    .warn { color: var(--warn); }
+    .success { color: var(--success); }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    textarea { min-height: 120px; }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .button, button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--county-blue-deep), var(--county-blue));
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 12px 24px rgba(11, 78, 162, 0.18);
+    }
+    .button.secondary, button.secondary {
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--county-blue-deep);
+      border-color: rgba(11, 78, 162, 0.18);
+      box-shadow: none;
+    }
+    .message-banner {
+      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .message-banner.error {
+      border-color: #e0c7bc;
+      background: #fff5f0;
+      color: var(--warn);
+    }
+    @media (max-width: 860px) {
+      main {
+        width: min(100vw - 20px, 100%);
+        margin: 10px auto 26px;
+        padding: 16px 16px 24px;
+        border-radius: 22px;
+      }
+      .site-rail, header {
+        flex-direction: column;
+        align-items: start;
+      }
+      .meta, .site-links {
+        text-align: left;
+        justify-content: start;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="site-rail">
+      <div>
+        <a class="site-brand" href="/">Stockport County Recruitment Hub</a>
+        <div class="site-subtitle">Live data coverage, recruitment briefs, longlists, and Wyscout review in one local workspace.</div>
+      </div>
+      <div class="site-links">
+        <a class="site-link" href="/">Dashboard</a>
+        <a class="site-link" href="/wyscout-review">Wyscout Review</a>
+      </div>
+    </div>
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>target_forward Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated 2026-03-14 19:15:54.915540+00:00</div>
+    <div>championship_transition / emerging_asset</div>
+  </div>
+</header>
+
+<section class="panel" style="margin-bottom:18px;">
+  <h2>Action Tiers</h2>
+  <p class="muted">Board Score = 100 x (1 - exp(-Composite / 19)), capped between 0 and 100.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Tier</th>
+        <th>Board</th>
+        <th>Composite</th>
+        <th>Action</th>
+        <th>Players</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Tier 1</td>
+        <td>87.8+</td>
+        <td>40.0+</td>
+        <td>Priority shortlist</td>
+        <td>2</td>
+      </tr>
+      <tr>
+        <td>Tier 2</td>
+        <td>83.3+</td>
+        <td>34.0+</td>
+        <td>Scout next</td>
+        <td>4</td>
+      </tr>
+      <tr>
+        <td>Tier 3</td>
+        <td>77.1+</td>
+        <td>28.0+</td>
+        <td>Active longlist</td>
+        <td>5</td>
+      </tr>
+      <tr>
+        <td>Tier 4</td>
+        <td>68.6+</td>
+        <td>22.0+</td>
+        <td>Monitor</td>
+        <td>6</td>
+      </tr>
+      <tr>
+        <td>Tier 5</td>
+        <td>0.0+</td>
+        <td>0.0+</td>
+        <td>Park</td>
+        <td>35</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Action</th>
+      <th>Board</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Model Notes</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>J. Andrews</strong><br />
+        <span class="muted">Gillingham</span>
+      </td>
+      <td>
+        <strong>Priority shortlist</strong><br />
+        <span class="muted">Tier 1</span>
+      </td>
+      <td>91.4</td>
+      <td>46.6</td>
+      <td>3.542561729399445 / 4.578197433978366 / 5.7913859630272855</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Emile Acquah</strong><br />
+        <span class="muted">Dundee</span>
+      </td>
+      <td>
+        <strong>Priority shortlist</strong><br />
+        <span class="muted">Tier 1</span>
+      </td>
+      <td>89.9</td>
+      <td>43.5</td>
+      <td>3.1445986577574088 / 4.190784947862643 / 5.403973476911562</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Kion Etete</strong><br />
+        <span class="muted">ST Mirren</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>87.0</td>
+      <td>38.7</td>
+      <td>4.163204141798069 / 5.220235712444936 / 6.433424241493855</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Ehibhatiomhan</strong><br />
+        <span class="muted">Reading</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>86.0</td>
+      <td>37.4</td>
+      <td>3.1751813661014023 / 4.2313734384591175 / 5.444561967508037</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Woods</strong><br />
+        <span class="muted">Accrington ST</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>85.0</td>
+      <td>36.0</td>
+      <td>3.3237828527551803 / 4.379862479486451 / 5.59305100853537</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Simms</strong><br />
+        <span class="muted">Coventry</span>
+      </td>
+      <td>
+        <strong>Scout next</strong><br />
+        <span class="muted">Tier 2</span>
+      </td>
+      <td>84.9</td>
+      <td>35.9</td>
+      <td>2.817963211297354 / 3.8751609905980477 / 5.088349519646967</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Dara Costelloe</strong><br />
+        <span class="muted">Dundee</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>82.7</td>
+      <td>33.3</td>
+      <td>2.8205538987667444 / 3.872394334368674 / 5.085582863417594</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>S. Tovide</strong><br />
+        <span class="muted">Colchester</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>82.5</td>
+      <td>33.1</td>
+      <td>2.614646962150923 / 3.67895898806212 / 4.892147517111039</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>M. Leaburn</strong><br />
+        <span class="muted">Charlton</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>81.8</td>
+      <td>32.4</td>
+      <td>3.4027685487367445 / 4.446520106282818 / 5.659708635331737</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>N. Lowe</strong><br />
+        <span class="muted">Stockport County</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>80.5</td>
+      <td>31.0</td>
+      <td>2.5432166587405054 / 3.603725603005805 / 4.816914132054724</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Kyreece Lisbie</strong><br />
+        <span class="muted">Colchester</span>
+      </td>
+      <td>
+        <strong>Active longlist</strong><br />
+        <span class="muted">Tier 3</span>
+      </td>
+      <td>79.2</td>
+      <td>29.9</td>
+      <td>2.141669384778186 / 3.1857831398430303 / 4.398971668891949</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Justin Patrick Nnamdi Obikwu</strong><br />
+        <span class="muted">Lincoln</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>75.0</td>
+      <td>26.3</td>
+      <td>3.198937366052234 / 4.263513984016155 / 5.476702513065074</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Higgins</strong><br />
+        <span class="muted">Exeter City</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>73.6</td>
+      <td>25.3</td>
+      <td>2.985674543762377 / 4.0502511617262975 / 5.263439690775217</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Francis Okoronkwo</strong><br />
+        <span class="muted">Lincoln</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>72.9</td>
+      <td>24.8</td>
+      <td>3.3066044884148362 / 4.371181106378757 / 5.584369635427676</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Louis Flower</strong><br />
+        <span class="muted">Crawley Town</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>72.1</td>
+      <td>24.3</td>
+      <td>3.8066114425133706 / 4.871188060477292 / 6.084376589526211</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Mark O’Mahony</strong><br />
+        <span class="muted">Reading</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>71.3</td>
+      <td>23.7</td>
+      <td>3.7602027549601518 / 4.824779372924072 / 6.0379679019729915</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Micah Mbick</strong><br />
+        <span class="muted">Colchester</span>
+      </td>
+      <td>
+        <strong>Monitor</strong><br />
+        <span class="muted">Tier 4</span>
+      </td>
+      <td>70.3</td>
+      <td>23.1</td>
+      <td>2.423182964561835 / 3.4760815353746537 / 4.689270064423573</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Detlef Esapa Osong</strong><br />
+        <span class="muted">Motherwell</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>68.5</td>
+      <td>22.0</td>
+      <td>4.818803552304633 / 5.883380170268554 / 7.096568699317473</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Silko Amari Otieno Thomas</strong><br />
+        <span class="muted">Leicester</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>67.8</td>
+      <td>21.5</td>
+      <td>3.973612820991095 / 5.0381894389550155 / 6.2513779680039345</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>F. Holman</strong><br />
+        <span class="muted">Swindon Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>64.2</td>
+      <td>19.5</td>
+      <td>2.1453939316325696 / 3.204644188618099 / 4.417832717667019</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Innes Cameron</strong><br />
+        <span class="muted">Kilmarnock</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>63.8</td>
+      <td>19.3</td>
+      <td>3.9456616375302813 / 4.997831125662999 / 6.211019654711919</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Princewill  Ehibhatiomhan</strong><br />
+        <span class="muted">Swindon Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>63.3</td>
+      <td>19.1</td>
+      <td>3.4684935575572746 / 4.533070175521195 / 5.746258704570114</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Joseph Charles Gardner</strong><br />
+        <span class="muted">Mansfield Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>63.3</td>
+      <td>19.0</td>
+      <td>3.358793543486283 / 4.423370161450204 / 5.636558690499124</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Lloyd</strong><br />
+        <span class="muted">Leyton Orient</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>59.7</td>
+      <td>17.2</td>
+      <td>4.2209525411185815 / 5.277369654586815 / 6.490558183635735</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>P. Aderoju</strong><br />
+        <span class="muted">Peterborough</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>59.5</td>
+      <td>17.2</td>
+      <td>3.2848179138570157 / 4.345511774151386 / 5.558700303200305</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Tabor</strong><br />
+        <span class="muted">Swindon Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>59.5</td>
+      <td>17.2</td>
+      <td>3.8095369799124628 / 4.863531386295975 / 6.076719915344894</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Oné</strong><br />
+        <span class="muted">Lincoln</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>59.0</td>
+      <td>17.0</td>
+      <td>3.3294725320730447 / 4.3845900494428145 / 5.597778578491733</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Crole</strong><br />
+        <span class="muted">Newport County</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>58.9</td>
+      <td>16.9</td>
+      <td>2.847640931503674 / 3.9030873717429495 / 5.116275900791869</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Taylan Harris</strong><br />
+        <span class="muted">Tranmere</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>57.7</td>
+      <td>16.4</td>
+      <td>2.617947789490506 / 3.6795241755363914 / 4.8927127045853105</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Blair</strong><br />
+        <span class="muted">Portsmouth</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>57.5</td>
+      <td>16.2</td>
+      <td>2.948961327652918 / 4.001065546589262 / 5.214254075638181</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Mundle-Smith</strong><br />
+        <span class="muted">Norwich</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>57.3</td>
+      <td>16.2</td>
+      <td>4.746192218595699 / 5.81076883655962 / 7.023957365608538</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Adom</strong><br />
+        <span class="muted">Burton Albion</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>56.9</td>
+      <td>16.0</td>
+      <td>3.3496964208586264 / 4.4070906141523345 / 5.620279143201254</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>T. Adeyemo</strong><br />
+        <span class="muted">Crawley Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>56.0</td>
+      <td>15.6</td>
+      <td>5.60073295647702 / 6.665309574440941 / 7.87849810348986</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Loupalo-Bi</strong><br />
+        <span class="muted">Walsall</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>55.9</td>
+      <td>15.5</td>
+      <td>3.9389137507109355 / 4.998959194933107 / 6.212147723982026</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>F. Fawunmi</strong><br />
+        <span class="muted">Leyton Orient</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>54.8</td>
+      <td>15.1</td>
+      <td>2.631693593017235 / 3.6795771355886866 / 4.892765664637606</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Donnell McNeilly</strong><br />
+        <span class="muted">Wycombe</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>54.1</td>
+      <td>14.8</td>
+      <td>2.8104151617685154 / 3.8749917797324356 / 5.0881803087813555</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Newall</strong><br />
+        <span class="muted">Burton Albion</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>53.8</td>
+      <td>14.7</td>
+      <td>4.674153468016157 / 5.738730085980078 / 6.951918615028997</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>W. Grainger</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>53.1</td>
+      <td>14.4</td>
+      <td>4.569674696504893 / 5.632528571621138 / 6.845717100670057</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Z. Okoro</strong><br />
+        <span class="muted">Lincoln</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>52.3</td>
+      <td>14.1</td>
+      <td>3.614632040233145 / 4.674268962653553 / 5.887457491702472</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>David Kamara</strong><br />
+        <span class="muted">Peterborough</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>50.9</td>
+      <td>13.5</td>
+      <td>3.4561483606815084 / 4.505284736233293 / 5.718473265282212</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>David Ogundele Abimbola</strong><br />
+        <span class="muted">Accrington ST</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>50.6</td>
+      <td>13.4</td>
+      <td>2.8831086841647022 / 3.9358054158567146 / 5.148993944905635</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>M. Adu-Poku</strong><br />
+        <span class="muted">Barrow</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>50.4</td>
+      <td>13.3</td>
+      <td>3.3076939331996007 / 4.368794913828094 / 5.581983442877014</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Cashman</strong><br />
+        <span class="muted">Crawley Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>49.7</td>
+      <td>13.1</td>
+      <td>2.7670647536539343 / 3.829611977816713 / 5.042800506865632</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Leo Farrell</strong><br />
+        <span class="muted">Barnsley</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>49.5</td>
+      <td>13.0</td>
+      <td>3.1400428529285254 / 4.201325929684956 / 5.414514458733875</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Wilson</strong><br />
+        <span class="muted">Exeter City</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>48.3</td>
+      <td>12.5</td>
+      <td>2.919307408043175 / 3.9821773819964372 / 5.195365911045356</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Gabriele Biancheri</strong><br />
+        <span class="muted">Rotherham</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>47.9</td>
+      <td>12.4</td>
+      <td>2.773993772453548 / 3.838570390417469 / 5.051758919466389</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>No major concerns logged yet</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Evans</strong><br />
+        <span class="muted">Northampton</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>46.4</td>
+      <td>11.9</td>
+      <td>2.3632540785575347 / 3.418113929863471 / 4.63130245891239</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Bobby Wales</strong><br />
+        <span class="muted">Kilmarnock</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>42.5</td>
+      <td>10.5</td>
+      <td>3.508957490547836 / 4.5735341085117565 / 5.7867226375606755</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Jack Howland</strong><br />
+        <span class="muted">Barnet</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>40.2</td>
+      <td>9.8</td>
+      <td>4.1729983318934085 / 5.237574949857329 / 6.450763478906249</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Doherty</strong><br />
+        <span class="muted">Blackburn</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>40.0</td>
+      <td>9.7</td>
+      <td>4.343368348391455 / 5.4050453931658895 / 6.6182339222148086</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Holmes</strong><br />
+        <span class="muted">Rotherham</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>35.8</td>
+      <td>8.4</td>
+      <td>2.8621773816632254 / 3.923869735122746 / 5.1370582641716656</td>
+      <td>
+          <ul><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li><li>Financial: Heuristic valuation used because no trained financial value model artifact is present.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>B. Ameen</strong><br />
+        <span class="muted">Swindon Town</span>
+      </td>
+      <td>
+        <strong>Park</strong><br />
+        <span class="muted">Tier 5</span>
+      </td>
+      <td>35.7</td>
+      <td>8.4</td>
+      <td>2.899931248312379 / 3.954333741760823 / 5.167522270809743</td>
+      <td>
+          <ul><li>Projection: Low sample — wide uncertainty bands, proceed with caution</li><li>Availability: Heuristic fallback used because injury-history coverage is too sparse for the trained availability model.</li></ul>
+      </td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li></ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  </main>
+</body>
+</html>

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stockport Recruitment Model</title>
+  <style>
+    :root {
+      --ink: #132218;
+      --muted: #5e6b61;
+      --line: #d8dfd7;
+      --panel: #f6f7f2;
+      --accent: #2f6b3d;
+      --accent-soft: #dfe9de;
+      --warn: #a14f2a;
+      --page: #f1efe6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f7f4ea 0%, var(--page) 100%);
+    }
+    main {
+      width: min(1080px, calc(100vw - 48px));
+      margin: 32px auto 64px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 28px 28px 36px;
+      box-shadow: 0 12px 40px rgba(19, 34, 24, 0.08);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-size: 32px;
+      letter-spacing: 0.02em;
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-size: 20px;
+    }
+    p, li, td, th, div, span {
+      line-height: 1.45;
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      text-align: right;
+      font-size: 13px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .muted { color: var(--muted); }
+    .warn { color: var(--warn); }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>controller Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated 2026-03-13 00:53:47.457165</div>
+    <div>low_cost_bridge</div>
+  </div>
+</header>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>M. Pack</strong><br />
+        <span class="muted">Portsmouth</span>
+      </td>
+      <td>33.9</td>
+      <td>4.761369184702876 / 6.348492246270502 / 7.943510044680232</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. McClean</strong><br />
+        <span class="muted">Wrexham</span>
+      </td>
+      <td>29.1</td>
+      <td>2.756320844922493 / 3.675094459896657 / 4.601762811712927</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Z. Swanson</strong><br />
+        <span class="muted">Portsmouth</span>
+      </td>
+      <td>28.1</td>
+      <td>3.1084583467295497 / 4.146815799133408 / 5.1913701955101015</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Galbraith</strong><br />
+        <span class="muted">Swansea</span>
+      </td>
+      <td>27.8</td>
+      <td>3.8364310373518915 / 5.1175932999762415 / 6.402596245388642</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Fisher</strong><br />
+        <span class="muted">Norwich</span>
+      </td>
+      <td>27.8</td>
+      <td>2.986916567502451 / 3.982555423336602 / 4.988720594960226</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. James</strong><br />
+        <span class="muted">Leicester</span>
+      </td>
+      <td>27.5</td>
+      <td>2.8440051492738596 / 3.7926536988379906 / 4.746565406296859</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>F. Downes</strong><br />
+        <span class="muted">Southampton</span>
+      </td>
+      <td>26.3</td>
+      <td>3.181119571695517 / 4.241492762260689 / 5.309760689667967</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>O. Arblaster</strong><br />
+        <span class="muted">Sheffield Utd</span>
+      </td>
+      <td>25.5</td>
+      <td>3.379413132557816 / 4.507910368984921 / 5.64430234225413</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Sydie Peck</strong><br />
+        <span class="muted">Sheffield Utd</span>
+      </td>
+      <td>24.9</td>
+      <td>3.286530154454777 / 4.383964371191541 / 5.486661745823044</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Brannagan</strong><br />
+        <span class="muted">Oxford United</span>
+      </td>
+      <td>23.8</td>
+      <td>2.5315866831135105 / 3.376554750189328 / 4.226785975159883</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Jacob Wright</strong><br />
+        <span class="muted">Norwich</span>
+      </td>
+      <td>23.6</td>
+      <td>5.551690755413283 / 7.403861505316104 / 9.263926992061029</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Cameron Bragg</strong><br />
+        <span class="muted">Southampton</span>
+      </td>
+      <td>23.5</td>
+      <td>5.942586691072372 / 7.923448921429831 / 9.914837467576762</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Jarvis Thornton</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>23.4</td>
+      <td>5.908414773992567 / 7.877886365323423 / 9.86314743033849</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Reece Johnson</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>22.4</td>
+      <td>4.806201507099407 / 6.410315459758273 / 8.027587307153983</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Amass</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>20.6</td>
+      <td>3.1153368384056264 / 4.158079711211445 / 5.20632497636176</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Ramsay</strong><br />
+        <span class="muted">Charlton</span>
+      </td>
+      <td>20.4</td>
+      <td>2.4050847494646335 / 3.2084774588221143 / 4.020698691099798</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Ozoh</strong><br />
+        <span class="muted">Derby</span>
+      </td>
+      <td>20.3</td>
+      <td>3.2508814599843068 / 4.334508613312409 / 5.426030503482617</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Allen</strong><br />
+        <span class="muted">Derby</span>
+      </td>
+      <td>19.9</td>
+      <td>3.5526315789473686 / 4.7368421052631575 / 5.968421052631579</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Max Alleyne</strong><br />
+        <span class="muted">Watford</span>
+      </td>
+      <td>19.4</td>
+      <td>3.3753918432841026 / 4.502081911903169 / 5.63929829631171</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Mukasa</strong><br />
+        <span class="muted">Leicester</span>
+      </td>
+      <td>19.4</td>
+      <td>4.119975443333358 / 5.494696125401416 / 6.877311544311578</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Forsyth</strong><br />
+        <span class="muted">Derby</span>
+      </td>
+      <td>18.2</td>
+      <td>2.643517009306483 / 3.5254990623411677 / 4.415375852217958</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Y. Alao</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>17.7</td>
+      <td>8.17669172932331 / 10.902255639097744 / 13.656766917293234</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>M. Litherland</strong><br />
+        <span class="muted">Blackburn</span>
+      </td>
+      <td>12.2</td>
+      <td>2.4490670023095817 / 3.2654226697461093 / 4.097567810866846</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  </main>
+</body>
+</html>

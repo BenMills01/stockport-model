@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Stockport Recruitment Model</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.94);
+      --panel-soft: rgba(234, 244, 255, 0.92);
+      --accent: #0b4ea2;
+      --accent-soft: #d8ebff;
+      --warn: #b1532d;
+      --success: #0e7f64;
+      --page: #eef5ff;
+      --shadow: 0 24px 60px rgba(8, 47, 103, 0.16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        radial-gradient(circle at top right, rgba(11, 78, 162, 0.28), transparent 24%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 14%, var(--page) 46%, #f5f9ff 100%);
+      position: relative;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(135deg, transparent 0%, transparent 48%, rgba(255, 255, 255, 0.2) 48%, rgba(255, 255, 255, 0.2) 52%, transparent 52%, transparent 100%),
+        repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0.08) 1px, transparent 1px, transparent 136px);
+      opacity: 0.7;
+    }
+    main {
+      width: min(1320px, calc(100vw - 36px));
+      margin: 26px auto 52px;
+      background: rgba(248, 251, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.58);
+      border-radius: 28px;
+      padding: 22px 22px 34px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+    main::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--county-blue-deep), var(--county-blue), var(--county-sky));
+    }
+    .site-rail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 24px;
+      padding: 18px 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(8, 47, 103, 0.96), rgba(11, 78, 162, 0.92));
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .site-rail::after {
+      content: "";
+      position: absolute;
+      right: -44px;
+      top: -58px;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.06) 38%, transparent 72%);
+    }
+    .site-brand {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .site-subtitle {
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 14px;
+      line-height: 1.4;
+      max-width: 56ch;
+    }
+    .site-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: end;
+      position: relative;
+      z-index: 1;
+    }
+    .site-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 18px;
+      margin-bottom: 24px;
+    }
+    h1, h2, h3 { margin: 0; }
+    h1 {
+      font-family: "Baskerville", "Iowan Old Style", "Georgia", serif;
+      font-size: 40px;
+      line-height: 1.02;
+      letter-spacing: 0.01em;
+    }
+    h2 {
+      margin-bottom: 12px;
+      font-size: 22px;
+      color: var(--county-blue-deep);
+    }
+    p, li, td, th, div, span {
+      line-height: 1.5;
+      font-size: 15px;
+    }
+    .meta {
+      color: var(--muted);
+      text-align: right;
+      font-size: 13px;
+    }
+    .panel {
+      background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 12px 30px rgba(8, 47, 103, 0.08);
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, #ffffff 0%, var(--accent-soft) 100%);
+      color: var(--county-blue-deep);
+      border: 1px solid rgba(11, 78, 162, 0.16);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+      text-align: left;
+    }
+    th {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: rgba(11, 78, 162, 0.05);
+    }
+    tbody tr:nth-child(even) { background: rgba(255, 255, 255, 0.42); }
+    tbody tr:hover { background: rgba(216, 235, 255, 0.46); }
+    .muted { color: var(--muted); }
+    .warn { color: var(--warn); }
+    .success { color: var(--success); }
+    ul {
+      margin: 8px 0 0;
+      padding-left: 18px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: rgba(255, 255, 255, 0.96);
+      color: var(--ink);
+      font: inherit;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    textarea { min-height: 120px; }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .button, button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, var(--county-blue-deep), var(--county-blue));
+      color: #fff;
+      border-radius: 999px;
+      padding: 11px 17px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 12px 24px rgba(11, 78, 162, 0.18);
+    }
+    .button.secondary, button.secondary {
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--county-blue-deep);
+      border-color: rgba(11, 78, 162, 0.18);
+      box-shadow: none;
+    }
+    .message-banner {
+      margin-bottom: 18px;
+      border-radius: 14px;
+      padding: 13px 15px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .message-banner.error {
+      border-color: #e0c7bc;
+      background: #fff5f0;
+      color: var(--warn);
+    }
+    @media (max-width: 860px) {
+      main {
+        width: min(100vw - 20px, 100%);
+        margin: 10px auto 26px;
+        padding: 16px 16px 24px;
+        border-radius: 22px;
+      }
+      .site-rail, header {
+        flex-direction: column;
+        align-items: start;
+      }
+      .meta, .site-links {
+        text-align: left;
+        justify-content: start;
+      }
+      h1 {
+        font-size: 32px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="site-rail">
+      <div>
+        <a class="site-brand" href="/">Stockport County Recruitment Hub</a>
+        <div class="site-subtitle">Live data coverage, recruitment briefs, longlists, and Wyscout review in one local workspace.</div>
+      </div>
+      <div class="site-links">
+        <a class="site-link" href="/">Dashboard</a>
+        <a class="site-link" href="/wyscout-review">Wyscout Review</a>
+      </div>
+    </div>
+<header>
+  <div>
+    <div class="badge">Longlist</div>
+    <h1>destroyer Longlist</h1>
+  </div>
+  <div class="meta">
+    <div>Generated 2026-03-13 01:43:56.566102</div>
+    <div>championship_transition / promotion_accelerator</div>
+  </div>
+</header>
+
+<table>
+  <thead>
+    <tr>
+      <th>Player</th>
+      <th>Composite</th>
+      <th>Projection</th>
+      <th>Strengths</th>
+      <th>Concerns</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>T. Dibling</strong><br />
+        <span class="muted">Southampton</span>
+      </td>
+      <td>62.9</td>
+      <td>7.794751076255231 / 10.393001435006974 / 13.004409688495562</td>
+      <td>
+        <ul><li>Strong role fit</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Lemonheigh-Evans</strong><br />
+        <span class="muted">Milton Keynes Dons</span>
+      </td>
+      <td>55.5</td>
+      <td>4.480650534727087 / 5.977844733079685 / 7.4806614988434825</td>
+      <td>
+        <ul><li>Strong role fit</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Alex Matos</strong><br />
+        <span class="muted">Sheffield Utd</span>
+      </td>
+      <td>53.4</td>
+      <td>5.368169636895792 / 7.157559515861055 / 8.968002026405266</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Neil</strong><br />
+        <span class="muted">Ipswich</span>
+      </td>
+      <td>48.5</td>
+      <td>7.921601463840301 / 10.562135285120402 / 13.218458580084715</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Daniel Crowley</strong><br />
+        <span class="muted">Willem II</span>
+      </td>
+      <td>47.6</td>
+      <td>3.890496057949293 / 5.190691058816168 / 6.4961492175777815</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Cundle</strong><br />
+        <span class="muted">Millwall</span>
+      </td>
+      <td>46.0</td>
+      <td>4.091001128357806 / 5.456422557108653 / 6.829738722701607</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Moran</strong><br />
+        <span class="muted">Preston</span>
+      </td>
+      <td>45.1</td>
+      <td>4.211483253588517 / 5.615311004784689 / 7.045454545454546</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Mingi</strong><br />
+        <span class="muted">Crewe</span>
+      </td>
+      <td>45.1</td>
+      <td>4.31981186662308 / 5.760511932003923 / 7.222264628963713</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. McLean</strong><br />
+        <span class="muted">Fleetwood Town</span>
+      </td>
+      <td>45.0</td>
+      <td>13.642105263157895 / 18.189473684210526 / 22.757894736842104</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>M. Bird</strong><br />
+        <span class="muted">Bristol City</span>
+      </td>
+      <td>44.7</td>
+      <td>5.644197683610649 / 7.525596911480866 / 9.414890876193187</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Shipston</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>43.7</td>
+      <td>9.086124401913874 / 12.114832535885167 / 15.180382775119618</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Bruno Fernandes</strong><br />
+        <span class="muted">Sheffield Wednesday</span>
+      </td>
+      <td>43.6</td>
+      <td>11.457236842105264 / 15.276315789473685 / 19.13486842105263</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>O. Taylor</strong><br />
+        <span class="muted">Mansfield Town</span>
+      </td>
+      <td>43.1</td>
+      <td>9.225 / 12.299999999999997 / 15.414473684210524</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. McAteer</strong><br />
+        <span class="muted">Leicester</span>
+      </td>
+      <td>41.9</td>
+      <td>3.729377255781398 / 4.9732513821411155 / 6.225020245342938</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Demetri Mitchell</strong><br />
+        <span class="muted">Hibernian</span>
+      </td>
+      <td>40.9</td>
+      <td>3.011000740498899 / 4.018768193722341 / 5.037061962735256</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>T. Devlin</strong><br />
+        <span class="muted">Portsmouth</span>
+      </td>
+      <td>39.8</td>
+      <td>4.9493004800780795 / 6.602681970147745 / 8.261893313840133</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Williams</strong><br />
+        <span class="muted">Bristol City</span>
+      </td>
+      <td>39.6</td>
+      <td>6.6633089901787965 / 8.88441198690506 / 11.134462352052381</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Davies</strong><br />
+        <span class="muted">Fleetwood Town</span>
+      </td>
+      <td>39.4</td>
+      <td>2.790665031100982 / 3.7232471547056156 / 4.661092436204986</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Neal</strong><br />
+        <span class="muted">Fleetwood Town</span>
+      </td>
+      <td>39.2</td>
+      <td>2.8761641891015133 / 3.83719513871851 / 4.806442850875154</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Woodhouse</strong><br />
+        <span class="muted">Exeter City</span>
+      </td>
+      <td>39.1</td>
+      <td>3.993107748652218 / 5.327896525281524 / 6.669458757288403</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Owen Eames</strong><br />
+        <span class="muted">Derby</span>
+      </td>
+      <td>38.9</td>
+      <td>12.87828947368421 / 17.17105263157895 / 21.49013157894737</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Papadopoulos</strong><br />
+        <span class="muted">Crawley Town</span>
+      </td>
+      <td>38.5</td>
+      <td>2.6070850202429146 / 3.4761133603238865 / 4.3793522267206475</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Kelly</strong><br />
+        <span class="muted">Millwall</span>
+      </td>
+      <td>38.0</td>
+      <td>9.095920406615207 / 12.127893875486944 / 15.178288396990258</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Ethan Erhahon</strong><br />
+        <span class="muted">ST Mirren</span>
+      </td>
+      <td>37.7</td>
+      <td>3.204581841809397 / 4.276680403556566 / 5.359305281093209</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Luke Robinson</strong><br />
+        <span class="muted">ST Johnstone</span>
+      </td>
+      <td>35.8</td>
+      <td>4.018093284223727 / 5.357457712298301 / 6.712611614057088</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>K. Phillips</strong><br />
+        <span class="muted">Sheffield Utd</span>
+      </td>
+      <td>35.7</td>
+      <td>3.76212313532103 / 5.01616418042804 / 6.291257857113997</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>B. Thompson</strong><br />
+        <span class="muted">Bromley</span>
+      </td>
+      <td>35.6</td>
+      <td>3.8556693162720705 / 5.144907726846074 / 6.440429855690717</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Isaac Hayden</strong><br />
+        <span class="muted">Standard Liege</span>
+      </td>
+      <td>35.6</td>
+      <td>3.2068425729344456 / 4.277462983485338 / 5.355978130878337</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Thompson</strong><br />
+        <span class="muted">Preston</span>
+      </td>
+      <td>35.6</td>
+      <td>3.6656410852251273 / 4.887521446966836 / 6.117296545550651</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Armando Quitirna</strong><br />
+        <span class="muted">Wycombe</span>
+      </td>
+      <td>35.5</td>
+      <td>3.0197128587738393 / 4.028358710483878 / 5.045455979197964</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Campbell</strong><br />
+        <span class="muted">Stevenage</span>
+      </td>
+      <td>35.2</td>
+      <td>2.710910997285418 / 3.6150596922869895 / 4.527103124130667</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Odoffin</strong><br />
+        <span class="muted">Luton</span>
+      </td>
+      <td>35.1</td>
+      <td>3.2909821428571426 / 4.3879761904761905 / 5.500759711779448</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Stepien-Iwumene</strong><br />
+        <span class="muted">Bromley</span>
+      </td>
+      <td>34.7</td>
+      <td>14.210526315789474 / 18.94736842105263 / 23.723684210526315</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>S. Dembélé</strong><br />
+        <span class="muted">Oxford United</span>
+      </td>
+      <td>34.6</td>
+      <td>6.5549099101817845 / 8.740961137982172 / 10.940170260519402</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Daniel Vost</strong><br />
+        <span class="muted">Huddersfield</span>
+      </td>
+      <td>34.1</td>
+      <td>10.404135338345863 / 13.872180451127818 / 17.3796992481203</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>G. McEachran</strong><br />
+        <span class="muted">Grimsby</span>
+      </td>
+      <td>33.9</td>
+      <td>2.8068503711949964 / 3.7447532120854126 / 4.689366579291618</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Matete</strong><br />
+        <span class="muted">Milton Keynes Dons</span>
+      </td>
+      <td>33.8</td>
+      <td>3.2228660528660527 / 4.297154737154737 / 5.389864474075</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Harry Tustin</strong><br />
+        <span class="muted">Cheltenham</span>
+      </td>
+      <td>33.6</td>
+      <td>3.4787368421052633 / 4.638315789473684 / 5.834736842105263</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Osadebe</strong><br />
+        <span class="muted">Barnet</span>
+      </td>
+      <td>33.1</td>
+      <td>4.729669078947368 / 6.307790890688259 / 7.893807439271255</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Jefferies</strong><br />
+        <span class="muted">Lincoln</span>
+      </td>
+      <td>33.1</td>
+      <td>3.5526048746819696 / 4.73680649957596 / 5.9289028613120545</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>T. O&amp;apos;Connor</strong><br />
+        <span class="muted">Peterborough</span>
+      </td>
+      <td>33.1</td>
+      <td>3.388281292045904 / 4.51770838939454 / 5.660293381480016</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Cameron Bragg</strong><br />
+        <span class="muted">Southampton</span>
+      </td>
+      <td>33.0</td>
+      <td>5.942586691072372 / 7.923448921429831 / 9.914837467576762</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>T. Archibald</strong><br />
+        <span class="muted">Leyton Orient</span>
+      </td>
+      <td>33.0</td>
+      <td>4.148979068271117 / 5.534510790718559 / 6.925398550317703</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>N. Khumbeni</strong><br />
+        <span class="muted">Gillingham</span>
+      </td>
+      <td>32.6</td>
+      <td>2.234049364648627 / 2.978732486198169 / 3.7339419235371847</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>L. Bate</strong><br />
+        <span class="muted">Stockport County</span>
+      </td>
+      <td>32.4</td>
+      <td>3.761578002737199 / 5.015437336982932 / 6.287717723860244</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>S. Revan</strong><br />
+        <span class="muted">Burton Albion</span>
+      </td>
+      <td>32.4</td>
+      <td>2.423505000362716 / 3.2364394156883 / 4.0572685678559886</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>C. Hayes</strong><br />
+        <span class="muted">Peterborough</span>
+      </td>
+      <td>32.3</td>
+      <td>4.011145269790827 / 5.349168883640007 / 6.695087234331293</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>E. Coleman</strong><br />
+        <span class="muted">Gillingham</span>
+      </td>
+      <td>32.0</td>
+      <td>2.711191103467475 / 3.6161056818162822 / 4.52773078648088</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>H. Ashby</strong><br />
+        <span class="muted">Bradford</span>
+      </td>
+      <td>31.9</td>
+      <td>4.137168510765551 / 5.516224681020733 / 6.913701903907495</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>R. Longelo-Mbule</strong><br />
+        <span class="muted">Salford City</span>
+      </td>
+      <td>31.6</td>
+      <td>2.1554780039215102 / 2.8753240553539934 / 3.6017114601699354</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Tobias Christopher Collyer</strong><br />
+        <span class="muted">West Brom</span>
+      </td>
+      <td>31.6</td>
+      <td>8.217981343860904 / 10.958903354812945 / 13.715614839449193</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Elevated availability risk</li><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Caolan Boyd-Munce</strong><br />
+        <span class="muted">ST Mirren</span>
+      </td>
+      <td>31.5</td>
+      <td>3.034374915694728 / 4.0483829285286435 / 5.067654099257296</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>Ben Perry</strong><br />
+        <span class="muted">Colchester</span>
+      </td>
+      <td>31.5</td>
+      <td>2.6032330827067667 / 3.4709774436090224 / 4.359774436090225</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Hinchy</strong><br />
+        <span class="muted">Notts County</span>
+      </td>
+      <td>31.4</td>
+      <td>3.3343984962406013 / 4.445864661654135 / 5.591541353383459</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>B. Adeeko</strong><br />
+        <span class="muted">Wigan</span>
+      </td>
+      <td>31.2</td>
+      <td>3.7093319744165605 / 4.945775965888747 / 6.200641009992513</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>A. Doughty</strong><br />
+        <span class="muted">Millwall</span>
+      </td>
+      <td>31.1</td>
+      <td>3.2423570638798997 / 4.323142751839866 / 5.4118231766419385</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>T. Gardner-Hickman</strong><br />
+        <span class="muted">Birmingham</span>
+      </td>
+      <td>31.0</td>
+      <td>3.2669802173894156 / 4.355973623185887 / 5.455493344771833</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>J. Currie</strong><br />
+        <span class="muted">Oxford United</span>
+      </td>
+      <td>30.8</td>
+      <td>3.0733112175764647 / 4.099697607840745 / 5.134660996155706</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>S. Charles</strong><br />
+        <span class="muted">Southampton</span>
+      </td>
+      <td>30.8</td>
+      <td>4.349876299167493 / 5.802341331220817 / 7.260194834452086</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <strong>D. Gyabi</strong><br />
+        <span class="muted">Hull City</span>
+      </td>
+      <td>30.7</td>
+      <td>3.3199811997090336 / 4.4266415996120445 / 5.54382831530453</td>
+      <td>
+        <ul><li>No standout strengths logged yet</li></ul>
+      </td>
+      <td>
+        <ul><li>Projection below Championship threshold</li></ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+  </main>
+</body>
+</html>
