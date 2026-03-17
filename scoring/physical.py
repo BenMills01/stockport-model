@@ -36,20 +36,20 @@ _PHYSICAL_WEIGHTS: dict[str, float] = {
     "sc_physical_top_speed_per_match": 0.15,
 }
 
-# Game-intelligence: off-ball runs, pressure resilience, passing to runs
+# Game-intelligence: pressure resilience and passing quality
+# Off-ball run metrics (dangerous runs in behind, run threat, exploitation rate)
+# are excluded as they are position-specific to forwards/runners and unfairly
+# penalise defenders and midfielders for not making those movements.
 _GI_WEIGHTS: dict[str, float] = {
-    "sc_off_ball_count_dangerous_run_in_behind_per_match": 0.15,
-    "sc_off_ball_run_in_behind_threat_per_match": 0.15,
-    "sc_off_ball_run_exploitation_rate": 0.10,
-    "sc_pressure_ball_retention_ratio_under_high_pressure": 0.15,
-    "sc_pressure_pass_completion_ratio_under_high_pressure": 0.15,
-    "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.15,
-    "sc_passes_opportunity_take_rate": 0.15,
+    "sc_pressure_ball_retention_ratio_under_high_pressure": 0.25,
+    "sc_pressure_pass_completion_ratio_under_high_pressure": 0.25,
+    "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.25,
+    "sc_passes_opportunity_take_rate": 0.25,
 }
 
 # Blend between the two sub-scores
-_PHYSICAL_SUB_WEIGHT = 0.60
-_GI_SUB_WEIGHT = 0.40
+_PHYSICAL_SUB_WEIGHT = 0.80
+_GI_SUB_WEIGHT = 0.20
 
 # Minimum number of peers with data before percentile ranking is meaningful
 _MIN_PEERS_WITH_DATA = 3
