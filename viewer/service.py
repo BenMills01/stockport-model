@@ -268,6 +268,8 @@ def get_on_pitch_profiles_context(
             "top_players": [],
             "present_top_players": [],
             "upside_top_players": [],
+            "technical_top_players": [],
+            "physical_top_players": [],
             "combined_league_top_fives": [],
             "on_pitch_league_top_fives": [],
             "present_league_top_fives": [],
@@ -418,6 +420,8 @@ def get_on_pitch_profiles_context(
         "top_players": rows_by_on_pitch[:top_n],
         "present_top_players": present_rows[:shortlist_n],
         "upside_top_players": upside_rows[:shortlist_n],
+        "technical_top_players": technical_rows[:shortlist_n],
+        "physical_top_players": physical_rows[:shortlist_n],
         "combined_league_top_fives": _combine_dashboard_league_top_fives(
             on_pitch_league_top_fives,
             technical_league_top_fives,
