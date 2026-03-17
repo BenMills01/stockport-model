@@ -286,15 +286,15 @@
             </div>
 
             <div class="tier-card">
-              <div class="league-mini-title">Present</div>
-              {% for row in league.present.players %}
+              <div class="league-mini-title">Technical</div>
+              {% for row in league.technical.players %}
                 <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
                   <div>
                     <strong>{{ loop.index }}. {{ row.player_name }}</strong>
                     <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
                   </div>
                   <div style="text-align:right;">
-                    <div><strong>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</strong></div>
+                    <div><strong>{{ "%.1f"|format(row.technical_score or 0) }}</strong></div>
                     <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
                   </div>
                 </div>
@@ -302,15 +302,15 @@
             </div>
 
             <div class="tier-card">
-              <div class="league-mini-title">Upside</div>
-              {% for row in league.upside.players %}
+              <div class="league-mini-title">Physical</div>
+              {% for row in league.physical.players %}
                 <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:10px;">
                   <div>
                     <strong>{{ loop.index }}. {{ row.player_name }}</strong>
                     <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
                   </div>
                   <div style="text-align:right;">
-                    <div><strong>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</strong></div>
+                    <div><strong>{{ "%.1f"|format(row.physical_score or 0) }}</strong></div>
                     <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
                   </div>
                 </div>
