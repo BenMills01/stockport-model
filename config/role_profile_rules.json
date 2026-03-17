@@ -9,24 +9,30 @@
   },
   "ball_playing_cb": {
     "minimum_height_cm": 183,
-    "allowed_primary_families": ["centre_back"]
+    "allowed_primary_families": ["centre_back"],
+    "allowed_sc_positions": ["CB", "LCB", "RCB"]
   },
   "aggressive_cb": {
     "minimum_height_cm": 183,
-    "allowed_primary_families": ["centre_back"]
+    "allowed_primary_families": ["centre_back"],
+    "allowed_sc_positions": ["CB", "LCB", "RCB"]
   },
   "covering_cb": {
     "minimum_height_cm": 183,
-    "allowed_primary_families": ["centre_back"]
+    "allowed_primary_families": ["centre_back"],
+    "allowed_sc_positions": ["CB", "LCB", "RCB"]
   },
   "attacking_fb": {
-    "allowed_primary_families": ["full_back_wing_back"]
+    "allowed_primary_families": ["full_back_wing_back"],
+    "allowed_sc_positions": ["LB", "RB", "LWB", "RWB"]
   },
   "inverted_fb": {
-    "allowed_primary_families": ["full_back_wing_back"]
+    "allowed_primary_families": ["full_back_wing_back"],
+    "allowed_sc_positions": ["LB", "RB", "LWB", "RWB"]
   },
   "defensive_fb": {
-    "allowed_primary_families": ["full_back_wing_back"]
+    "allowed_primary_families": ["full_back_wing_back"],
+    "allowed_sc_positions": ["LB", "RB", "LWB", "RWB"]
   },
   "poacher": {
     "minimum_forward_label_share": 0.55,

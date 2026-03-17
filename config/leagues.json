@@ -4,21 +4,32 @@
     "name": "Championship",
     "country": "England",
     "tier": 2,
-    "polling_priority": 1
+    "polling_priority": 1,
+    "recruitment_board": true
   },
   {
     "league_id": 41,
     "name": "League One",
     "country": "England",
     "tier": 3,
-    "polling_priority": 1
+    "polling_priority": 1,
+    "recruitment_board": true
   },
   {
     "league_id": 42,
     "name": "League Two",
     "country": "England",
     "tier": 4,
-    "polling_priority": 2
+    "polling_priority": 2,
+    "recruitment_board": true
+  },
+  {
+    "league_id": 179,
+    "name": "Premiership",
+    "country": "Scotland",
+    "tier": 1,
+    "polling_priority": 3,
+    "recruitment_board": true
   },
   {
     "league_id": 39,
@@ -96,13 +107,6 @@
     "country": "Belgium",
     "tier": 2,
     "polling_priority": 4
-  },
-  {
-    "league_id": 179,
-    "name": "Premiership",
-    "country": "Scotland",
-    "tier": 1,
-    "polling_priority": 3
   },
   {
     "league_id": 94,

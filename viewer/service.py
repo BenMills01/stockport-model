@@ -499,6 +499,14 @@ def _load_on_pitch_profile_candidates(
     allowed_primary_families: set[str] | None = (
         set(role_rules["allowed_primary_families"]) if role_rules.get("allowed_primary_families") else None
     )
+    allowed_sc_positions: set[str] | None = (
+        set(role_rules["allowed_sc_positions"]) if role_rules.get("allowed_sc_positions") else None
+    )
+    recruitment_leagues = {
+        int(league_id)
+        for league_id, meta in league_catalog.items()
+        if meta.get("recruitment_board")
+    }
 
     with session_scope() as session:
         rows = session.execute(
@@ -511,6 +519,19 @@ def _load_on_pitch_profile_candidates(
                     from match_performances mp
                     where mp.season = :season
                     group by mp.player_id
+                ),
+                sc_modal_position as (
+                    select
+                        spm.player_id,
+                        sp.position as modal_sc_position,
+                        row_number() over (
+                            partition by spm.player_id
+                            order by count(*) desc, sp.position
+                        ) as rn
+                    from skillcorner_physical sp
+                    join skillcorner_player_map spm on spm.sc_player_id = sp.sc_player_id
+                    where sp.position is not null and sp.position <> 'SUB'
+                    group by spm.player_id, sp.position
                 )
                 select
                     pr.player_id,
@@ -522,10 +543,12 @@ def _load_on_pitch_profile_candidates(
                     pl.birth_date,
                     pl.current_age_years,
                     pl.height_cm,
-                    coalesce(sm.total_minutes, 0.0) as total_minutes
+                    coalesce(sm.total_minutes, 0.0) as total_minutes,
+                    scp.modal_sc_position
                 from player_roles pr
                 join players pl on pl.player_id = pr.player_id
                 left join season_minutes sm on sm.player_id = pr.player_id
+                left join sc_modal_position scp on scp.player_id = pr.player_id and scp.rn = 1
                 where pr.season = :season
                 order by coalesce(sm.total_minutes, 0.0) desc, pl.player_name
                 """
@@ -536,10 +559,11 @@ def _load_on_pitch_profile_candidates(
     exact_candidates = _filter_on_pitch_profile_candidates(
         rows,
         role_names={role_name},
-        tracked_leagues=tracked_leagues,
+        tracked_leagues=recruitment_leagues,
         minimum_minutes=minimum_minutes,
         minimum_height_cm=minimum_height_cm,
         allowed_primary_families=allowed_primary_families,
+        allowed_sc_positions=allowed_sc_positions,
         league_catalog=league_catalog,
         candidate_limit=candidate_limit,
     )
@@ -556,10 +580,11 @@ def _load_on_pitch_profile_candidates(
         family_candidates = _filter_on_pitch_profile_candidates(
             rows,
             role_names=set(family_roles),
-            tracked_leagues=tracked_leagues,
+            tracked_leagues=recruitment_leagues,
             minimum_minutes=minimum_minutes,
             minimum_height_cm=minimum_height_cm,
             allowed_primary_families=allowed_primary_families,
+            allowed_sc_positions=allowed_sc_positions,
             league_catalog=league_catalog,
             candidate_limit=candidate_limit,
         )
@@ -593,6 +618,7 @@ def _filter_on_pitch_profile_candidates(
     minimum_minutes: int,
     minimum_height_cm: float | None,
     allowed_primary_families: set[str] | None,
+    allowed_sc_positions: set[str] | None,
     league_catalog: dict[int, dict[str, Any]],
     candidate_limit: int,
 ) -> list[dict[str, Any]]:
@@ -614,6 +640,10 @@ def _filter_on_pitch_profile_candidates(
         if allowed_primary_families is not None:
             primary_role = str(row.get("primary_role") or "").strip()
             if _primary_family(primary_role) not in allowed_primary_families:
+                continue
+        modal_sc_pos = row.get("modal_sc_position")
+        if allowed_sc_positions is not None and modal_sc_pos is not None:
+            if str(modal_sc_pos).upper() not in allowed_sc_positions:
                 continue
         league_id = _parse_optional_int(row.get("current_league_id"))
         if league_id is None or league_id not in tracked_leagues:
@@ -646,6 +676,7 @@ def _filter_on_pitch_profile_candidates(
                 ),
                 "height_cm": height_cm,
                 "total_minutes": total_minutes,
+                "modal_sc_position": modal_sc_pos,
             }
         )
         if len(candidates) >= candidate_limit:
