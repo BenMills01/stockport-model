@@ -161,6 +161,29 @@
       </div>
     </section>
 
+    {% if score_guides %}
+      <section class="panel">
+        <h2>What's Good?</h2>
+        <div class="cols-3">
+          {% for guide in score_guides %}
+            <div class="tier-card">
+              <h3>{{ guide.label }}</h3>
+              {% for band in guide.bands %}
+                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
+                  <div>
+                    <strong>{{ band.label }}</strong>
+                    <div class="muted">{{ band.description }}</div>
+                  </div>
+                  <div><strong>{{ "%.1f"|format(band.threshold) }}+</strong></div>
+                </div>
+              {% endfor %}
+              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below {{ "%.1f"|format(guide.median) }} is below the current board median.</div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+
     {% if top_players %}
       <section class="panel" style="margin-bottom:18px;">
           <h2>Top 10 Overall</h2>
