@@ -15,6 +15,7 @@ from ingestion.api_football import estimate_ingest_request_plan, fetch_api_usage
 from ingestion.api_football import fetch_fixture_team_stats, fetch_fixtures
 from ingestion.api_football import fetch_lineups, fetch_match_events, fetch_match_performances
 from ingestion.fbref import ingest_fbref_player_stats
+from ingestion.skillcorner import load_competition_edition_ids, run_skillcorner_ingest
 from ingestion.transfermarkt import (
     ingest_market_values,
     ingest_player_profiles,
@@ -25,8 +26,9 @@ from ingestion.transfermarkt import (
 
 LOGGER = logging.getLogger(__name__)
 
-# Run TM enrichment on Mondays (weekday 0).
+# Run TM + SkillCorner enrichment on Mondays (weekday 0).
 _TM_ENRICHMENT_WEEKDAY = 0
+_SC_ENRICHMENT_WEEKDAY = 0
 
 
 def run_tm_enrichment(
@@ -121,6 +123,29 @@ def run_tm_enrichment(
     return results
 
 
+def run_skillcorner_enrichment() -> dict[str, Any]:
+    """Run the weekly SkillCorner enrichment pipeline.
+
+    Discovers or loads competition edition IDs from config, then runs the full
+    SkillCorner ingest (match reconciliation → player reconciliation → physical,
+    off-ball runs, pressure, passes).
+
+    Returns the summary dict from ``run_skillcorner_ingest``.
+    """
+
+    try:
+        edition_ids = load_competition_edition_ids()
+    except Exception as exc:
+        LOGGER.exception("SkillCorner competition edition discovery failed")
+        return {"error": str(exc)}
+
+    if not edition_ids:
+        LOGGER.warning("No SkillCorner competition edition IDs available — skipping ingest")
+        return {"skipped": True, "reason": "no_edition_ids"}
+
+    return run_skillcorner_ingest(edition_ids)
+
+
 def run_daily_ingest(
     *,
     from_date: date | None = None,
@@ -131,6 +156,7 @@ def run_daily_ingest(
     request_buffer: int = 100,
     persist_state: bool = True,
     run_tm_enrichment_flag: bool = False,
+    run_skillcorner_flag: bool = False,
 ) -> dict[str, Any]:
     """Run the daily ingestion routine and persist the last successful run."""
 
@@ -242,6 +268,16 @@ def run_daily_ingest(
             LOGGER.exception("Weekly TM enrichment run failed")
             results["errors"].append({"step": "tm_enrichment", "error": str(exc)})
 
+    # Run SkillCorner enrichment weekly (Mondays) or when explicitly requested.
+    should_run_sc = run_skillcorner_flag or (end_date.weekday() == _SC_ENRICHMENT_WEEKDAY)
+    if should_run_sc:
+        try:
+            sc_results = run_skillcorner_enrichment()
+            results["skillcorner_enrichment"] = sc_results
+        except Exception as exc:  # pragma: no cover
+            LOGGER.exception("Weekly SkillCorner enrichment run failed")
+            results["errors"].append({"step": "skillcorner_enrichment", "error": str(exc)})
+
     if persist_state and not results["errors"]:
         save_last_run(state_file, end_date)
 
@@ -285,6 +321,11 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Force Transfermarkt enrichment regardless of day of week.",
     )
+    parser.add_argument(
+        "--skillcorner",
+        action="store_true",
+        help="Force SkillCorner enrichment regardless of day of week.",
+    )
     return parser.parse_args()
 
 
@@ -300,6 +341,7 @@ def main() -> None:
         request_buffer=args.request_buffer,
         persist_state=not args.skip_state,
         run_tm_enrichment_flag=args.tm_enrichment,
+        run_skillcorner_flag=args.skillcorner,
     )
     LOGGER.info("Daily ingest complete: %s", json.dumps(results, indent=2))
 

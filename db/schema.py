@@ -424,6 +424,7 @@ class PredictionLog(Base):
     financial_value_band_high: Mapped[Decimal | None] = mapped_column(Money)
     var_score: Mapped[float | None] = mapped_column(Float)
     composite_score: Mapped[float | None] = mapped_column(Float)
+    physical_score: Mapped[float | None] = mapped_column(Float)
     archetype_weights_used: Mapped[dict[str, Any]] = mapped_column(JSONB, nullable=False)
     model_warnings: Mapped[list[Any] | None] = mapped_column(JSONB)
     component_fallbacks: Mapped[dict[str, Any] | None] = mapped_column(JSONB)
@@ -567,3 +568,280 @@ class PathwayPlayer(Base):
     last_assessed_date: Mapped[date | None] = mapped_column(Date)
     assessed_by: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
+
+
+# ---------------------------------------------------------------------------
+# SkillCorner tables
+# ---------------------------------------------------------------------------
+
+class SkillCornerMatchMap(Base):
+    """Maps a SkillCorner match ID to a Fixture row."""
+
+    __tablename__ = "skillcorner_match_map"
+
+    sc_match_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    fixture_id: Mapped[int | None] = mapped_column(Integer)
+    sc_competition_id: Mapped[int | None] = mapped_column(Integer)
+    sc_season_id: Mapped[int | None] = mapped_column(Integer)
+    sc_competition_edition_id: Mapped[int | None] = mapped_column(Integer)
+    match_date: Mapped[date | None] = mapped_column(Date)
+    home_team_sc: Mapped[str | None] = mapped_column(Text)
+    away_team_sc: Mapped[str | None] = mapped_column(Text)
+    match_confidence: Mapped[float | None] = mapped_column(Float)
+    matched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SkillCornerPlayerMap(Base):
+    """Maps a SkillCorner player ID to a Player row."""
+
+    __tablename__ = "skillcorner_player_map"
+
+    sc_player_id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    player_id: Mapped[int | None] = mapped_column(Integer)
+    sc_first_name: Mapped[str | None] = mapped_column(Text)
+    sc_last_name: Mapped[str | None] = mapped_column(Text)
+    sc_short_name: Mapped[str | None] = mapped_column(Text)
+    sc_birthday: Mapped[date | None] = mapped_column(Date)
+    match_method: Mapped[str | None] = mapped_column(
+        String(32)
+    )  # birthdate_name | shirt_number_name | name_only | manual | unmatched
+    match_confidence: Mapped[float | None] = mapped_column(Float)
+    matched_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class SkillCornerPhysical(Base):
+    """Per-match physical output from the SkillCorner /physical/ endpoint."""
+
+    __tablename__ = "skillcorner_physical"
+    __table_args__ = (
+        UniqueConstraint("sc_match_id", "sc_player_id"),
+        Index("ix_skillcorner_physical_fixture_player", "fixture_id", "player_id"),
+        Index("ix_skillcorner_physical_match_date", "match_date"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sc_match_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    sc_player_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    fixture_id: Mapped[int | None] = mapped_column(Integer)
+    player_id: Mapped[int | None] = mapped_column(Integer)
+    # Identity
+    player_name: Mapped[str | None] = mapped_column(Text)
+    player_birthdate: Mapped[date | None] = mapped_column(Date)
+    match_name: Mapped[str | None] = mapped_column(Text)
+    match_date: Mapped[date | None] = mapped_column(Date)
+    team_id: Mapped[int | None] = mapped_column(Integer)
+    team_name: Mapped[str | None] = mapped_column(Text)
+    competition_id: Mapped[int | None] = mapped_column(Integer)
+    competition_name: Mapped[str | None] = mapped_column(Text)
+    season_id: Mapped[int | None] = mapped_column(Integer)
+    season_name: Mapped[str | None] = mapped_column(Text)
+    competition_edition_id: Mapped[int | None] = mapped_column(Integer)
+    position: Mapped[str | None] = mapped_column(Text)
+    group_: Mapped[str | None] = mapped_column("group", Text)
+    quality_check: Mapped[bool | None] = mapped_column(Boolean)
+    count_match: Mapped[int | None] = mapped_column(Integer)
+    count_match_failed: Mapped[int | None] = mapped_column(Integer)
+    # Sample / context
+    minutes_played_per_match: Mapped[float | None] = mapped_column(Float)
+    adjusted_min_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    adjusted_min_otip_per_match: Mapped[float | None] = mapped_column(Float)
+    # Physical metrics — per match
+    dist_per_match: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_per_match: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_per_match: Mapped[float | None] = mapped_column(Float)
+    count_hsr_per_match: Mapped[float | None] = mapped_column(Float)
+    count_sprint_per_match: Mapped[float | None] = mapped_column(Float)
+    count_high_accel_per_match: Mapped[float | None] = mapped_column(Float)
+    count_high_decel_per_match: Mapped[float | None] = mapped_column(Float)
+    top_speed_per_match: Mapped[float | None] = mapped_column(Float)
+    dist_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    dist_otip_per_match: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_otip_per_match: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_otip_per_match: Mapped[float | None] = mapped_column(Float)
+    # Physical metrics — per 90 min
+    dist_p90: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_p90: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_p90: Mapped[float | None] = mapped_column(Float)
+    count_hsr_p90: Mapped[float | None] = mapped_column(Float)
+    count_sprint_p90: Mapped[float | None] = mapped_column(Float)
+    count_high_accel_p90: Mapped[float | None] = mapped_column(Float)
+    count_high_decel_p90: Mapped[float | None] = mapped_column(Float)
+    # Physical metrics — per 60 min ball in play
+    dist_p60bip: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_p60bip: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_p60bip: Mapped[float | None] = mapped_column(Float)
+    count_hsr_p60bip: Mapped[float | None] = mapped_column(Float)
+    count_sprint_p60bip: Mapped[float | None] = mapped_column(Float)
+    count_high_accel_p60bip: Mapped[float | None] = mapped_column(Float)
+    count_high_decel_p60bip: Mapped[float | None] = mapped_column(Float)
+    # Physical metrics — per 30 min time in possession
+    dist_p30tip: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_p30tip: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_p30tip: Mapped[float | None] = mapped_column(Float)
+    dist_tip_p30tip: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_tip_p30tip: Mapped[float | None] = mapped_column(Float)
+    # Physical metrics — per 30 min time out of possession
+    dist_p30otip: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_p30otip: Mapped[float | None] = mapped_column(Float)
+    sprint_dist_p30otip: Mapped[float | None] = mapped_column(Float)
+    dist_otip_p30otip: Mapped[float | None] = mapped_column(Float)
+    hsr_dist_otip_p30otip: Mapped[float | None] = mapped_column(Float)
+
+
+class SkillCornerOffBallRuns(Base):
+    """Per-match off-ball running output from /in_possession/off_ball_runs/."""
+
+    __tablename__ = "skillcorner_off_ball_runs"
+    __table_args__ = (
+        UniqueConstraint("sc_match_id", "sc_player_id"),
+        Index("ix_skillcorner_off_ball_runs_fixture_player", "fixture_id", "player_id"),
+        Index("ix_skillcorner_off_ball_runs_match_date", "match_date"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sc_match_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    sc_player_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    fixture_id: Mapped[int | None] = mapped_column(Integer)
+    player_id: Mapped[int | None] = mapped_column(Integer)
+    # Identity
+    player_name: Mapped[str | None] = mapped_column(Text)
+    player_birthdate: Mapped[date | None] = mapped_column(Date)
+    match_name: Mapped[str | None] = mapped_column(Text)
+    match_date: Mapped[date | None] = mapped_column(Date)
+    team_id: Mapped[int | None] = mapped_column(Integer)
+    team_name: Mapped[str | None] = mapped_column(Text)
+    competition_id: Mapped[int | None] = mapped_column(Integer)
+    competition_name: Mapped[str | None] = mapped_column(Text)
+    season_id: Mapped[int | None] = mapped_column(Integer)
+    season_name: Mapped[str | None] = mapped_column(Text)
+    competition_edition_id: Mapped[int | None] = mapped_column(Integer)
+    position: Mapped[str | None] = mapped_column(Text)
+    group_: Mapped[str | None] = mapped_column("group", Text)
+    quality_check: Mapped[bool | None] = mapped_column(Boolean)
+    count_match: Mapped[int | None] = mapped_column(Integer)
+    count_match_failed: Mapped[int | None] = mapped_column(Integer)
+    third: Mapped[str | None] = mapped_column(Text)
+    channel: Mapped[str | None] = mapped_column(Text)
+    minutes_played_per_match: Mapped[float | None] = mapped_column(Float)
+    adjusted_min_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    # Metrics
+    count_run_in_behind_in_sample: Mapped[float | None] = mapped_column(Float)
+    count_dangerous_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    run_in_behind_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    count_run_in_behind_leading_to_goal_per_match: Mapped[float | None] = mapped_column(Float)
+    count_run_in_behind_targeted_per_match: Mapped[float | None] = mapped_column(Float)
+    count_run_in_behind_received_per_match: Mapped[float | None] = mapped_column(Float)
+    count_run_in_behind_leading_to_shot_per_match: Mapped[float | None] = mapped_column(Float)
+    run_in_behind_targeted_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    run_in_behind_received_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    count_dangerous_run_in_behind_targeted_per_match: Mapped[float | None] = mapped_column(Float)
+    count_dangerous_run_in_behind_received_per_match: Mapped[float | None] = mapped_column(Float)
+
+
+class SkillCornerPressure(Base):
+    """Per-match on-ball pressure output from /in_possession/on_ball_pressures/."""
+
+    __tablename__ = "skillcorner_pressure"
+    __table_args__ = (
+        UniqueConstraint("sc_match_id", "sc_player_id"),
+        Index("ix_skillcorner_pressure_fixture_player", "fixture_id", "player_id"),
+        Index("ix_skillcorner_pressure_match_date", "match_date"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sc_match_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    sc_player_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    fixture_id: Mapped[int | None] = mapped_column(Integer)
+    player_id: Mapped[int | None] = mapped_column(Integer)
+    # Identity
+    player_name: Mapped[str | None] = mapped_column(Text)
+    player_birthdate: Mapped[date | None] = mapped_column(Date)
+    match_name: Mapped[str | None] = mapped_column(Text)
+    match_date: Mapped[date | None] = mapped_column(Date)
+    team_id: Mapped[int | None] = mapped_column(Integer)
+    team_name: Mapped[str | None] = mapped_column(Text)
+    competition_id: Mapped[int | None] = mapped_column(Integer)
+    competition_name: Mapped[str | None] = mapped_column(Text)
+    season_id: Mapped[int | None] = mapped_column(Integer)
+    season_name: Mapped[str | None] = mapped_column(Text)
+    competition_edition_id: Mapped[int | None] = mapped_column(Integer)
+    position: Mapped[str | None] = mapped_column(Text)
+    group_: Mapped[str | None] = mapped_column("group", Text)
+    quality_check: Mapped[bool | None] = mapped_column(Boolean)
+    count_match: Mapped[int | None] = mapped_column(Integer)
+    count_match_failed: Mapped[int | None] = mapped_column(Integer)
+    third: Mapped[str | None] = mapped_column(Text)
+    channel: Mapped[str | None] = mapped_column(Text)
+    minutes_played_per_match: Mapped[float | None] = mapped_column(Float)
+    adjusted_min_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    # Metrics
+    count_high_pressure_received_in_sample: Mapped[float | None] = mapped_column(Float)
+    count_high_pressure_received_per_match: Mapped[float | None] = mapped_column(Float)
+    count_forced_losses_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    count_ball_retention_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    ball_retention_ratio_under_high_pressure: Mapped[float | None] = mapped_column(Float)
+    ball_retention_added_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    pass_completion_ratio_under_high_pressure: Mapped[float | None] = mapped_column(Float)
+    count_pass_attempts_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_passes_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    count_dangerous_pass_attemps_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_dangerous_passes_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    dangerous_pass_completion_ratio_under_high_pressure: Mapped[float | None] = mapped_column(Float)
+    count_difficult_pass_attempts_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_difficult_passes_under_high_pressure_per_match: Mapped[float | None] = mapped_column(Float)
+    difficult_pass_completion_ratio_under_high_pressure: Mapped[float | None] = mapped_column(Float)
+
+
+class SkillCornerPasses(Base):
+    """Per-match passing output from /in_possession/passes/."""
+
+    __tablename__ = "skillcorner_passes"
+    __table_args__ = (
+        UniqueConstraint("sc_match_id", "sc_player_id"),
+        Index("ix_skillcorner_passes_fixture_player", "fixture_id", "player_id"),
+        Index("ix_skillcorner_passes_match_date", "match_date"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    sc_match_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    sc_player_id: Mapped[int] = mapped_column(Integer, nullable=False)
+    fixture_id: Mapped[int | None] = mapped_column(Integer)
+    player_id: Mapped[int | None] = mapped_column(Integer)
+    # Identity
+    player_name: Mapped[str | None] = mapped_column(Text)
+    player_birthdate: Mapped[date | None] = mapped_column(Date)
+    match_name: Mapped[str | None] = mapped_column(Text)
+    match_date: Mapped[date | None] = mapped_column(Date)
+    team_id: Mapped[int | None] = mapped_column(Integer)
+    team_name: Mapped[str | None] = mapped_column(Text)
+    competition_id: Mapped[int | None] = mapped_column(Integer)
+    competition_name: Mapped[str | None] = mapped_column(Text)
+    season_id: Mapped[int | None] = mapped_column(Integer)
+    season_name: Mapped[str | None] = mapped_column(Text)
+    competition_edition_id: Mapped[int | None] = mapped_column(Integer)
+    position: Mapped[str | None] = mapped_column(Text)
+    group_: Mapped[str | None] = mapped_column("group", Text)
+    quality_check: Mapped[bool | None] = mapped_column(Boolean)
+    count_match: Mapped[int | None] = mapped_column(Integer)
+    count_match_failed: Mapped[int | None] = mapped_column(Integer)
+    third: Mapped[str | None] = mapped_column(Text)
+    channel: Mapped[str | None] = mapped_column(Text)
+    minutes_played_per_match: Mapped[float | None] = mapped_column(Float)
+    adjusted_min_tip_per_match: Mapped[float | None] = mapped_column(Float)
+    # Metrics
+    count_opportunities_to_pass_to_run_in_behind_in_sample: Mapped[float | None] = mapped_column(Float)
+    count_opportunities_to_pass_to_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    count_pass_attempts_to_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    pass_opportunities_to_run_in_behind_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    run_in_behind_to_which_pass_attempted_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    pass_completion_ratio_to_run_in_behind: Mapped[float | None] = mapped_column(Float)
+    count_run_in_behind_by_teammate_per_match: Mapped[float | None] = mapped_column(Float)
+    run_in_behind_to_which_pass_completed_threat_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_pass_to_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_pass_to_run_in_behind_leading_to_shot_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_pass_to_run_in_behind_leading_to_goal_per_match: Mapped[float | None] = mapped_column(Float)
+    count_pass_opportunities_to_dangerous_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    count_pass_attempts_to_dangerous_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)
+    count_completed_pass_to_dangerous_run_in_behind_per_match: Mapped[float | None] = mapped_column(Float)

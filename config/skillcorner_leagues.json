@@ -1,0 +1,67 @@
+[
+  {
+    "league_id": 40,
+    "name": "Championship",
+    "sc_competition_edition_ids": [544, 890, 1216]
+  },
+  {
+    "league_id": 41,
+    "name": "League One",
+    "sc_competition_edition_ids": [545, 893, 1211]
+  },
+  {
+    "league_id": 42,
+    "name": "League Two",
+    "sc_competition_edition_ids": [557, 894, 1214]
+  },
+  {
+    "league_id": 179,
+    "name": "Premiership",
+    "sc_competition_edition_ids": [565, 937, 1213]
+  },
+  {
+    "league_id": 39,
+    "name": "Premier League",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 78,
+    "name": "Bundesliga",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 79,
+    "name": "2. Bundesliga",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 61,
+    "name": "Ligue 1",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 140,
+    "name": "La Liga",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 135,
+    "name": "Serie A",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 88,
+    "name": "Eredivisie",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 94,
+    "name": "Primeira Liga",
+    "sc_competition_edition_ids": []
+  },
+  {
+    "league_id": 144,
+    "name": "Jupiler Pro League",
+    "sc_competition_edition_ids": []
+  }
+]

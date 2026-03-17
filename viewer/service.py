@@ -29,6 +29,7 @@ from models.role_fit import get_active_template_for_role, score_role_fit
 from outputs.longlist import generate_longlist_report
 from scoring.action_tiers import board_score_equation, classify_composite_action, composite_to_board_score, load_board_action_tiers, summarise_action_tiers
 from scoring.composite import effective_layer_weights, projection_score_from_logged_p50
+from scoring.physical import score_physical
 
 
 _WYSCOUT_IMPORT_LOCK = Lock()
@@ -288,6 +289,7 @@ def get_on_pitch_profiles_context(
 
     rows: list[dict[str, Any]] = []
     skipped_count = 0
+    peer_player_ids = [c["player_id"] for c in candidates]
     for candidate in candidates:
         try:
             role_fit = score_role_fit(candidate["player_id"], template.template_id, selected_season)
@@ -312,7 +314,9 @@ def get_on_pitch_profiles_context(
         )
         row["age_upside_score"] = age_score
         row["unknown_age_penalty_multiplier"] = age_penalty_multiplier
-        row["on_pitch_score"] = _compute_dashboard_weighted_score(
+
+        # Technical score = weighted blend of role fit, current performance, projection
+        row["technical_score"] = _compute_dashboard_weighted_score(
             row,
             weight_rows=overall_weights,
             fields={"Role Fit": "role_fit_score", "Current": "current_score", "Projection": "projection_score"},
@@ -330,6 +334,21 @@ def get_on_pitch_profiles_context(
             fields={"Role Fit": "role_fit_score", "Projection": "projection_score", "Age": "age_upside_score"},
             soft_minutes_multiplier=soft_multiplier * age_penalty_multiplier,
         )
+
+        # Physical score = peer-percentile ranked SkillCorner metrics (None if no SC data)
+        try:
+            row["physical_score"] = score_physical(candidate["player_id"], peer_player_ids)
+        except Exception:
+            row["physical_score"] = None
+
+        # On-pitch score = 60% technical + 40% physical; falls back to technical when no SC data
+        technical = row["technical_score"]
+        physical = row["physical_score"]
+        if technical is not None and physical is not None:
+            row["on_pitch_score"] = round(0.60 * float(technical) + 0.40 * float(physical), 2)
+        else:
+            row["on_pitch_score"] = technical
+
         rows.append(row)
 
     top_n = int(config.get("top_n") or 10)
@@ -350,23 +369,34 @@ def get_on_pitch_profiles_context(
         reverse=True,
     )
 
+    league_top_n = int(config.get("league_top_n") or 5)
     on_pitch_league_top_fives = _build_dashboard_league_top_fives(
         rows_by_on_pitch,
-        top_n=int(config.get("league_top_n") or 5),
+        top_n=league_top_n,
         score_key="on_pitch_score",
-        tie_break_keys=("projection_score", "current_score"),
+        tie_break_keys=("technical_score", "projection_score"),
     )
-    present_league_top_fives = _build_dashboard_league_top_fives(
-        present_rows,
-        top_n=int(config.get("league_top_n") or 5),
-        score_key="present_on_pitch_score",
-        tie_break_keys=("current_score", "on_pitch_score"),
+    technical_rows = sorted(
+        rows,
+        key=lambda row: (float(row.get("technical_score") or 0.0), float(row.get("current_score") or 0.0)),
+        reverse=True,
     )
-    upside_league_top_fives = _build_dashboard_league_top_fives(
-        upside_rows,
-        top_n=int(config.get("league_top_n") or 5),
-        score_key="upside_on_pitch_score",
-        tie_break_keys=("projection_score", "on_pitch_score"),
+    technical_league_top_fives = _build_dashboard_league_top_fives(
+        technical_rows,
+        top_n=league_top_n,
+        score_key="technical_score",
+        tie_break_keys=("current_score", "projection_score"),
+    )
+    physical_rows = sorted(
+        [row for row in rows if row.get("physical_score") is not None],
+        key=lambda row: float(row.get("physical_score") or 0.0),
+        reverse=True,
+    )
+    physical_league_top_fives = _build_dashboard_league_top_fives(
+        physical_rows,
+        top_n=league_top_n,
+        score_key="physical_score",
+        tie_break_keys=("on_pitch_score",),
     )
 
     return {
@@ -390,12 +420,12 @@ def get_on_pitch_profiles_context(
         "upside_top_players": upside_rows[:shortlist_n],
         "combined_league_top_fives": _combine_dashboard_league_top_fives(
             on_pitch_league_top_fives,
-            present_league_top_fives,
-            upside_league_top_fives,
+            technical_league_top_fives,
+            physical_league_top_fives,
         ),
         "on_pitch_league_top_fives": on_pitch_league_top_fives,
-        "present_league_top_fives": present_league_top_fives,
-        "upside_league_top_fives": upside_league_top_fives,
+        "technical_league_top_fives": technical_league_top_fives,
+        "physical_league_top_fives": physical_league_top_fives,
         "candidate_count": len(candidates),
         "scored_count": len(rows),
         "skipped_count": skipped_count,
@@ -749,8 +779,8 @@ def _build_dashboard_league_top_fives(
 
 def _combine_dashboard_league_top_fives(
     on_pitch_cards: list[dict[str, Any]],
-    present_cards: list[dict[str, Any]],
-    upside_cards: list[dict[str, Any]],
+    technical_cards: list[dict[str, Any]],
+    physical_cards: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     league_catalog = _league_catalog()
     combined: dict[int, dict[str, Any]] = {}
@@ -765,15 +795,15 @@ def _combine_dashboard_league_top_fives(
                 "tier": meta.get("tier"),
                 "polling_priority": meta.get("polling_priority", 99),
                 "on_pitch": {"players": [], "top_score": 0.0},
-                "present": {"players": [], "top_score": 0.0},
-                "upside": {"players": [], "top_score": 0.0},
+                "technical": {"players": [], "top_score": 0.0},
+                "physical": {"players": [], "top_score": 0.0},
             }
         return combined[league_id]
 
     for key, cards in (
         ("on_pitch", on_pitch_cards),
-        ("present", present_cards),
-        ("upside", upside_cards),
+        ("technical", technical_cards),
+        ("physical", physical_cards),
     ):
         for card in cards:
             league_id = int(card["league_id"])
@@ -798,6 +828,8 @@ def _build_on_pitch_score_guides(rows: list[dict[str, Any]]) -> list[dict[str, A
     guides: list[dict[str, Any]] = []
     for label, key in (
         ("On-Pitch", "on_pitch_score"),
+        ("Technical", "technical_score"),
+        ("Physical", "physical_score"),
         ("Present", "present_on_pitch_score"),
         ("Upside", "upside_on_pitch_score"),
     ):

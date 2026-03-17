@@ -107,7 +107,7 @@
 
 <div class="panel" style="margin-bottom:18px;">
   <h2 style="margin:0;">Method</h2>
-  <div class="muted" style="margin-top:6px;">This board ignores availability and financial value. It ranks role-matched players only, requires at least {{ minimum_minutes }} season minutes, and applies a softer minutes-evidence multiplier so tiny samples do not dominate. Upside is now age-aware: it blends role fit, projection, and an age-potential score based on the role family curve, and unknown DOBs are penalised.</div>
+  <div class="muted" style="margin-top:6px;">This board ignores availability and financial value. It ranks role-matched players only, requires at least {{ minimum_minutes }} season minutes, and applies a softer minutes-evidence multiplier so tiny samples do not dominate. On-pitch score is 60% technical (role fit, current performance, projection) + 40% physical (peer-percentile SkillCorner output). Players without SkillCorner data fall back to technical only.</div>
   <div class="chip-row">
     {% for row in overall_weights %}<span class="chip">Overall {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
     {% for row in present_weights %}<span class="chip">Present {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
@@ -151,7 +151,9 @@
             <tr>
               <th>Player</th>
               <th>League</th>
-              <th>On-Pitch</th>
+              <th title="60% technical + 40% physical (falls back to technical when no SkillCorner data)">On-Pitch</th>
+              <th title="Role fit, current performance and projection blend">Technical</th>
+              <th title="Peer-percentile ranked SkillCorner physical output">Physical</th>
               <th>Present</th>
               <th>Upside</th>
               <th>Age</th>
@@ -167,6 +169,8 @@
                 </td>
                 <td>{{ row.league_name }}</td>
                 <td><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></td>
+                <td>{{ "%.1f"|format(row.technical_score or 0) }}</td>
+                <td>{% if row.physical_score is not none %}{{ "%.1f"|format(row.physical_score) }}{% else %}<span class="muted">—</span>{% endif %}</td>
                 <td>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</td>
                 <td>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</td>
                 <td>{{ row.age_label }}</td>
@@ -246,16 +250,16 @@
           </div>
 
           <div class="tier-card">
-            <div class="league-mini-title">Present</div>
+            <div class="league-mini-title">Technical</div>
             <div style="display:grid;gap:10px;">
-              {% for row in league.present.players %}
+              {% for row in league.technical.players %}
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
                   <div>
                     <strong style="display:block;"><a href="/player/{{ row.player_id }}" style="color:inherit;text-decoration:none;">{{ loop.index }}. {{ row.player_name }}</a></strong>
                     <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
                   </div>
                   <div style="text-align:right;white-space:nowrap;">
-                    <div><strong>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</strong></div>
+                    <div><strong>{{ "%.1f"|format(row.technical_score or 0) }}</strong></div>
                     <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
                   </div>
                 </div>
@@ -264,16 +268,16 @@
           </div>
 
           <div class="tier-card">
-            <div class="league-mini-title">Upside</div>
+            <div class="league-mini-title">Physical</div>
             <div style="display:grid;gap:10px;">
-              {% for row in league.upside.players %}
+              {% for row in league.physical.players %}
                 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
                   <div>
                     <strong style="display:block;"><a href="/player/{{ row.player_id }}" style="color:inherit;text-decoration:none;">{{ loop.index }}. {{ row.player_name }}</a></strong>
                     <div class="muted">{{ row.current_team }} · Age {{ row.age_label }}</div>
                   </div>
                   <div style="text-align:right;white-space:nowrap;">
-                    <div><strong>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</strong></div>
+                    <div><strong>{{ "%.1f"|format(row.physical_score or 0) }}</strong></div>
                     <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
                   </div>
                 </div>

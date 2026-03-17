@@ -136,6 +136,13 @@ class Settings:
     viewer_basic_auth_password: str | None = field(
         default_factory=lambda: os.getenv("STOCKPORT_VIEWER_BASIC_AUTH_PASSWORD") or None
     )
+    skillcorner_username: str | None = field(
+        default_factory=lambda: os.getenv("SKILLCORNER_USERNAME") or None
+    )
+    skillcorner_password: str | None = field(
+        default_factory=lambda: os.getenv("SKILLCORNER_PASSWORD") or None
+    )
+    skillcorner_base_url: str = "https://www.skillcorner.com/api"
 
     @property
     def config_dir(self) -> Path:
