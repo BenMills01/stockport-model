@@ -4,39 +4,56 @@
     "minimum_forward_label_share": 0.55,
     "maximum_midfielder_label_share": 0.45,
     "minimum_central_attack_share": 0.25,
-    "maximum_wide_attack_share": 0.45
+    "maximum_wide_attack_share": 0.45,
+    "allowed_primary_families": ["striker"]
   },
   "ball_playing_cb": {
-    "minimum_height_cm": 183
+    "minimum_height_cm": 183,
+    "allowed_primary_families": ["centre_back"]
   },
   "aggressive_cb": {
-    "minimum_height_cm": 183
+    "minimum_height_cm": 183,
+    "allowed_primary_families": ["centre_back"]
   },
   "covering_cb": {
-    "minimum_height_cm": 183
+    "minimum_height_cm": 183,
+    "allowed_primary_families": ["centre_back"]
+  },
+  "attacking_fb": {
+    "allowed_primary_families": ["full_back_wing_back"]
+  },
+  "inverted_fb": {
+    "allowed_primary_families": ["full_back_wing_back"]
+  },
+  "defensive_fb": {
+    "allowed_primary_families": ["full_back_wing_back"]
   },
   "poacher": {
     "minimum_forward_label_share": 0.55,
     "maximum_midfielder_label_share": 0.40,
     "minimum_central_attack_share": 0.35,
-    "maximum_wide_attack_share": 0.35
+    "maximum_wide_attack_share": 0.35,
+    "allowed_primary_families": ["striker"]
   },
   "pressing_forward": {
     "minimum_forward_label_share": 0.45,
     "maximum_midfielder_label_share": 0.50,
     "minimum_central_attack_share": 0.20,
-    "maximum_wide_attack_share": 0.50
+    "maximum_wide_attack_share": 0.50,
+    "allowed_primary_families": ["striker"]
   },
   "complete_forward": {
     "minimum_forward_label_share": 0.50,
     "maximum_midfielder_label_share": 0.45,
     "minimum_central_attack_share": 0.25,
-    "maximum_wide_attack_share": 0.45
+    "maximum_wide_attack_share": 0.45,
+    "allowed_primary_families": ["striker"]
   },
   "false_9": {
     "minimum_forward_label_share": 0.40,
     "maximum_midfielder_label_share": 0.60,
     "minimum_central_attack_share": 0.20,
-    "maximum_wide_attack_share": 0.50
+    "maximum_wide_attack_share": 0.50,
+    "allowed_primary_families": ["striker"]
   }
 }

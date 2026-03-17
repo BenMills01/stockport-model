@@ -496,6 +496,9 @@ def _load_on_pitch_profile_candidates(
     tracked_leagues = {int(league_id) for league_id in league_catalog}
     role_rules = get_settings().load_json("role_profile_rules.json").get(role_name) or {}
     minimum_height_cm = role_rules.get("minimum_height_cm")
+    allowed_primary_families: set[str] | None = (
+        set(role_rules["allowed_primary_families"]) if role_rules.get("allowed_primary_families") else None
+    )
 
     with session_scope() as session:
         rows = session.execute(
@@ -536,6 +539,7 @@ def _load_on_pitch_profile_candidates(
         tracked_leagues=tracked_leagues,
         minimum_minutes=minimum_minutes,
         minimum_height_cm=minimum_height_cm,
+        allowed_primary_families=allowed_primary_families,
         league_catalog=league_catalog,
         candidate_limit=candidate_limit,
     )
@@ -555,6 +559,7 @@ def _load_on_pitch_profile_candidates(
             tracked_leagues=tracked_leagues,
             minimum_minutes=minimum_minutes,
             minimum_height_cm=minimum_height_cm,
+            allowed_primary_families=allowed_primary_families,
             league_catalog=league_catalog,
             candidate_limit=candidate_limit,
         )
@@ -587,9 +592,17 @@ def _filter_on_pitch_profile_candidates(
     tracked_leagues: set[int],
     minimum_minutes: int,
     minimum_height_cm: float | None,
+    allowed_primary_families: set[str] | None,
     league_catalog: dict[int, dict[str, Any]],
     candidate_limit: int,
 ) -> list[dict[str, Any]]:
+    role_family_cache: dict[str, str | None] = {}
+
+    def _primary_family(primary_role: str) -> str | None:
+        if primary_role not in role_family_cache:
+            role_family_cache[primary_role] = _role_family_for_role(primary_role)
+        return role_family_cache[primary_role]
+
     candidates: list[dict[str, Any]] = []
     for row in rows:
         player_roles = {
@@ -598,6 +611,10 @@ def _filter_on_pitch_profile_candidates(
         }
         if not player_roles.intersection(role_names):
             continue
+        if allowed_primary_families is not None:
+            primary_role = str(row.get("primary_role") or "").strip()
+            if _primary_family(primary_role) not in allowed_primary_families:
+                continue
         league_id = _parse_optional_int(row.get("current_league_id"))
         if league_id is None or league_id not in tracked_leagues:
             continue
