@@ -288,6 +288,7 @@ def get_on_pitch_profiles_context(
         candidate_limit=int(config.get("candidate_limit") or 250),
     )
     candidates = list(candidate_bundle.get("candidates") or [])
+    league_catalog = _league_catalog()
 
     rows: list[dict[str, Any]] = []
     skipped_count = 0
@@ -336,6 +337,13 @@ def get_on_pitch_profiles_context(
             fields={"Role Fit": "role_fit_score", "Projection": "projection_score", "Age": "age_upside_score"},
             soft_minutes_multiplier=soft_multiplier * age_penalty_multiplier,
         )
+
+        # Apply league strength factor to technical score
+        league_id = candidate.get("current_league_id")
+        strength_factor = float(league_catalog.get(league_id, {}).get("strength_factor") or 1.0)
+        raw_technical = row["technical_score"]
+        row["technical_score"] = round(float(raw_technical) * strength_factor, 2) if raw_technical is not None else None
+        row["league_strength_factor"] = strength_factor
 
         # Physical score = peer-percentile ranked SkillCorner metrics (None if no SC data)
         try:

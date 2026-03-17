@@ -5,7 +5,8 @@
     "country": "England",
     "tier": 2,
     "polling_priority": 1,
-    "recruitment_board": true
+    "recruitment_board": true,
+    "strength_factor": 1.000
   },
   {
     "league_id": 41,
@@ -13,7 +14,8 @@
     "country": "England",
     "tier": 3,
     "polling_priority": 1,
-    "recruitment_board": true
+    "recruitment_board": true,
+    "strength_factor": 0.913
   },
   {
     "league_id": 42,
@@ -21,7 +23,8 @@
     "country": "England",
     "tier": 4,
     "polling_priority": 2,
-    "recruitment_board": true
+    "recruitment_board": true,
+    "strength_factor": 0.843
   },
   {
     "league_id": 179,
@@ -29,7 +32,8 @@
     "country": "Scotland",
     "tier": 1,
     "polling_priority": 3,
-    "recruitment_board": true
+    "recruitment_board": true,
+    "strength_factor": 0.936
   },
   {
     "league_id": 39,
