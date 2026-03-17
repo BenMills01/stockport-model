@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <style>
+    :root {
+      --county-blue: #0b4ea2;
+      --county-blue-deep: #082f67;
+      --county-sky: #6eb7ff;
+      --county-ice: #eaf4ff;
+      --county-white: #f8fbff;
+      --ink: #11243c;
+      --muted: #607792;
+      --line: rgba(11, 78, 162, 0.16);
+      --panel: rgba(255, 255, 255, 0.95);
+      --shadow: 0 18px 40px rgba(8, 47, 103, 0.12);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(110, 183, 255, 0.34), transparent 30%),
+        linear-gradient(180deg, #e3efff 0%, #d8e8ff 18%, #f5f9ff 100%);
+    }
+    main { width: min(1400px, calc(100vw - 32px)); margin: 28px auto 40px; }
+    .hero {
+      background: linear-gradient(135deg, rgba(8,47,103,0.97), rgba(11,78,162,0.92));
+      color: #fff;
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+    .hero h1 { margin: 0 0 8px; font-size: 36px; }
+    .hero p { margin: 0; max-width: 72ch; color: rgba(255,255,255,0.82); font-size: 15px; }
+    .meta { margin-top: 12px; font-size: 13px; color: rgba(255,255,255,0.76); }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    h2 { margin: 0 0 14px; color: var(--county-blue-deep); }
+    .muted { color: var(--muted); font-size: 13px; }
+    .link { color: var(--county-blue); text-decoration: none; font-weight: 700; }
+    .nav { display: flex; gap: 16px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+    .nav a { color: rgba(255,255,255,0.82); text-decoration: none; font-size: 14px; }
+    .nav a:hover { color: #fff; }
+
+    /* Filter bar */
+    .filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; align-items: center; }
+    .filters select, .filters input {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      color: var(--ink);
+      background: #fff;
+      outline: none;
+    }
+    .filters label { font-size: 13px; color: var(--muted); }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead th {
+      text-align: left;
+      padding: 10px 8px;
+      border-bottom: 2px solid var(--line);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    thead th:hover { color: var(--county-blue); }
+    thead th.sort-asc::after { content: " ↑"; color: var(--county-blue); }
+    thead th.sort-desc::after { content: " ↓"; color: var(--county-blue); }
+    tbody tr:hover { background: var(--county-ice); }
+    td { padding: 10px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    td strong { font-size: 14px; }
+    .rank { font-size: 13px; color: var(--muted); font-weight: 700; width: 36px; }
+    .score-cell { font-size: 16px; font-weight: 800; color: var(--county-blue-deep); }
+    .score-sub { font-size: 13px; color: var(--muted); }
+    .league-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(11,78,162,0.08);
+      color: var(--county-blue-deep);
+    }
+    .role-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      background: rgba(11,78,162,0.05);
+      color: var(--muted);
+      border: 1px solid var(--line);
+    }
+    .no-sc { color: var(--muted); font-size: 13px; }
+    .hidden { display: none; }
+    .count-label { font-size: 13px; color: var(--muted); margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <span class="badge">Static Beta Snapshot</span>
+      <div class="nav">
+        <a href="{{ site_home_href }}">← Home</a>
+      </div>
+      <h1>Recruitment Longlist</h1>
+      <p>All candidates across every role profile, deduplicated by player and ranked by best on-pitch score. Sort by any column. Filter by league or role.</p>
+      <div class="meta">{{ rows|length }} players · Season {{ season }} · Generated {{ generated_at.strftime("%d %b %Y %H:%M") }}</div>
+    </section>
+
+    <section class="panel">
+      <div class="filters">
+        <label>League:</label>
+        <select id="filter-league" onchange="applyFilters()">
+          <option value="">All Leagues</option>
+          {% for league in leagues %}
+            <option value="{{ league }}">{{ league }}</option>
+          {% endfor %}
+        </select>
+        <label>Role:</label>
+        <select id="filter-role" onchange="applyFilters()">
+          <option value="">All Roles</option>
+          {% for role in roles %}
+            <option value="{{ role }}">{{ role }}</option>
+          {% endfor %}
+        </select>
+        <label>Min On-Pitch:</label>
+        <input type="number" id="filter-min-score" min="0" max="100" step="1" placeholder="0" oninput="applyFilters()" style="width:80px;" />
+      </div>
+      <div class="count-label" id="count-label">Showing {{ rows|length }} players</div>
+      <table id="longlist-table">
+        <thead>
+          <tr>
+            <th class="rank">#</th>
+            <th onclick="sortTable('player_name')" data-col="player_name">Player</th>
+            <th onclick="sortTable('league_name')" data-col="league_name">League</th>
+            <th onclick="sortTable('role_name')" data-col="role_name">Best Role</th>
+            <th onclick="sortTable('age')" data-col="age">Age</th>
+            <th onclick="sortTable('on_pitch_score')" data-col="on_pitch_score" class="sort-desc">On-Pitch</th>
+            <th onclick="sortTable('technical_score')" data-col="technical_score">Technical</th>
+            <th onclick="sortTable('physical_score')" data-col="physical_score">Physical</th>
+            <th onclick="sortTable('total_minutes')" data-col="total_minutes">Minutes</th>
+          </tr>
+        </thead>
+        <tbody id="table-body">
+          {% for row in rows %}
+            <tr
+              data-player="{{ row.player_name }}"
+              data-league="{{ row.league_name }}"
+              data-role="{{ row.role_name }}"
+              data-age="{{ row.age_years or 0 }}"
+              data-on-pitch="{{ row.on_pitch_score or 0 }}"
+              data-technical="{{ row.technical_score or 0 }}"
+              data-physical="{{ row.physical_score or '' }}"
+              data-minutes="{{ row.total_minutes or 0 }}"
+            >
+              <td class="rank">{{ loop.index }}</td>
+              <td>
+                <strong>{{ row.player_name }}</strong>
+                <div class="muted">{{ row.current_team }}</div>
+              </td>
+              <td><span class="league-badge">{{ row.league_name }}</span></td>
+              <td><span class="role-badge">{{ row.role_name | replace("_", " ") }}</span></td>
+              <td>{{ row.age_label }}</td>
+              <td class="score-cell">{{ "%.1f"|format(row.on_pitch_score or 0) }}</td>
+              <td class="score-sub">{{ "%.1f"|format(row.technical_score or 0) }}</td>
+              <td>{% if row.physical_score %}<span class="score-sub">{{ "%.1f"|format(row.physical_score) }}</span>{% else %}<span class="no-sc">—</span>{% endif %}</td>
+              <td class="score-sub">{{ "%.0f"|format(row.total_minutes or 0) }}m</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    let sortCol = 'on_pitch_score';
+    let sortDir = 'desc';
+
+    function sortTable(col) {
+      if (sortCol === col) {
+        sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+      } else {
+        sortCol = col;
+        sortDir = 'desc';
+      }
+      document.querySelectorAll('thead th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.col === col) th.classList.add('sort-' + sortDir);
+      });
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const leagueFilter = document.getElementById('filter-league').value.toLowerCase();
+      const roleFilter = document.getElementById('filter-role').value.toLowerCase();
+      const minScore = parseFloat(document.getElementById('filter-min-score').value) || 0;
+
+      const tbody = document.getElementById('table-body');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      const visible = rows.filter(row => {
+        const league = row.dataset.league.toLowerCase();
+        const role = row.dataset.role.toLowerCase();
+        const score = parseFloat(row.dataset.onPitch) || 0;
+        if (leagueFilter && league !== leagueFilter) return false;
+        if (roleFilter && role !== roleFilter) return false;
+        if (score < minScore) return false;
+        return true;
+      });
+
+      const numeric = ['age', 'on_pitch_score', 'technical_score', 'physical_score', 'total_minutes'];
+      const colAttr = {
+        'player_name': 'player',
+        'league_name': 'league',
+        'role_name': 'role',
+        'age': 'age',
+        'on_pitch_score': 'onPitch',
+        'technical_score': 'technical',
+        'physical_score': 'physical',
+        'total_minutes': 'minutes',
+      };
+
+      visible.sort((a, b) => {
+        const attr = colAttr[sortCol];
+        let av = a.dataset[attr], bv = b.dataset[attr];
+        if (numeric.includes(sortCol)) {
+          av = parseFloat(av) || 0;
+          bv = parseFloat(bv) || 0;
+          return sortDir === 'desc' ? bv - av : av - bv;
+        }
+        av = (av || '').toLowerCase();
+        bv = (bv || '').toLowerCase();
+        return sortDir === 'desc' ? bv.localeCompare(av) : av.localeCompare(bv);
+      });
+
+      rows.forEach(r => r.classList.add('hidden'));
+      visible.forEach((row, i) => {
+        row.classList.remove('hidden');
+        row.querySelector('.rank').textContent = i + 1;
+      });
+
+      document.getElementById('count-label').textContent = `Showing ${visible.length} players`;
+    }
+  </script>
+</body>
+</html>

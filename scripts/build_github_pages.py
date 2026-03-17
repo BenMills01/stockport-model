@@ -34,6 +34,8 @@ def build_pages_site() -> dict[str, Any]:
     REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
     profile_rows: list[dict[str, Any]] = []
+    longlist_by_player: dict[int, dict[str, Any]] = {}
+
     for role_name, role_family in role_options:
         context = get_on_pitch_profiles_context(role_name=role_name, season=selected_season)
         filename = f"{role_name}.html"
@@ -69,6 +71,32 @@ def build_pages_site() -> dict[str, Any]:
         )
         (PROFILES_DIR / filename).write_text(profile_html, encoding="utf-8")
 
+        # Accumulate longlist — keep best on_pitch_score per player
+        for row in context.get("rows") or []:
+            pid = int(row.get("player_id") or 0)
+            score = float(row.get("on_pitch_score") or 0.0)
+            if pid not in longlist_by_player or score > float(longlist_by_player[pid].get("on_pitch_score") or 0.0):
+                longlist_by_player[pid] = {**row, "role_name": role_name}
+
+    longlist_rows = sorted(
+        longlist_by_player.values(),
+        key=lambda r: float(r.get("on_pitch_score") or 0.0),
+        reverse=True,
+    )
+    longlist_leagues = sorted({str(r.get("league_name") or "") for r in longlist_rows if r.get("league_name")})
+    longlist_roles = sorted({str(r.get("role_name") or "") for r in longlist_rows if r.get("role_name")})
+    longlist_html = render_template(
+        "github_pages_longlist.html",
+        title="Recruitment Longlist · Stockport",
+        rows=longlist_rows,
+        season=selected_season,
+        generated_at=generated_at,
+        leagues=longlist_leagues,
+        roles=longlist_roles,
+        site_home_href="index.html",
+    )
+    (DOCS_DIR / "longlist.html").write_text(longlist_html, encoding="utf-8")
+
     report_rows = _copy_report_artifacts()
     reports_index_html = render_template(
         "github_pages_reports.html",
@@ -87,6 +115,8 @@ def build_pages_site() -> dict[str, Any]:
         profiles=profile_rows,
         reports=report_rows[:8],
         reports_href="reports/index.html",
+        longlist_href="longlist.html",
+        longlist_count=len(longlist_rows),
     )
     (DOCS_DIR / "index.html").write_text(index_html, encoding="utf-8")
     (DOCS_DIR / "404.html").write_text(index_html, encoding="utf-8")

@@ -106,7 +106,10 @@
           <h2>On-Pitch Profiles</h2>
           <div class="muted">Open any profile board for the latest public snapshot.</div>
         </div>
-        <a class="link" href="{{ reports_href }}">Open Brief Reports →</a>
+        <div style="display:flex;gap:16px;">
+          <a class="link" href="{{ longlist_href }}">Full Longlist ({{ longlist_count }}) →</a>
+          <a class="link" href="{{ reports_href }}">Brief Reports →</a>
+        </div>
       </div>
       <div class="grid cards" style="margin-top:16px;">
         {% for profile in profiles %}

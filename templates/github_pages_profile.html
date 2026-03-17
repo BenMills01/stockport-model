@@ -161,32 +161,8 @@
       </div>
     </section>
 
-    {% if score_guides %}
-      <section class="panel">
-        <h2>What’s Good?</h2>
-        <div class="cols-3">
-          {% for guide in score_guides %}
-            <div class="tier-card">
-              <h3>{{ guide.label }}</h3>
-              {% for band in guide.bands %}
-                <div style="display:flex;justify-content:space-between;gap:12px;margin-bottom:8px;">
-                  <div>
-                    <strong>{{ band.label }}</strong>
-                    <div class="muted">{{ band.description }}</div>
-                  </div>
-                  <div><strong>{{ "%.1f"|format(band.threshold) }}+</strong></div>
-                </div>
-              {% endfor %}
-              <div class="muted" style="padding-top:8px;border-top:1px solid var(--line);">Below {{ "%.1f"|format(guide.median) }} is below the current board median.</div>
-            </div>
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
-
     {% if top_players %}
-      <section class="cols-2" style="margin-bottom:18px;">
-        <div class="panel">
+      <section class="panel" style="margin-bottom:18px;">
           <h2>Top 10 Overall</h2>
           <table>
             <thead>
@@ -217,45 +193,6 @@
               {% endfor %}
             </tbody>
           </table>
-        </div>
-
-        <div>
-          <div class="tier-card" style="margin-bottom:12px;">
-            <h2>Technical Top 5</h2>
-            <div style="display:grid;gap:10px;">
-              {% for row in technical_top_players %}
-                <div style="display:flex;justify-content:space-between;gap:12px;">
-                  <div>
-                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
-                    <div class="muted">{{ row.current_team }} · {{ row.league_name }} · Age {{ row.age_label }}</div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div><strong>{{ "%.1f"|format(row.technical_score or 0) }}</strong></div>
-                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-
-          <div class="tier-card">
-            <h2>Physical Top 5</h2>
-            <div style="display:grid;gap:10px;">
-              {% for row in physical_top_players %}
-                <div style="display:flex;justify-content:space-between;gap:12px;">
-                  <div>
-                    <strong>{{ loop.index }}. {{ row.player_name }}</strong>
-                    <div class="muted">{{ row.current_team }} · {{ row.league_name }} · Age {{ row.age_label }}</div>
-                  </div>
-                  <div style="text-align:right;">
-                    <div><strong>{{ "%.1f"|format(row.physical_score or 0) }}</strong></div>
-                    <div class="muted">{{ "%.0f"|format(row.total_minutes or 0) }}m</div>
-                  </div>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
       </section>
 
       <section class="panel">
