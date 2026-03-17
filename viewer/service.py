@@ -888,10 +888,9 @@ def _build_on_pitch_score_guides(rows: list[dict[str, Any]]) -> list[dict[str, A
     guides: list[dict[str, Any]] = []
     for label, key in (
         ("On-Pitch", "on_pitch_score"),
+        ("On-Pitch", "on_pitch_score"),
         ("Technical", "technical_score"),
         ("Physical", "physical_score"),
-        ("Present", "present_on_pitch_score"),
-        ("Upside", "upside_on_pitch_score"),
     ):
         values = sorted(float(row.get(key) or 0.0) for row in rows)
         if not values:
