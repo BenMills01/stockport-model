@@ -20,7 +20,7 @@ from sqlalchemy import text
 from config import get_settings
 from db import session_scope
 from db.read_cache import load_player_match_frame
-from db.schema import MatchPerformance
+from db.schema import MatchPerformance, WyscoutSeasonStat
 from features.confidence import compute_confidence, minutes_evidence_multiplier, shrink_low_sample_value
 from features.opposition import compute_opposition_splits
 from features.per90 import _compute_per90_frame
@@ -323,12 +323,14 @@ def get_on_pitch_profiles_context(
                 player_id=int(candidate["player_id"]),
                 season=selected_season,
                 metrics=dict(profile.get("metrics") or {}),
+                role_family=str(profile.get("role_family") or ""),
                 metric_frame=metric_frame,
             )
             current = _score_on_pitch_profile_current(
                 player_id=int(candidate["player_id"]),
                 season=selected_season,
                 metrics=dict(profile.get("metrics") or {}),
+                role_family=str(profile.get("role_family") or ""),
                 metric_frame=metric_frame,
             )
             projection = project_to_championship(candidate["player_id"], selected_season, brief=None)
@@ -756,6 +758,127 @@ def _filter_on_pitch_profile_candidates(
     return candidates
 
 
+# Maps our internal Wyscout metric names to possible normalized column aliases in metrics_json.
+# Column names are normalised by _normalise_column_name in wyscout_import.py:
+#   strip → lower → non-alnum → '_' → collapse multiple '_'
+# CRITICAL: Wyscout "won, %" columns normalise WITHOUT a _pct suffix:
+#   "Aerial duels won, %" → "aerial_duels_won"   ← a percentage, handled in RATIO aliases below
+#   "Accurate crosses, %" → "accurate_crosses"   ← a percentage, NOT a count
+# All of these are volume metrics → stored as {name}_per90 in the frame.
+_WYSCOUT_METRIC_ALIASES: dict[str, list[str]] = {
+    # Expected goals / assists — prefer the pre-computed per-90 column from the export
+    "xg": ["xg_per_90", "xg"],
+    "xa": ["xa_per_90", "xa"],
+    # Non-penalty goals per 90 (Wyscout does not export npxG, only np goals)
+    "non_penalty_goals": ["non_penalty_goals_per_90", "non_penalty_goals"],
+    # Passing / creation — all already per-90 in the Wyscout Search Results export
+    "progressive_passes": ["progressive_passes_per_90"],
+    "deep_completions": ["deep_completions_per_90"],
+    "shot_assists": ["shot_assists_per_90"],
+    "passes_to_final_third": ["passes_to_final_third_per_90"],
+    # Carrying / running
+    "progressive_runs": ["progressive_runs_per_90"],
+    "touches_in_box": ["touches_in_box_per_90"],
+    # Crossing — volume only; the "Accurate crosses, %" column is a ratio (handled below)
+    "crosses": ["crosses_per_90"],
+    # Aerial — volume of aerial challenges (win % is handled as a ratio metric below)
+    "aerial_duels": ["aerial_duels_per_90"],
+    # Defensive
+    "padj_interceptions": ["padj_interceptions"],  # PAdj season total → divided by minutes
+    "padj_tackles": ["padj_sliding_tackles"],       # PAdj season total → divided by minutes
+    "ball_recoveries": ["ball_recoveries_per_90", "ball_recoveries"],
+    # GK
+    "successful_exits": ["exits_per_90"],
+}
+
+# Ratio metrics are not per-90 normalized — stored as their own name (no _per90 suffix).
+# IMPORTANT: these aliases are the exact normalized DB keys (result of _normalise_column_name).
+#   "Aerial duels won, %"   → key "aerial_duels_won"   (NOT "aerial_duels_won_pct")
+#   "Defensive duels won, %" → key "defensive_duels_won"
+#   "Accurate long passes, %" → key "accurate_long_passes"
+#   "Save rate, %"           → key "save_rate"
+_WYSCOUT_RATIO_ALIASES: dict[str, list[str]] = {
+    "aerial_duels_won_pct": ["aerial_duels_won"],
+    "defensive_duels_won_pct": ["defensive_duels_won"],
+    "offensive_duels_won_pct": ["offensive_duels_won"],
+    "long_pass_accuracy": ["accurate_long_passes"],
+    "save_pct": ["save_rate"],
+}
+
+# All ratio metric names — looked up in the frame without _per90 suffix (like pass_accuracy).
+_WYSCOUT_RATIO_METRICS: frozenset[str] = frozenset(_WYSCOUT_RATIO_ALIASES.keys())
+
+
+def _extract_wyscout_per90(
+    metrics: dict[str, Any], minutes_played: int | None, aliases: list[str]
+) -> float | None:
+    """Return a per-90 value for the first matching alias in a Wyscout metrics_json dict."""
+    for alias in aliases:
+        raw = metrics.get(alias)
+        if raw is None:
+            continue
+        try:
+            value = float(raw)
+        except (TypeError, ValueError):
+            continue
+        # Already a per-90 value if the column name says so
+        if "per_90" in alias or alias.endswith("_90"):
+            return value
+        # Convert total → per-90 using stored minutes
+        if minutes_played and minutes_played >= 45:
+            return value / (minutes_played / 90.0)
+    return None
+
+
+def _extract_wyscout_ratio(metrics: dict[str, Any], aliases: list[str]) -> float | None:
+    """Return a ratio/percentage value (no per-90 conversion) from a Wyscout metrics_json dict."""
+    for alias in aliases:
+        raw = metrics.get(alias)
+        if raw is None:
+            continue
+        try:
+            return float(raw)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
+def _load_wyscout_metric_frame(player_ids: tuple[int, ...], season: str) -> pd.DataFrame:
+    """Load Wyscout advanced metrics for a set of players, returned as per-90 and ratio columns."""
+    if not player_ids:
+        return pd.DataFrame()
+    with session_scope() as session:
+        rows = list(
+            session.scalars(
+                select(WyscoutSeasonStat).where(
+                    WyscoutSeasonStat.season == season,
+                    WyscoutSeasonStat.player_id.in_(player_ids),
+                )
+            )
+        )
+    if not rows:
+        return pd.DataFrame()
+
+    # Where a player has multiple rows (played in multiple leagues), keep the one with most minutes
+    best: dict[int, WyscoutSeasonStat] = {}
+    for row in rows:
+        existing = best.get(row.player_id)
+        if existing is None or (row.minutes_played or 0) > (existing.minutes_played or 0):
+            best[row.player_id] = row
+
+    records = []
+    for row in best.values():
+        metrics = row.metrics_json or {}
+        record: dict[str, Any] = {"player_id": row.player_id}
+        for metric_name, aliases in _WYSCOUT_METRIC_ALIASES.items():
+            record[f"{metric_name}_per90"] = _extract_wyscout_per90(metrics, row.minutes_played, aliases)
+        for metric_name, aliases in _WYSCOUT_RATIO_ALIASES.items():
+            record[metric_name] = _extract_wyscout_ratio(metrics, aliases)
+        records.append(record)
+
+    return pd.DataFrame(records)
+
+
 def _load_on_pitch_metric_frame(player_ids_key: tuple[int, ...], season: str) -> pd.DataFrame:
     if not player_ids_key:
         return pd.DataFrame()
@@ -781,7 +904,62 @@ def _load_on_pitch_metric_frame(player_ids_key: tuple[int, ...], season: str) ->
         aggregations["pass_accuracy"] = "mean"
     aggregations["minutes"] = "sum"
     aggregations["league_id"] = _mode_value
-    return per90.groupby("player_id", as_index=False).agg(aggregations)
+    base = per90.groupby("player_id", as_index=False).agg(aggregations)
+
+    # Blend in Wyscout advanced metrics — left join so players without data get NaN
+    wyscout = _load_wyscout_metric_frame(player_ids_key, season)
+    if not wyscout.empty:
+        base = base.merge(wyscout, on="player_id", how="left", suffixes=("", "_wyscout"))
+    return base
+
+
+_PRIMARY_METRIC_CONFIG: dict[str, Any] = json.loads(
+    (Path(__file__).resolve().parents[1] / "config" / "on_pitch_primary_metrics.json").read_text()
+)
+_PRIMARY_WEIGHT: float = float(_PRIMARY_METRIC_CONFIG.get("primary_weight", 0.40))
+_PRIMARY_FAMILIES: dict[str, dict[str, Any]] = _PRIMARY_METRIC_CONFIG.get("families", {})
+
+_RATIO_METRIC_NAMES: frozenset[str] = frozenset({"pass_accuracy"}) | _WYSCOUT_RATIO_METRICS
+
+
+def _score_metric_set(
+    metric_dict: dict[str, float],
+    target_row: Any,
+    peers: pd.DataFrame,
+) -> tuple[float, dict[str, dict[str, float]], dict[str, float]]:
+    """Score a weighted metric dict against same-league peers.
+
+    Returns (renormalised_raw_score_0_to_100, contributions, percentile_scores).
+    Missing metrics (no column or no player value) are skipped and weights renormalised.
+    """
+    contributions: dict[str, dict[str, float]] = {}
+    percentile_scores: dict[str, float] = {}
+    raw_score = 0.0
+    total_weight = 0.0
+
+    for metric_name, weight in metric_dict.items():
+        metric_column = metric_name if metric_name in _RATIO_METRIC_NAMES else f"{metric_name}_per90"
+        if metric_column not in peers.columns:
+            continue
+        player_value = _parse_optional_float(target_row.get(metric_column))
+        if player_value is None:
+            continue
+        peer_values = pd.to_numeric(peers[metric_column], errors="coerce").dropna()
+        percentile = _percentile_from_series(player_value, peer_values)
+        percentile_scores[metric_name] = percentile
+        contribution = float(weight) * percentile
+        raw_score += contribution
+        total_weight += float(weight)
+        contributions[metric_name] = {
+            "player_percentile": percentile,
+            "weight": float(weight),
+            "contribution": contribution,
+        }
+
+    if 0.0 < total_weight < 1.0:
+        raw_score = raw_score / total_weight
+
+    return raw_score, contributions, percentile_scores
 
 
 def _score_on_pitch_profile_fit(
@@ -789,8 +967,14 @@ def _score_on_pitch_profile_fit(
     player_id: int,
     season: str,
     metrics: dict[str, float],
+    role_family: str,
     metric_frame: pd.DataFrame,
 ) -> dict[str, Any]:
+    """Two-layer profile fit score.
+
+    Layer 1 (primary, 40%): universal quality for this role family — is this a good player at all?
+    Layer 2 (secondary, 60%): profile-specific metrics — what type of player are they?
+    """
     if metric_frame.empty:
         raise ValueError("No on-pitch metric frame available")
 
@@ -804,24 +988,19 @@ def _score_on_pitch_profile_fit(
     if peers.empty:
         peers = metric_frame.copy()
 
-    contributions: dict[str, dict[str, float]] = {}
-    raw_score = 0.0
-    percentile_scores: dict[str, float] = {}
-    for metric_name, weight in metrics.items():
-        metric_column = "pass_accuracy" if metric_name == "pass_accuracy" else f"{metric_name}_per90"
-        if metric_column not in peers.columns:
-            continue
-        peer_values = pd.to_numeric(peers[metric_column], errors="coerce").dropna()
-        player_value = _parse_optional_float(target_row.get(metric_column))
-        percentile = _percentile_from_series(player_value, peer_values)
-        percentile_scores[metric_name] = percentile
-        contribution = float(weight) * percentile
-        raw_score += contribution
-        contributions[metric_name] = {
-            "player_percentile": percentile,
-            "weight": float(weight),
-            "contribution": contribution,
-        }
+    # --- Layer 1: primary (universal family quality) ---
+    primary_metrics = (_PRIMARY_FAMILIES.get(role_family) or {}).get("metrics") or {}
+    primary_raw, primary_contributions, primary_percentiles = _score_metric_set(
+        primary_metrics, target_row, peers
+    )
+
+    # --- Layer 2: secondary (profile-specific fit) ---
+    secondary_raw, secondary_contributions, secondary_percentiles = _score_metric_set(
+        metrics, target_row, peers
+    )
+
+    secondary_weight = 1.0 - _PRIMARY_WEIGHT
+    raw_score = _PRIMARY_WEIGHT * primary_raw + secondary_weight * secondary_raw
 
     confidence = compute_confidence(player_id, season)
     shrinkage_factor = float(confidence.get("shrinkage_factor", 1.0) or 1.0)
@@ -833,9 +1012,12 @@ def _score_on_pitch_profile_fit(
     return {
         "score": float(max(0.0, min(100.0, score))),
         "raw_score": float(max(0.0, min(100.0, raw_score))),
+        "primary_score": float(max(0.0, min(100.0, primary_raw))),
+        "secondary_score": float(max(0.0, min(100.0, secondary_raw))),
         "shrinkage_factor": shrinkage_factor,
-        "decomposition": contributions,
-        "percentiles": percentile_scores,
+        "primary_decomposition": primary_contributions,
+        "decomposition": secondary_contributions,
+        "percentiles": {**primary_percentiles, **secondary_percentiles},
         "confidence_tier": confidence["confidence_tier"],
     }
 
@@ -845,12 +1027,14 @@ def _score_on_pitch_profile_current(
     player_id: int,
     season: str,
     metrics: dict[str, float],
+    role_family: str,
     metric_frame: pd.DataFrame,
 ) -> dict[str, Any]:
     role_fit = _score_on_pitch_profile_fit(
         player_id=player_id,
         season=season,
         metrics=metrics,
+        role_family=role_family,
         metric_frame=metric_frame,
     )
     opposition = compute_opposition_splits(player_id=player_id, season=season)

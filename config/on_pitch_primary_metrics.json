@@ -1,0 +1,59 @@
+{
+  "_comment": "Primary metrics define universal quality for each role family. Scored against same-league peers, blended at primary_weight with profile-specific secondary metrics. Weights within each block must sum to 1.0.",
+  "primary_weight": 0.40,
+  "families": {
+    "striker": {
+      "label": "Striker quality baseline",
+      "metrics": {
+        "non_penalty_goals": 0.30,
+        "xg": 0.25,
+        "shots_total": 0.25,
+        "touches_in_box": 0.20
+      }
+    },
+    "wide_attacker_winger": {
+      "label": "Wide attacker quality baseline",
+      "metrics": {
+        "xg": 0.30,
+        "xa": 0.25,
+        "dribbles_success": 0.25,
+        "goals_scored": 0.20
+      }
+    },
+    "central_midfielder": {
+      "label": "Central midfielder quality baseline",
+      "metrics": {
+        "passes_total": 0.30,
+        "pass_accuracy": 0.25,
+        "duels_won": 0.25,
+        "minutes": 0.20
+      }
+    },
+    "full_back_wing_back": {
+      "label": "Full back / wing back quality baseline",
+      "metrics": {
+        "tackles_total": 0.25,
+        "defensive_duels_won_pct": 0.30,
+        "duels_won": 0.25,
+        "pass_accuracy": 0.20
+      }
+    },
+    "centre_back": {
+      "label": "Centre back quality baseline",
+      "metrics": {
+        "aerial_duels_won_pct": 0.30,
+        "defensive_duels_won_pct": 0.30,
+        "padj_interceptions": 0.20,
+        "duels_won": 0.20
+      }
+    },
+    "goalkeeper": {
+      "label": "Goalkeeper quality baseline",
+      "metrics": {
+        "saves": 0.35,
+        "save_pct": 0.35,
+        "pass_accuracy": 0.30
+      }
+    }
+  }
+}

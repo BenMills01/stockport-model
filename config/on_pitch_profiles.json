@@ -9,16 +9,19 @@
     "allowed_sc_positions": ["ST", "CF"],
     "profile_points": ["Runs to stretch", "Pace", "Strength", "Pressing"],
     "metrics": {
-      "goals_scored": 0.18,
-      "shots_total": 0.14,
-      "shots_on_target": 0.14,
-      "dribbles_success": 0.10,
-      "dribbles_attempts": 0.08,
+      "non_penalty_goals": 0.12,
+      "xg": 0.10,
+      "touches_in_box": 0.10,
+      "ball_recoveries": 0.06,
+      "goals_scored": 0.10,
+      "shots_total": 0.08,
+      "shots_on_target": 0.06,
+      "dribbles_success": 0.08,
+      "dribbles_attempts": 0.06,
       "duels_won": 0.10,
-      "duels_total": 0.08,
-      "fouls_drawn": 0.08,
-      "tackles_total": 0.05,
-      "minutes": 0.05
+      "duels_total": 0.06,
+      "fouls_drawn": 0.06,
+      "minutes": 0.02
     }
   },
   {
@@ -32,16 +35,19 @@
     "minimum_height_cm": 186,
     "profile_points": ["Retention", "Pressing", "Link up", "Size + strength", "Attacks crosses"],
     "metrics": {
-      "duels_won": 0.16,
-      "duels_total": 0.12,
-      "passes_total": 0.12,
-      "pass_accuracy": 0.10,
-      "passes_key": 0.10,
+      "xa": 0.10,
+      "aerial_duels": 0.08,
+      "aerial_duels_won_pct": 0.08,
+      "duels_won": 0.10,
+      "duels_total": 0.06,
+      "passes_total": 0.10,
+      "pass_accuracy": 0.08,
+      "passes_key": 0.08,
       "assists": 0.08,
-      "shots_total": 0.10,
+      "shots_total": 0.06,
       "fouls_drawn": 0.08,
-      "tackles_total": 0.08,
-      "minutes": 0.06
+      "tackles_total": 0.06,
+      "minutes": 0.04
     }
   },
   {
@@ -54,16 +60,18 @@
     "allowed_sc_positions": ["ST", "CF"],
     "profile_points": ["Shot volume", "Variety of finishing", "Box movement", "Pressing"],
     "metrics": {
-      "goals_scored": 0.20,
-      "shots_total": 0.18,
-      "shots_on_target": 0.18,
-      "dribbles_success": 0.08,
-      "passes_key": 0.08,
-      "assists": 0.05,
-      "fouls_drawn": 0.07,
-      "tackles_total": 0.06,
+      "non_penalty_goals": 0.14,
+      "xg": 0.10,
+      "touches_in_box": 0.12,
+      "offensive_duels_won_pct": 0.08,
+      "goals_scored": 0.10,
+      "shots_total": 0.10,
+      "shots_on_target": 0.08,
+      "dribbles_success": 0.06,
+      "passes_key": 0.06,
+      "fouls_drawn": 0.08,
       "duels_won": 0.06,
-      "minutes": 0.04
+      "minutes": 0.02
     }
   },
   {
@@ -76,16 +84,19 @@
     "allowed_sc_positions": ["LW", "LF"],
     "profile_points": ["Pace", "1v1 ability", "Goal threat"],
     "metrics": {
-      "dribbles_success": 0.18,
-      "dribbles_attempts": 0.14,
-      "goals_scored": 0.14,
-      "shots_total": 0.10,
-      "shots_on_target": 0.10,
-      "passes_key": 0.10,
-      "assists": 0.08,
-      "fouls_drawn": 0.06,
-      "duels_won": 0.05,
-      "minutes": 0.05
+      "xg": 0.12,
+      "xa": 0.08,
+      "progressive_runs": 0.10,
+      "offensive_duels_won_pct": 0.08,
+      "dribbles_success": 0.14,
+      "dribbles_attempts": 0.08,
+      "goals_scored": 0.08,
+      "shots_total": 0.06,
+      "shots_on_target": 0.06,
+      "passes_key": 0.08,
+      "assists": 0.06,
+      "fouls_drawn": 0.04,
+      "duels_won": 0.02
     }
   },
   {
@@ -98,16 +109,19 @@
     "allowed_sc_positions": ["RW", "RF"],
     "profile_points": ["Pace", "1v1 ability", "Goal threat"],
     "metrics": {
-      "dribbles_success": 0.18,
-      "dribbles_attempts": 0.14,
-      "goals_scored": 0.14,
-      "shots_total": 0.10,
-      "shots_on_target": 0.10,
-      "passes_key": 0.10,
-      "assists": 0.08,
-      "fouls_drawn": 0.06,
-      "duels_won": 0.05,
-      "minutes": 0.05
+      "xg": 0.12,
+      "xa": 0.08,
+      "progressive_runs": 0.10,
+      "offensive_duels_won_pct": 0.08,
+      "dribbles_success": 0.14,
+      "dribbles_attempts": 0.08,
+      "goals_scored": 0.08,
+      "shots_total": 0.06,
+      "shots_on_target": 0.06,
+      "passes_key": 0.08,
+      "assists": 0.06,
+      "fouls_drawn": 0.04,
+      "duels_won": 0.02
     }
   },
   {
@@ -120,16 +134,18 @@
     "allowed_sc_positions": ["AM", "CAM", "CF"],
     "profile_points": ["Receiving between lines", "Link play", "Key passes", "Goal contributions", "Pressing"],
     "metrics": {
-      "passes_key": 0.18,
-      "assists": 0.12,
-      "passes_total": 0.12,
-      "pass_accuracy": 0.10,
-      "goals_scored": 0.10,
-      "shots_total": 0.10,
-      "shots_on_target": 0.08,
-      "fouls_drawn": 0.08,
-      "tackles_total": 0.07,
-      "minutes": 0.05
+      "xa": 0.14,
+      "shot_assists": 0.10,
+      "progressive_runs": 0.08,
+      "passes_key": 0.14,
+      "assists": 0.10,
+      "passes_total": 0.08,
+      "pass_accuracy": 0.06,
+      "goals_scored": 0.08,
+      "shots_total": 0.06,
+      "shots_on_target": 0.06,
+      "fouls_drawn": 0.06,
+      "tackles_total": 0.04
     }
   },
   {
@@ -142,17 +158,21 @@
     "allowed_sc_positions": ["CM", "AM"],
     "profile_points": ["Contribution both boxes", "Repeated sprints and ball success", "Goal threat", "Elite endurance"],
     "metrics": {
-      "passes_total": 0.10,
-      "tackles_total": 0.12,
-      "tackles_interceptions": 0.10,
-      "duels_won": 0.10,
-      "shots_total": 0.10,
-      "shots_on_target": 0.08,
-      "goals_scored": 0.10,
-      "dribbles_success": 0.08,
-      "fouls_drawn": 0.06,
-      "passes_key": 0.08,
-      "minutes": 0.08
+      "xg": 0.08,
+      "xa": 0.06,
+      "ball_recoveries": 0.06,
+      "progressive_passes": 0.08,
+      "progressive_runs": 0.06,
+      "tackles_total": 0.10,
+      "passes_total": 0.08,
+      "tackles_interceptions": 0.08,
+      "duels_won": 0.08,
+      "shots_total": 0.06,
+      "goals_scored": 0.06,
+      "shots_on_target": 0.04,
+      "dribbles_success": 0.06,
+      "passes_key": 0.04,
+      "minutes": 0.06
     }
   },
   {
@@ -165,16 +185,18 @@
     "allowed_sc_positions": ["DM", "CM"],
     "profile_points": ["Influence in possession", "Connector", "Line breaker", "Switch of play", "Mobility"],
     "metrics": {
-      "passes_total": 0.18,
-      "pass_accuracy": 0.18,
+      "progressive_passes": 0.10,
+      "padj_interceptions": 0.10,
+      "ball_recoveries": 0.06,
+      "passes_to_final_third": 0.06,
+      "passes_total": 0.12,
+      "pass_accuracy": 0.12,
+      "tackles_interceptions": 0.10,
+      "tackles_total": 0.08,
+      "duels_won": 0.08,
       "passes_key": 0.06,
-      "tackles_interceptions": 0.14,
-      "tackles_total": 0.12,
-      "duels_won": 0.10,
       "duels_total": 0.06,
-      "fouls_drawn": 0.04,
-      "assists": 0.04,
-      "minutes": 0.08
+      "minutes": 0.06
     }
   },
   {
@@ -188,15 +210,19 @@
     "minimum_height_cm": 180,
     "profile_points": ["Positive defensive action", "Prevented attacks", "First pass quality", "Line breaking", "Size and dominance"],
     "metrics": {
-      "tackles_total": 0.16,
-      "tackles_interceptions": 0.16,
-      "duels_won": 0.14,
-      "duels_total": 0.10,
-      "passes_total": 0.10,
-      "pass_accuracy": 0.10,
-      "passes_key": 0.04,
-      "fouls_committed": 0.04,
-      "minutes": 0.16
+      "padj_interceptions": 0.12,
+      "padj_tackles": 0.06,
+      "defensive_duels_won_pct": 0.08,
+      "aerial_duels": 0.04,
+      "aerial_duels_won_pct": 0.06,
+      "ball_recoveries": 0.06,
+      "tackles_total": 0.12,
+      "tackles_interceptions": 0.12,
+      "duels_won": 0.10,
+      "duels_total": 0.06,
+      "passes_total": 0.06,
+      "pass_accuracy": 0.06,
+      "minutes": 0.06
     }
   },
   {
@@ -209,16 +235,20 @@
     "allowed_sc_positions": ["LWB", "LB"],
     "profile_points": ["Repeated sprints", "Crosses", "Elite endurance", "Tidy in possession"],
     "metrics": {
-      "assists": 0.12,
-      "passes_key": 0.16,
-      "dribbles_success": 0.10,
-      "dribbles_attempts": 0.08,
-      "passes_total": 0.10,
-      "pass_accuracy": 0.08,
+      "xa": 0.06,
+      "crosses": 0.08,
+      "progressive_runs": 0.08,
+      "passes_to_final_third": 0.06,
+      "assists": 0.10,
+      "passes_key": 0.10,
+      "dribbles_success": 0.08,
+      "dribbles_attempts": 0.04,
+      "passes_total": 0.06,
+      "pass_accuracy": 0.06,
       "tackles_total": 0.08,
       "tackles_interceptions": 0.08,
-      "duels_won": 0.08,
-      "minutes": 0.12
+      "duels_won": 0.04,
+      "minutes": 0.08
     }
   },
   {
@@ -231,16 +261,20 @@
     "allowed_sc_positions": ["RWB", "RB"],
     "profile_points": ["Repeated sprints", "Crosses", "Elite endurance", "Tidy in possession"],
     "metrics": {
-      "assists": 0.12,
-      "passes_key": 0.16,
-      "dribbles_success": 0.10,
-      "dribbles_attempts": 0.08,
-      "passes_total": 0.10,
-      "pass_accuracy": 0.08,
+      "xa": 0.06,
+      "crosses": 0.08,
+      "progressive_runs": 0.08,
+      "passes_to_final_third": 0.06,
+      "assists": 0.10,
+      "passes_key": 0.10,
+      "dribbles_success": 0.08,
+      "dribbles_attempts": 0.04,
+      "passes_total": 0.06,
+      "pass_accuracy": 0.06,
       "tackles_total": 0.08,
       "tackles_interceptions": 0.08,
-      "duels_won": 0.08,
-      "minutes": 0.12
+      "duels_won": 0.04,
+      "minutes": 0.08
     }
   },
   {
@@ -254,16 +288,19 @@
     "minimum_height_cm": 178,
     "profile_points": ["Speed and athleticism", "Duels (ground/air)", "Crossing ability", "Steps out with the ball", "Versatility"],
     "metrics": {
-      "duels_won": 0.16,
-      "duels_total": 0.12,
-      "tackles_total": 0.12,
-      "tackles_interceptions": 0.10,
-      "passes_key": 0.08,
-      "assists": 0.06,
-      "dribbles_success": 0.10,
-      "dribbles_attempts": 0.08,
-      "passes_total": 0.10,
-      "minutes": 0.08
+      "defensive_duels_won_pct": 0.08,
+      "ball_recoveries": 0.06,
+      "aerial_duels": 0.10,
+      "aerial_duels_won_pct": 0.06,
+      "padj_interceptions": 0.08,
+      "duels_won": 0.12,
+      "duels_total": 0.08,
+      "tackles_total": 0.10,
+      "tackles_interceptions": 0.08,
+      "dribbles_success": 0.08,
+      "passes_total": 0.06,
+      "passes_key": 0.04,
+      "assists": 0.06
     }
   },
   {
@@ -277,16 +314,19 @@
     "minimum_height_cm": 178,
     "profile_points": ["Speed and athleticism", "Duels (ground/air)", "Crossing ability", "Steps out with the ball", "Versatility"],
     "metrics": {
-      "duels_won": 0.16,
-      "duels_total": 0.12,
-      "tackles_total": 0.12,
-      "tackles_interceptions": 0.10,
-      "passes_key": 0.08,
-      "assists": 0.06,
-      "dribbles_success": 0.10,
-      "dribbles_attempts": 0.08,
-      "passes_total": 0.10,
-      "minutes": 0.08
+      "defensive_duels_won_pct": 0.08,
+      "ball_recoveries": 0.06,
+      "aerial_duels": 0.10,
+      "aerial_duels_won_pct": 0.06,
+      "padj_interceptions": 0.08,
+      "duels_won": 0.12,
+      "duels_total": 0.08,
+      "tackles_total": 0.10,
+      "tackles_interceptions": 0.08,
+      "dribbles_success": 0.08,
+      "passes_total": 0.06,
+      "passes_key": 0.04,
+      "assists": 0.06
     }
   },
   {
@@ -300,15 +340,18 @@
     "minimum_height_cm": 183,
     "profile_points": ["Speed in recovery", "Sprint to receive", "Duels (ground/air)", "Line breaking passes", "Comfortable to step out"],
     "metrics": {
-      "passes_total": 0.18,
-      "pass_accuracy": 0.16,
-      "duels_won": 0.16,
-      "duels_total": 0.12,
-      "tackles_interceptions": 0.12,
-      "tackles_total": 0.08,
-      "passes_key": 0.04,
-      "dribbles_success": 0.04,
-      "minutes": 0.10
+      "aerial_duels": 0.08,
+      "aerial_duels_won_pct": 0.06,
+      "padj_interceptions": 0.06,
+      "progressive_passes": 0.08,
+      "passes_to_final_third": 0.06,
+      "long_pass_accuracy": 0.06,
+      "passes_total": 0.12,
+      "pass_accuracy": 0.10,
+      "duels_won": 0.14,
+      "duels_total": 0.08,
+      "tackles_interceptions": 0.08,
+      "tackles_total": 0.08
     }
   },
   {
@@ -322,15 +365,18 @@
     "minimum_height_cm": 185,
     "profile_points": ["Speed in recovery", "Sprint to receive", "Duels (ground/air)", "Calmness on ball", "Dominant"],
     "metrics": {
-      "duels_won": 0.18,
-      "duels_total": 0.16,
-      "tackles_interceptions": 0.14,
-      "tackles_total": 0.12,
-      "passes_total": 0.10,
-      "pass_accuracy": 0.10,
-      "passes_key": 0.04,
-      "dribbles_success": 0.06,
-      "minutes": 0.10
+      "aerial_duels": 0.10,
+      "aerial_duels_won_pct": 0.08,
+      "defensive_duels_won_pct": 0.08,
+      "padj_interceptions": 0.08,
+      "ball_recoveries": 0.06,
+      "progressive_passes": 0.06,
+      "duels_won": 0.14,
+      "duels_total": 0.10,
+      "tackles_interceptions": 0.10,
+      "tackles_total": 0.08,
+      "passes_total": 0.06,
+      "pass_accuracy": 0.06
     }
   },
   {
@@ -344,15 +390,18 @@
     "minimum_height_cm": 183,
     "profile_points": ["Speed in recovery", "Sprint to receive", "Duels (ground/air)", "Line breaking passes", "Comfortable to step out"],
     "metrics": {
-      "passes_total": 0.18,
-      "pass_accuracy": 0.16,
-      "duels_won": 0.16,
-      "duels_total": 0.12,
-      "tackles_interceptions": 0.12,
-      "tackles_total": 0.08,
-      "passes_key": 0.04,
-      "dribbles_success": 0.04,
-      "minutes": 0.10
+      "aerial_duels": 0.08,
+      "aerial_duels_won_pct": 0.06,
+      "padj_interceptions": 0.06,
+      "progressive_passes": 0.08,
+      "passes_to_final_third": 0.06,
+      "long_pass_accuracy": 0.06,
+      "passes_total": 0.12,
+      "pass_accuracy": 0.10,
+      "duels_won": 0.14,
+      "duels_total": 0.08,
+      "tackles_interceptions": 0.08,
+      "tackles_total": 0.08
     }
   },
   {
@@ -365,11 +414,13 @@
     "allowed_sc_positions": ["GK"],
     "profile_points": ["Calmness on the ball", "Plays beyond a press", "Hit angled balls"],
     "metrics": {
-      "saves": 0.34,
-      "pass_accuracy": 0.24,
-      "passes_total": 0.22,
+      "saves": 0.26,
+      "save_pct": 0.12,
+      "successful_exits": 0.08,
+      "pass_accuracy": 0.20,
+      "passes_total": 0.18,
       "assists": 0.06,
-      "minutes": 0.14
+      "minutes": 0.10
     }
   }
 ]
