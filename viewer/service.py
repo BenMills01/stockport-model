@@ -409,14 +409,10 @@ def get_on_pitch_profiles_context(
         except Exception:
             row["physical_score"] = None
 
-        # On-pitch score blends raw football and physical scores, then applies league strength
-        # so the cross-league board stays comparable while physical remains readable on its own.
-        technical = raw_technical_score
-        physical = row["physical_score"]
-        if technical is not None and physical is not None:
-            raw_on_pitch = round(0.60 * float(technical) + 0.40 * float(physical), 2)
-        else:
-            raw_on_pitch = technical
+        # On-pitch score = technical score only. Physical is an independent column.
+        # Blending physical caused coverage bias (SkillCorner not available for all players)
+        # and double-counted attributes already captured in technical metrics.
+        raw_on_pitch = raw_technical_score
         row["on_pitch_score_raw"] = raw_on_pitch
         row["on_pitch_score"] = _apply_league_strength_factor(raw_on_pitch, strength_factor)
 
