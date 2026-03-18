@@ -7,13 +7,18 @@ from unittest.mock import patch
 
 import pandas as pd
 
-from viewer.service import _combine_dashboard_league_top_fives, _compute_upside_age_adjustment, _load_on_pitch_profile_candidates, _player_age_years
+from viewer.service import _apply_league_strength_factor, _combine_dashboard_league_top_fives, _compute_upside_age_adjustment, _decorate_prediction_row, _load_on_pitch_profile_candidates, _player_age_years
 from viewer.service import _role_names_for_family
 from viewer.service import _load_wyscout_review_rows
 from viewer.service import create_brief_from_form, get_brief_builder_context, get_brief_context, run_brief_longlist
 
 
 class ViewerServiceTests(unittest.TestCase):
+    def test_apply_league_strength_factor_scales_scores(self) -> None:
+        self.assertEqual(_apply_league_strength_factor(50.0, 1.0), 50.0)
+        self.assertEqual(_apply_league_strength_factor(50.0, 0.913), 45.65)
+        self.assertIsNone(_apply_league_strength_factor(None, 0.913))
+
     def test_role_names_for_family_returns_related_profiles(self) -> None:
         role_names = _role_names_for_family("false_9")
 
@@ -52,8 +57,8 @@ class ViewerServiceTests(unittest.TestCase):
         self.assertEqual(len(combined), 1)
         self.assertEqual(combined[0]["league_name"], "Championship")
         self.assertEqual(combined[0]["on_pitch"]["players"][0]["player_name"], "A. Morris")
-        self.assertEqual(combined[0]["present"]["players"][0]["player_name"], "G. McEachran")
-        self.assertEqual(combined[0]["upside"]["players"][0]["player_name"], "J. Varane")
+        self.assertEqual(combined[0]["technical"]["players"][0]["player_name"], "G. McEachran")
+        self.assertEqual(combined[0]["physical"]["players"][0]["player_name"], "J. Varane")
 
     def test_player_age_years_uses_current_age_fallback_when_birth_date_missing(self) -> None:
         self.assertEqual(_player_age_years(None, 28), 28.0)
@@ -96,7 +101,7 @@ class ViewerServiceTests(unittest.TestCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0]["player_name"], "L. Fiorini")
 
-    def test_load_on_pitch_profile_candidates_falls_back_to_role_family_when_exact_role_is_empty(self) -> None:
+    def test_load_on_pitch_profile_candidates_uses_configured_candidate_pool(self) -> None:
         class FakeExecuteResult:
             def mappings(self):
                 return self
@@ -133,19 +138,62 @@ class ViewerServiceTests(unittest.TestCase):
             return_value=FakeSessionScope(),
         ), patch(
             "viewer.service._league_catalog",
-            return_value={40: {"name": "Championship"}},
+            return_value={40: {"name": "Championship", "recruitment_board": True}},
         ):
             result = _load_on_pitch_profile_candidates(
-                role_name="false_9",
+                profile={
+                    "role_name": "point",
+                    "candidate_roles": ["poacher"],
+                    "allowed_sc_positions": ["ST", "CF"],
+                },
                 season="2025",
                 minimum_minutes=180,
                 candidate_limit=250,
             )
 
-        self.assertEqual(result["match_mode"], "role_family")
+        self.assertEqual(result["match_mode"], "configured_pool")
         self.assertTrue(result["match_note"])
         self.assertEqual(len(result["candidates"]), 1)
         self.assertEqual(result["candidates"][0]["player_name"], "Striker One")
+
+    def test_decorate_prediction_row_applies_league_strength_to_on_pitch_sections(self) -> None:
+        row = _decorate_prediction_row(
+            {
+                "player_id": 9,
+                "current_league_id": 41,
+                "composite_score": 42.0,
+                "role_fit_score": 60.0,
+                "l1_performance_score": 50.0,
+                "championship_projection_50th": 5.0,
+                "availability_risk_prob": 0.2,
+                "var_score": 0.01,
+                "model_warnings": [],
+                "component_fallbacks": {},
+                "total_minutes": 900.0,
+            },
+            {41: {"name": "League One", "strength_factor": 0.913}},
+            on_pitch_weights=[
+                {"label": "Role Fit", "percent": 40.0},
+                {"label": "Current", "percent": 35.0},
+                {"label": "Projection", "percent": 25.0},
+            ],
+            present_on_pitch_weights=[
+                {"label": "Role Fit", "percent": 55.0},
+                {"label": "Current", "percent": 45.0},
+            ],
+            upside_on_pitch_weights=[
+                {"label": "Role Fit", "percent": 30.0},
+                {"label": "Projection", "percent": 70.0},
+            ],
+        )
+
+        self.assertEqual(row["league_strength_factor"], 0.913)
+        self.assertAlmostEqual(row["on_pitch_score_raw"], 57.48547717842324)
+        self.assertAlmostEqual(row["on_pitch_score"], 52.48)
+        self.assertAlmostEqual(row["present_on_pitch_score_raw"], 55.5)
+        self.assertAlmostEqual(row["present_on_pitch_score"], 50.67)
+        self.assertAlmostEqual(row["upside_on_pitch_score_raw"], 62.75933609958506)
+        self.assertAlmostEqual(row["upside_on_pitch_score"], 57.3)
 
     def test_get_brief_builder_context_exposes_defaults_and_options(self) -> None:
         context = get_brief_builder_context()

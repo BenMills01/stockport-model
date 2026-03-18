@@ -1,5 +1,5 @@
 {
-  "default_role_name": "controller",
+  "default_role_name": "6",
   "default_season_mode": "latest",
   "minimum_minutes": 180,
   "candidate_limit": 250,

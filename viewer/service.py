@@ -13,19 +13,24 @@ from threading import Lock
 from time import perf_counter
 from typing import Any
 
+import pandas as pd
+from sqlalchemy import select
 from sqlalchemy import text
 
 from config import get_settings
 from db import session_scope
-from features.confidence import minutes_evidence_multiplier
+from db.read_cache import load_player_match_frame
+from db.schema import MatchPerformance
+from features.confidence import compute_confidence, minutes_evidence_multiplier, shrink_low_sample_value
+from features.opposition import compute_opposition_splits
+from features.per90 import _compute_per90_frame
+from features.rolling import compute_rolling
 from governance.pipeline import create_brief as pipeline_create_brief
 from governance.pipeline import generate_longlist, _load_brief_dict
 from ingestion.common import normalise_text
 from ingestion.matching import build_source_lookup_key, save_source_player_mapping
 from ingestion.wyscout_import import LEAGUE_FOLDER_ALIASES, import_wyscout_root
 from models.championship_projection import project_to_championship
-from models.l1_performance import score_l1_performance
-from models.role_fit import get_active_template_for_role, score_role_fit
 from outputs.longlist import generate_longlist_report
 from scoring.action_tiers import board_score_equation, classify_composite_action, composite_to_board_score, load_board_action_tiers, summarise_action_tiers
 from scoring.composite import effective_layer_weights, projection_score_from_logged_p50
@@ -49,8 +54,11 @@ _AGE_CURVE_BY_ROLE_FAMILY = {
     "full_back_wing_back": "full_back_wing_back",
     "midfield": "central_midfielder",
     "transition_midfield": "central_midfielder",
+    "central_midfielder": "central_midfielder",
     "wide_creator_runner": "wide_attacker_winger",
+    "wide_attacker_winger": "wide_attacker_winger",
     "striker": "striker",
+    "goalkeeper": "goalkeeper",
 }
 
 
@@ -236,6 +244,8 @@ def get_on_pitch_profiles_context(
     """Build a brief-free on-pitch dashboard for a selected role profile."""
 
     config = _on_pitch_dashboard_config()
+    profile_map = _on_pitch_profile_map()
+    physical_profile_map = _on_pitch_physical_profile_map()
     role_options = _on_pitch_role_options()
     season_options = _on_pitch_season_options()
     selected_role = role_name or str(config.get("default_role_name") or (role_options[0][0] if role_options else "controller"))
@@ -248,10 +258,15 @@ def get_on_pitch_profiles_context(
     overall_weights = _dashboard_weight_rows("score_weights_pct")
     present_weights = _dashboard_weight_rows("present_weights_pct")
     upside_weights = _dashboard_weight_rows("upside_weights_pct")
-    role_family = _role_family_for_role(selected_role)
+    profile = profile_map.get(selected_role)
+    role_family = (str(profile.get("role_family") or "") or None) if profile else None
+    selected_physical_profile = (
+        physical_profile_map.get(str(profile.get("physical_profile") or "").strip())
+        if profile
+        else None
+    )
 
-    template = get_active_template_for_role(selected_role)
-    if template is None:
+    if profile is None:
         return {
             "title": "On-Pitch Profiles",
             "generated_at": datetime.now(),
@@ -260,6 +275,11 @@ def get_on_pitch_profiles_context(
             "selected_role": selected_role,
             "selected_role_family": role_family,
             "selected_season": selected_season,
+            "selected_profile_label": selected_role.upper(),
+            "selected_profile_points": [],
+            "selected_physical_label": None,
+            "selected_physical_points": [],
+            "selected_physical_blend": [],
             "overall_weights": overall_weights,
             "present_weights": present_weights,
             "upside_weights": upside_weights,
@@ -282,21 +302,35 @@ def get_on_pitch_profiles_context(
         }
 
     candidate_bundle = _load_on_pitch_profile_candidates(
-        role_name=selected_role,
+        profile=profile,
         season=selected_season,
         minimum_minutes=int(config.get("minimum_minutes") or 0),
         candidate_limit=int(config.get("candidate_limit") or 250),
     )
     candidates = list(candidate_bundle.get("candidates") or [])
     league_catalog = _league_catalog()
+    metric_frame = _load_on_pitch_metric_frame(
+        tuple(sorted(int(candidate["player_id"]) for candidate in candidates)),
+        selected_season,
+    )
 
     rows: list[dict[str, Any]] = []
     skipped_count = 0
     peer_player_ids = [c["player_id"] for c in candidates]
     for candidate in candidates:
         try:
-            role_fit = score_role_fit(candidate["player_id"], template.template_id, selected_season)
-            current = score_l1_performance(candidate["player_id"], selected_season, selected_role)
+            role_fit = _score_on_pitch_profile_fit(
+                player_id=int(candidate["player_id"]),
+                season=selected_season,
+                metrics=dict(profile.get("metrics") or {}),
+                metric_frame=metric_frame,
+            )
+            current = _score_on_pitch_profile_current(
+                player_id=int(candidate["player_id"]),
+                season=selected_season,
+                metrics=dict(profile.get("metrics") or {}),
+                metric_frame=metric_frame,
+            )
             projection = project_to_championship(candidate["player_id"], selected_season, brief=None)
             projection_score = _projection_score_from_projection_bundle(projection)
         except Exception:
@@ -319,45 +353,68 @@ def get_on_pitch_profiles_context(
         row["unknown_age_penalty_multiplier"] = age_penalty_multiplier
 
         # Technical score = weighted blend of role fit, current performance, projection
-        row["technical_score"] = _compute_dashboard_weighted_score(
+        raw_technical_score = _compute_dashboard_weighted_score(
             row,
             weight_rows=overall_weights,
             fields={"Role Fit": "role_fit_score", "Current": "current_score", "Projection": "projection_score"},
             soft_minutes_multiplier=soft_multiplier,
         )
-        row["present_on_pitch_score"] = _compute_dashboard_weighted_score(
+        raw_present_score = _compute_dashboard_weighted_score(
             row,
             weight_rows=present_weights,
             fields={"Role Fit": "role_fit_score", "Current": "current_score"},
             soft_minutes_multiplier=soft_multiplier,
         )
-        row["upside_on_pitch_score"] = _compute_dashboard_weighted_score(
+        raw_upside_score = _compute_dashboard_weighted_score(
             row,
             weight_rows=upside_weights,
             fields={"Role Fit": "role_fit_score", "Projection": "projection_score", "Age": "age_upside_score"},
             soft_minutes_multiplier=soft_multiplier * age_penalty_multiplier,
         )
+        row["technical_score_raw"] = raw_technical_score
+        row["present_on_pitch_score_raw"] = raw_present_score
+        row["upside_on_pitch_score_raw"] = raw_upside_score
 
-        # Apply league strength factor to technical score
         league_id = candidate.get("current_league_id")
         strength_factor = float(league_catalog.get(league_id, {}).get("strength_factor") or 1.0)
-        raw_technical = row["technical_score"]
-        row["technical_score"] = round(float(raw_technical) * strength_factor, 2) if raw_technical is not None else None
         row["league_strength_factor"] = strength_factor
+        row["technical_score"] = _apply_league_strength_factor(raw_technical_score, strength_factor)
+        row["present_on_pitch_score"] = _apply_league_strength_factor(raw_present_score, strength_factor)
+        row["upside_on_pitch_score"] = _apply_league_strength_factor(raw_upside_score, strength_factor)
 
         # Physical score = peer-percentile ranked SkillCorner metrics (None if no SC data)
         try:
-            row["physical_score"] = score_physical(candidate["player_id"], peer_player_ids)
+            physical_weights = selected_physical_profile.get("physical_weights") if selected_physical_profile else None
+            gi_weights = selected_physical_profile.get("gi_weights") if selected_physical_profile else None
+            row["physical_score"] = score_physical(
+                candidate["player_id"],
+                peer_player_ids,
+                physical_weights=dict(physical_weights) if isinstance(physical_weights, dict) and physical_weights else None,
+                gi_weights=dict(gi_weights) if isinstance(gi_weights, dict) and gi_weights else None,
+                physical_sub_weight=(
+                    float(selected_physical_profile["physical_sub_weight"])
+                    if selected_physical_profile and "physical_sub_weight" in selected_physical_profile
+                    else None
+                ),
+                gi_sub_weight=(
+                    float(selected_physical_profile["gi_sub_weight"])
+                    if selected_physical_profile and "gi_sub_weight" in selected_physical_profile
+                    else None
+                ),
+            )
         except Exception:
             row["physical_score"] = None
 
-        # On-pitch score = 60% technical + 40% physical; falls back to technical when no SC data
-        technical = row["technical_score"]
+        # On-pitch score blends raw football and physical scores, then applies league strength
+        # so the cross-league board stays comparable while physical remains readable on its own.
+        technical = raw_technical_score
         physical = row["physical_score"]
         if technical is not None and physical is not None:
-            row["on_pitch_score"] = round(0.60 * float(technical) + 0.40 * float(physical), 2)
+            raw_on_pitch = round(0.60 * float(technical) + 0.40 * float(physical), 2)
         else:
-            row["on_pitch_score"] = technical
+            raw_on_pitch = technical
+        row["on_pitch_score_raw"] = raw_on_pitch
+        row["on_pitch_score"] = _apply_league_strength_factor(raw_on_pitch, strength_factor)
 
         rows.append(row)
 
@@ -415,11 +472,24 @@ def get_on_pitch_profiles_context(
         "role_options": role_options,
         "season_options": season_options,
         "selected_role": selected_role,
+        "selected_profile_label": str(profile.get("label") or selected_role.upper()),
+        "selected_profile_points": list(profile.get("profile_points") or []),
         "selected_role_family": role_family,
         "selected_season": selected_season,
         "candidate_match_mode": candidate_bundle.get("match_mode", "exact_role"),
         "candidate_match_note": candidate_bundle.get("match_note"),
         "candidate_match_roles": list(candidate_bundle.get("match_roles") or [selected_role]),
+        "selected_physical_label": (
+            str(selected_physical_profile.get("label") or "")
+            if selected_physical_profile
+            else None
+        ),
+        "selected_physical_points": list(
+            selected_physical_profile.get("profile_points") or []
+        )
+        if selected_physical_profile
+        else [],
+        "selected_physical_blend": _physical_blend_rows(selected_physical_profile),
         "overall_weights": overall_weights,
         "present_weights": present_weights,
         "upside_weights": upside_weights,
@@ -450,17 +520,35 @@ def _on_pitch_dashboard_config() -> dict[str, Any]:
     return dict(get_settings().load_json("on_pitch_dashboard.json"))
 
 
+def _on_pitch_profile_payloads() -> list[dict[str, Any]]:
+    return list(get_settings().load_json("on_pitch_profiles.json"))
+
+
+def _on_pitch_profile_map() -> dict[str, dict[str, Any]]:
+    return {
+        str(profile.get("role_name")): dict(profile)
+        for profile in _on_pitch_profile_payloads()
+        if str(profile.get("role_name") or "").strip()
+    }
+
+
+def _on_pitch_physical_profile_map() -> dict[str, dict[str, Any]]:
+    payload = get_settings().load_json("on_pitch_physical_profiles.json")
+    return {
+        str(profile_name): dict(profile)
+        for profile_name, profile in dict(payload).items()
+        if str(profile_name or "").strip()
+    }
+
+
 def _on_pitch_role_options() -> list[tuple[str, str | None]]:
-    templates = get_settings().load_json("role_templates.json")
-    seen: set[str] = set()
     options: list[tuple[str, str | None]] = []
-    for template in templates:
-        role_name = str(template.get("role_name") or "").strip()
-        if not role_name or role_name in seen:
+    for profile in _on_pitch_profile_payloads():
+        role_name = str(profile.get("role_name") or "").strip()
+        if not role_name:
             continue
-        seen.add(role_name)
-        options.append((role_name, template.get("role_family")))
-    return sorted(options, key=lambda item: ((item[1] or ""), item[0]))
+        options.append((role_name, profile.get("role_family")))
+    return options
 
 
 def _on_pitch_season_options() -> list[str]:
@@ -493,22 +581,39 @@ def _dashboard_weight_rows(config_key: str) -> list[dict[str, Any]]:
     ]
 
 
+def _physical_blend_rows(profile: dict[str, Any] | None) -> list[dict[str, Any]]:
+    if not profile:
+        return []
+    physical_pct = 100.0 * float(profile.get("physical_sub_weight") or 0.0)
+    gi_pct = 100.0 * float(profile.get("gi_sub_weight") or 0.0)
+    total = physical_pct + gi_pct
+    if total <= 0.0:
+        return []
+    return [
+        {"label": "Physical Output", "percent": round(physical_pct / total, 1)},
+        {"label": "Pressure / GI", "percent": round(gi_pct / total, 1)},
+    ]
+
+
 def _load_on_pitch_profile_candidates(
     *,
-    role_name: str,
+    profile: dict[str, Any],
     season: str,
     minimum_minutes: int,
     candidate_limit: int,
 ) -> dict[str, Any]:
     league_catalog = _league_catalog()
-    tracked_leagues = {int(league_id) for league_id in league_catalog}
-    role_rules = get_settings().load_json("role_profile_rules.json").get(role_name) or {}
-    minimum_height_cm = role_rules.get("minimum_height_cm")
-    allowed_primary_families: set[str] | None = (
-        set(role_rules["allowed_primary_families"]) if role_rules.get("allowed_primary_families") else None
-    )
+    role_name = str(profile.get("role_name") or "")
+    minimum_height_cm = profile.get("minimum_height_cm")
+    candidate_roles = {
+        str(value).strip()
+        for value in (profile.get("candidate_roles") or [])
+        if str(value or "").strip()
+    }
     allowed_sc_positions: set[str] | None = (
-        set(role_rules["allowed_sc_positions"]) if role_rules.get("allowed_sc_positions") else None
+        {str(value).upper() for value in (profile.get("allowed_sc_positions") or []) if str(value or "").strip()}
+        if profile.get("allowed_sc_positions")
+        else None
     )
     recruitment_leagues = {
         int(league_id)
@@ -564,57 +669,28 @@ def _load_on_pitch_profile_candidates(
             {"season": season},
         ).mappings().all()
 
-    exact_candidates = _filter_on_pitch_profile_candidates(
+    candidates = _filter_on_pitch_profile_candidates(
         rows,
-        role_names={role_name},
+        role_names=candidate_roles or {role_name},
         tracked_leagues=recruitment_leagues,
         minimum_minutes=minimum_minutes,
         minimum_height_cm=minimum_height_cm,
-        allowed_primary_families=allowed_primary_families,
         allowed_sc_positions=allowed_sc_positions,
         league_catalog=league_catalog,
         candidate_limit=candidate_limit,
     )
-    if exact_candidates:
-        return {
-            "candidates": exact_candidates,
-            "match_mode": "exact_role",
-            "match_roles": [role_name],
-            "match_note": None,
-        }
-
-    family_roles = _role_names_for_family(role_name)
-    if family_roles and set(family_roles) != {role_name}:
-        family_candidates = _filter_on_pitch_profile_candidates(
-            rows,
-            role_names=set(family_roles),
-            tracked_leagues=recruitment_leagues,
-            minimum_minutes=minimum_minutes,
-            minimum_height_cm=minimum_height_cm,
-            allowed_primary_families=allowed_primary_families,
-            allowed_sc_positions=allowed_sc_positions,
-            league_catalog=league_catalog,
-            candidate_limit=candidate_limit,
+    match_roles = sorted(candidate_roles or {role_name})
+    note = None
+    if match_roles:
+        note = (
+            f"This Stockport profile is using the underlying candidate pool "
+            f"({', '.join(match_roles)}) and then scoring those players against the {role_name.upper()} template."
         )
-        if family_candidates:
-            role_family = _role_family_for_role(role_name)
-            family_label = str(role_family or "related roles").replace("_", " ")
-            return {
-                "candidates": family_candidates,
-                "match_mode": "role_family",
-                "match_roles": family_roles,
-                "match_note": (
-                    f"No exact {role_name} labels cleared the current {season} filters, "
-                    f"so this board is using the wider {family_label} family and then scoring "
-                    f"those players against the {role_name} template."
-                ),
-            }
-
     return {
-        "candidates": [],
-        "match_mode": "exact_role",
-        "match_roles": [role_name],
-        "match_note": None,
+        "candidates": candidates,
+        "match_mode": "configured_pool",
+        "match_roles": match_roles or [role_name],
+        "match_note": note,
     }
 
 
@@ -625,18 +701,10 @@ def _filter_on_pitch_profile_candidates(
     tracked_leagues: set[int],
     minimum_minutes: int,
     minimum_height_cm: float | None,
-    allowed_primary_families: set[str] | None,
     allowed_sc_positions: set[str] | None,
     league_catalog: dict[int, dict[str, Any]],
     candidate_limit: int,
 ) -> list[dict[str, Any]]:
-    role_family_cache: dict[str, str | None] = {}
-
-    def _primary_family(primary_role: str) -> str | None:
-        if primary_role not in role_family_cache:
-            role_family_cache[primary_role] = _role_family_for_role(primary_role)
-        return role_family_cache[primary_role]
-
     candidates: list[dict[str, Any]] = []
     for row in rows:
         player_roles = {
@@ -645,10 +713,6 @@ def _filter_on_pitch_profile_candidates(
         }
         if not player_roles.intersection(role_names):
             continue
-        if allowed_primary_families is not None:
-            primary_role = str(row.get("primary_role") or "").strip()
-            if _primary_family(primary_role) not in allowed_primary_families:
-                continue
         modal_sc_pos = row.get("modal_sc_position")
         if allowed_sc_positions is not None and modal_sc_pos is not None:
             if str(modal_sc_pos).upper() not in allowed_sc_positions:
@@ -692,6 +756,158 @@ def _filter_on_pitch_profile_candidates(
     return candidates
 
 
+def _load_on_pitch_metric_frame(player_ids_key: tuple[int, ...], season: str) -> pd.DataFrame:
+    if not player_ids_key:
+        return pd.DataFrame()
+    with session_scope() as session:
+        rows = list(
+            session.scalars(
+                select(MatchPerformance).where(
+                    MatchPerformance.season == season,
+                    MatchPerformance.player_id.in_(player_ids_key),
+                )
+            )
+        )
+    frame = pd.DataFrame([_match_performance_row_to_dict(row) for row in rows])
+    if frame.empty:
+        return pd.DataFrame()
+    per90 = _compute_per90_frame(frame)
+    if per90.empty:
+        return pd.DataFrame()
+
+    per90_columns = [column for column in per90.columns if column.endswith("_per90")]
+    aggregations: dict[str, Any] = {column: "mean" for column in per90_columns}
+    if "pass_accuracy" in per90.columns:
+        aggregations["pass_accuracy"] = "mean"
+    aggregations["minutes"] = "sum"
+    aggregations["league_id"] = _mode_value
+    return per90.groupby("player_id", as_index=False).agg(aggregations)
+
+
+def _score_on_pitch_profile_fit(
+    *,
+    player_id: int,
+    season: str,
+    metrics: dict[str, float],
+    metric_frame: pd.DataFrame,
+) -> dict[str, Any]:
+    if metric_frame.empty:
+        raise ValueError("No on-pitch metric frame available")
+
+    target = metric_frame[metric_frame["player_id"] == player_id]
+    if target.empty:
+        raise ValueError(f"No metric row found for player {player_id}")
+
+    target_row = target.iloc[0]
+    player_league_id = int(target_row["league_id"])
+    peers = metric_frame[metric_frame["league_id"] == player_league_id].copy()
+    if peers.empty:
+        peers = metric_frame.copy()
+
+    contributions: dict[str, dict[str, float]] = {}
+    raw_score = 0.0
+    percentile_scores: dict[str, float] = {}
+    for metric_name, weight in metrics.items():
+        metric_column = "pass_accuracy" if metric_name == "pass_accuracy" else f"{metric_name}_per90"
+        if metric_column not in peers.columns:
+            continue
+        peer_values = pd.to_numeric(peers[metric_column], errors="coerce").dropna()
+        player_value = _parse_optional_float(target_row.get(metric_column))
+        percentile = _percentile_from_series(player_value, peer_values)
+        percentile_scores[metric_name] = percentile
+        contribution = float(weight) * percentile
+        raw_score += contribution
+        contributions[metric_name] = {
+            "player_percentile": percentile,
+            "weight": float(weight),
+            "contribution": contribution,
+        }
+
+    confidence = compute_confidence(player_id, season)
+    shrinkage_factor = float(confidence.get("shrinkage_factor", 1.0) or 1.0)
+    score = shrink_low_sample_value(
+        player_value=raw_score,
+        league_role_average=50.0,
+        shrinkage_factor=shrinkage_factor,
+    )
+    return {
+        "score": float(max(0.0, min(100.0, score))),
+        "raw_score": float(max(0.0, min(100.0, raw_score))),
+        "shrinkage_factor": shrinkage_factor,
+        "decomposition": contributions,
+        "percentiles": percentile_scores,
+        "confidence_tier": confidence["confidence_tier"],
+    }
+
+
+def _score_on_pitch_profile_current(
+    *,
+    player_id: int,
+    season: str,
+    metrics: dict[str, float],
+    metric_frame: pd.DataFrame,
+) -> dict[str, Any]:
+    role_fit = _score_on_pitch_profile_fit(
+        player_id=player_id,
+        season=season,
+        metrics=metrics,
+        metric_frame=metric_frame,
+    )
+    opposition = compute_opposition_splits(player_id=player_id, season=season)
+    match_frame = load_player_match_frame(player_id, season).copy()
+    per90 = _compute_per90_frame(match_frame)
+    rolling = compute_rolling(per90)
+
+    total_weight = sum(float(weight) for weight in metrics.values()) or 1.0
+    role_metric_score = float(role_fit.get("raw_score") or 0.0)
+    consistency_sum = 0.0
+    slope_numerator = 0.0
+    slope_denominator = 0.0
+    tier1_sum = 0.0
+
+    for metric_name, raw_weight in metrics.items():
+        weight = float(raw_weight) / total_weight
+        roll_info = rolling.get(metric_name, {})
+        opp_info = opposition.get(metric_name) or {}
+        consistency_sum += _consistency_to_score(roll_info.get("roll_10_cv")) * weight
+        slope = roll_info.get("trend_slope_10")
+        if slope is not None:
+            slope_numerator += float(slope) * weight
+            slope_denominator += weight
+        tier1_sum += _tier1_percentile_score(
+            tier1_value=opp_info.get("tier1"),
+            baseline_value=opp_info.get("tier3"),
+        ) * weight
+
+    consistency_score = consistency_sum
+    weighted_slope: float | None = (slope_numerator / slope_denominator) if slope_denominator > 0.0 else None
+    trend_score = _trend_to_score(weighted_slope)
+    vs_tier1_percentile = tier1_sum
+    raw_score = (
+        (0.50 * role_metric_score)
+        + (0.20 * consistency_score)
+        + (0.15 * trend_score)
+        + (0.15 * vs_tier1_percentile)
+    )
+
+    confidence = compute_confidence(player_id, season)
+    shrinkage_factor = float(confidence.get("shrinkage_factor", 1.0) or 1.0)
+    score = shrink_low_sample_value(
+        player_value=raw_score,
+        league_role_average=50.0,
+        shrinkage_factor=shrinkage_factor,
+    )
+    return {
+        "score": float(max(0.0, min(100.0, score))),
+        "raw_score": float(max(0.0, min(100.0, raw_score))),
+        "shrinkage_factor": shrinkage_factor,
+        "percentile_in_role": role_metric_score,
+        "form_trend": _trend_label(weighted_slope),
+        "consistency": consistency_score,
+        "vs_tier1_percentile": vs_tier1_percentile,
+    }
+
+
 def _projection_score_from_projection_bundle(bundle: dict[str, Any]) -> float:
     performances = bundle.get("projected_performance") or {}
     if not performances:
@@ -707,6 +923,9 @@ def _projection_score_from_projection_bundle(bundle: dict[str, Any]) -> float:
 
 
 def _role_family_for_role(role_name: str) -> str | None:
+    profile = _on_pitch_profile_map().get(role_name)
+    if profile is not None:
+        return str(profile.get("role_family") or "") or None
     templates = get_settings().load_json("role_templates.json")
     for template in templates:
         if str(template.get("role_name")) == role_name:
@@ -727,6 +946,54 @@ def _role_names_for_family(role_name: str) -> list[str]:
     if role_name not in role_names:
         role_names.append(role_name)
     return sorted(dict.fromkeys(role_names))
+
+
+def _percentile_from_series(player_value: float | None, peer_values: pd.Series) -> float:
+    if player_value is None or peer_values.empty:
+        return 0.0
+    return float((peer_values <= player_value).mean() * 100.0)
+
+
+def _mode_value(series: pd.Series) -> Any:
+    modes = series.mode(dropna=True)
+    if not modes.empty:
+        return modes.iloc[0]
+    non_null = series.dropna()
+    return non_null.iloc[0] if not non_null.empty else None
+
+
+def _match_performance_row_to_dict(row: MatchPerformance) -> dict[str, Any]:
+    return {
+        column.name: getattr(row, column.name)
+        for column in MatchPerformance.__table__.columns
+    }
+
+
+def _consistency_to_score(cv: float | None) -> float:
+    if cv is None:
+        return 50.0
+    return float(max(0.0, min(100.0, 100.0 / (1.0 + cv))))
+
+
+def _trend_to_score(trend_slope: float | None) -> float:
+    if trend_slope is None:
+        return 50.0
+    return float(max(0.0, min(100.0, 50.0 + (trend_slope * 50.0))))
+
+
+def _trend_label(trend_slope: float | None) -> str:
+    if trend_slope is None or abs(trend_slope) < 0.02:
+        return "stable"
+    return "improving" if trend_slope > 0 else "declining"
+
+
+def _tier1_percentile_score(*, tier1_value: float | None, baseline_value: float | None) -> float:
+    if tier1_value is None:
+        return 50.0
+    if baseline_value is None or baseline_value == 0:
+        return 100.0 if tier1_value > 0 else 50.0
+    ratio = tier1_value / baseline_value
+    return float(max(0.0, min(100.0, ratio * 50.0)))
 
 
 def _player_age_years(birth_date: Any, current_age_years: Any = None) -> float | None:
@@ -757,8 +1024,11 @@ def _compute_upside_age_adjustment(*, role_name: str, age_years: float | None) -
         )
 
     curves = get_settings().load_json("age_curves.json")
-    role_family = _role_family_for_role(role_name)
-    curve_key = _AGE_CURVE_BY_ROLE_FAMILY.get(str(role_family))
+    profile = _on_pitch_profile_map().get(role_name)
+    curve_key = str(profile.get("age_curve_key") or "") if profile else ""
+    if not curve_key:
+        role_family = _role_family_for_role(role_name)
+        curve_key = str(_AGE_CURVE_BY_ROLE_FAMILY.get(str(role_family)) or "")
     if not curve_key or curve_key not in curves:
         return 50.0, 1.0
 
@@ -2244,9 +2514,10 @@ def _decorate_prediction_row(
     present_on_pitch_weights: list[dict[str, Any]],
     upside_on_pitch_weights: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    row_dict["league_name"] = league_catalog.get(int(row_dict["current_league_id"]), {}).get(
-        "name", f"League {row_dict['current_league_id']}"
-    )
+    league_meta = league_catalog.get(int(row_dict["current_league_id"]), {})
+    row_dict["league_name"] = league_meta.get("name", f"League {row_dict['current_league_id']}")
+    strength_factor = float(league_meta.get("strength_factor") or 1.0)
+    row_dict["league_strength_factor"] = strength_factor
     row_dict["board_score"] = composite_to_board_score(row_dict.get("composite_score"))
     row_dict["projection_score"] = projection_score_from_logged_p50(row_dict.get("championship_projection_50th"))
     row_dict["current_score"] = float(row_dict.get("l1_performance_score") or 0.0)
@@ -2256,14 +2527,14 @@ def _decorate_prediction_row(
     row_dict["model_warnings"] = list(row_dict.get("model_warnings") or [])
     row_dict["component_fallbacks"] = dict(row_dict.get("component_fallbacks") or {})
     row_dict["soft_minutes_multiplier"] = _soft_on_pitch_minutes_multiplier(row_dict.get("total_minutes"))
-    row_dict["on_pitch_score"] = _compute_on_pitch_score(
+    raw_on_pitch_score = _compute_on_pitch_score(
         role_fit_score=row_dict.get("role_fit_score"),
         current_score=row_dict.get("current_score"),
         projection_score=row_dict.get("projection_score"),
         on_pitch_weights=on_pitch_weights,
         soft_minutes_multiplier=row_dict["soft_minutes_multiplier"],
     )
-    row_dict["present_on_pitch_score"] = _compute_dual_component_score(
+    raw_present_score = _compute_dual_component_score(
         left_score=row_dict.get("role_fit_score"),
         right_score=row_dict.get("current_score"),
         weight_rows=present_on_pitch_weights,
@@ -2271,7 +2542,7 @@ def _decorate_prediction_row(
         right_label="Current",
         soft_minutes_multiplier=row_dict["soft_minutes_multiplier"],
     )
-    row_dict["upside_on_pitch_score"] = _compute_dual_component_score(
+    raw_upside_score = _compute_dual_component_score(
         left_score=row_dict.get("role_fit_score"),
         right_score=row_dict.get("projection_score"),
         weight_rows=upside_on_pitch_weights,
@@ -2279,6 +2550,12 @@ def _decorate_prediction_row(
         right_label="Projection",
         soft_minutes_multiplier=row_dict["soft_minutes_multiplier"],
     )
+    row_dict["on_pitch_score_raw"] = raw_on_pitch_score
+    row_dict["present_on_pitch_score_raw"] = raw_present_score
+    row_dict["upside_on_pitch_score_raw"] = raw_upside_score
+    row_dict["on_pitch_score"] = _apply_league_strength_factor(raw_on_pitch_score, strength_factor)
+    row_dict["present_on_pitch_score"] = _apply_league_strength_factor(raw_present_score, strength_factor)
+    row_dict["upside_on_pitch_score"] = _apply_league_strength_factor(raw_upside_score, strength_factor)
     return row_dict
 
 
@@ -2321,6 +2598,17 @@ def _compute_dual_component_score(
         + (float(right_score or 0.0) * weight_lookup[right_label])
     )
     return base_score * soft_minutes_multiplier
+
+
+def _apply_league_strength_factor(score: Any, strength_factor: Any) -> float | None:
+    if score is None:
+        return None
+    try:
+        score_value = float(score)
+        factor_value = float(strength_factor or 1.0)
+    except (TypeError, ValueError):
+        return None
+    return round(score_value * factor_value, 2)
 
 
 def _soft_on_pitch_minutes_multiplier(total_minutes: Any) -> float:

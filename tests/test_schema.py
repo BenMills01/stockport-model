@@ -33,6 +33,12 @@ EXPECTED_TABLES = {
     "wyscout_season_stats",
     "source_player_mappings",
     "pathway_players",
+    "skillcorner_player_map",
+    "skillcorner_match_map",
+    "skillcorner_physical",
+    "skillcorner_off_ball_runs",
+    "skillcorner_pressure",
+    "skillcorner_passes",
 }
 
 

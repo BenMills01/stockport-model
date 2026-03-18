@@ -1,0 +1,292 @@
+{
+  "stretch_striker": {
+    "label": "Stretch Striker",
+    "profile_points": ["Top speed", "Sprint distance", "Repeat sprint threat", "Runs beyond"],
+    "physical_sub_weight": 0.88,
+    "gi_sub_weight": 0.12,
+    "physical_weights": {
+      "sc_physical_sprint_dist_per_match": 0.22,
+      "sc_physical_top_speed_per_match": 0.20,
+      "sc_physical_count_sprint_per_match": 0.16,
+      "sc_physical_hsr_dist_per_match": 0.16,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_count_high_accel_per_match": 0.08,
+      "sc_physical_count_high_decel_per_match": 0.04,
+      "sc_physical_dist_per_match": 0.04
+    },
+    "gi_weights": {
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.35,
+      "sc_passes_opportunity_take_rate": 0.25,
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.20,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.20
+    }
+  },
+  "link_striker": {
+    "label": "Link Striker",
+    "profile_points": ["Work rate", "Acceleration and deceleration", "Pressure retention", "Link actions"],
+    "physical_sub_weight": 0.75,
+    "gi_sub_weight": 0.25,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.16,
+      "sc_physical_hsr_dist_per_match": 0.14,
+      "sc_physical_sprint_dist_per_match": 0.12,
+      "sc_physical_count_hsr_per_match": 0.12,
+      "sc_physical_count_sprint_per_match": 0.10,
+      "sc_physical_count_high_accel_per_match": 0.12,
+      "sc_physical_count_high_decel_per_match": 0.12,
+      "sc_physical_top_speed_per_match": 0.12
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.35,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.30,
+      "sc_passes_opportunity_take_rate": 0.20,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.15
+    }
+  },
+  "box_finisher": {
+    "label": "Box Finisher",
+    "profile_points": ["Short sharp bursts", "Explosive actions", "Sprint count", "Box movement"],
+    "physical_sub_weight": 0.85,
+    "gi_sub_weight": 0.15,
+    "physical_weights": {
+      "sc_physical_count_high_accel_per_match": 0.18,
+      "sc_physical_count_sprint_per_match": 0.18,
+      "sc_physical_sprint_dist_per_match": 0.16,
+      "sc_physical_top_speed_per_match": 0.14,
+      "sc_physical_count_high_decel_per_match": 0.12,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_hsr_dist_per_match": 0.08,
+      "sc_physical_dist_per_match": 0.04
+    },
+    "gi_weights": {
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.25,
+      "sc_passes_opportunity_take_rate": 0.25,
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.25,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.25
+    }
+  },
+  "wide_runner": {
+    "label": "Wide Runner",
+    "profile_points": ["Pace", "Repeat sprinting", "Explosive carry actions", "Run threat"],
+    "physical_sub_weight": 0.9,
+    "gi_sub_weight": 0.1,
+    "physical_weights": {
+      "sc_physical_top_speed_per_match": 0.24,
+      "sc_physical_sprint_dist_per_match": 0.22,
+      "sc_physical_count_sprint_per_match": 0.18,
+      "sc_physical_hsr_dist_per_match": 0.14,
+      "sc_physical_count_hsr_per_match": 0.08,
+      "sc_physical_count_high_accel_per_match": 0.08,
+      "sc_physical_count_high_decel_per_match": 0.04,
+      "sc_physical_dist_per_match": 0.02
+    },
+    "gi_weights": {
+      "sc_passes_opportunity_take_rate": 0.30,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.25,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.25,
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.20
+    }
+  },
+  "dynamic_creator": {
+    "label": "Dynamic Creator",
+    "profile_points": ["Mobility in pockets", "Sharp changes of direction", "Pressure resistance", "Quick release"],
+    "physical_sub_weight": 0.72,
+    "gi_sub_weight": 0.28,
+    "physical_weights": {
+      "sc_physical_count_high_accel_per_match": 0.18,
+      "sc_physical_count_high_decel_per_match": 0.16,
+      "sc_physical_hsr_dist_per_match": 0.14,
+      "sc_physical_dist_per_match": 0.12,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_sprint_dist_per_match": 0.10,
+      "sc_physical_count_sprint_per_match": 0.10,
+      "sc_physical_top_speed_per_match": 0.10
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.35,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.35,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.15,
+      "sc_passes_opportunity_take_rate": 0.15
+    }
+  },
+  "box_midfielder": {
+    "label": "Box Midfielder",
+    "profile_points": ["Total distance", "High-speed volume", "Repeat actions", "Engine"],
+    "physical_sub_weight": 0.82,
+    "gi_sub_weight": 0.18,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.22,
+      "sc_physical_hsr_dist_per_match": 0.18,
+      "sc_physical_count_hsr_per_match": 0.14,
+      "sc_physical_sprint_dist_per_match": 0.10,
+      "sc_physical_count_sprint_per_match": 0.10,
+      "sc_physical_count_high_accel_per_match": 0.10,
+      "sc_physical_count_high_decel_per_match": 0.08,
+      "sc_physical_top_speed_per_match": 0.08
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.30,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.25,
+      "sc_passes_opportunity_take_rate": 0.25,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.20
+    }
+  },
+  "controller_midfielder": {
+    "label": "Controller Midfielder",
+    "profile_points": ["Mobility over long phases", "Acceleration to receive", "Pressure retention", "Passing security"],
+    "physical_sub_weight": 0.65,
+    "gi_sub_weight": 0.35,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.16,
+      "sc_physical_count_high_accel_per_match": 0.16,
+      "sc_physical_count_high_decel_per_match": 0.14,
+      "sc_physical_hsr_dist_per_match": 0.12,
+      "sc_physical_intensity_index": 0.12,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_sprint_dist_per_match": 0.07,
+      "sc_physical_count_sprint_per_match": 0.07,
+      "sc_physical_top_speed_per_match": 0.06
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.35,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.35,
+      "sc_passes_opportunity_take_rate": 0.20,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.10
+    }
+  },
+  "anchor_midfielder": {
+    "label": "Anchor Midfielder",
+    "profile_points": ["Coverage", "Braking and turning", "Repeat duel actions", "Secure under pressure"],
+    "physical_sub_weight": 0.72,
+    "gi_sub_weight": 0.28,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.18,
+      "sc_physical_intensity_index": 0.14,
+      "sc_physical_count_high_accel_per_match": 0.14,
+      "sc_physical_count_high_decel_per_match": 0.14,
+      "sc_physical_hsr_dist_per_match": 0.10,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_sprint_dist_per_match": 0.08,
+      "sc_physical_count_sprint_per_match": 0.06,
+      "sc_physical_top_speed_per_match": 0.06
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.35,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.35,
+      "sc_passes_opportunity_take_rate": 0.15,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.15
+    }
+  },
+  "wingback_engine": {
+    "label": "Wing-Back Engine",
+    "profile_points": ["Repeat sprinting", "Total running volume", "High-speed overlap threat", "Recovery capacity"],
+    "physical_sub_weight": 0.85,
+    "gi_sub_weight": 0.15,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.20,
+      "sc_physical_hsr_dist_per_match": 0.18,
+      "sc_physical_sprint_dist_per_match": 0.14,
+      "sc_physical_count_hsr_per_match": 0.12,
+      "sc_physical_count_sprint_per_match": 0.10,
+      "sc_physical_count_high_accel_per_match": 0.10,
+      "sc_physical_count_high_decel_per_match": 0.08,
+      "sc_physical_top_speed_per_match": 0.08
+    },
+    "gi_weights": {
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.30,
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.25,
+      "sc_passes_opportunity_take_rate": 0.25,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.20
+    }
+  },
+  "wide_duel_defender": {
+    "label": "Wide Duel Defender",
+    "profile_points": ["Speed in wide spaces", "Recovery running", "Explosive duels", "Retention after regains"],
+    "physical_sub_weight": 0.82,
+    "gi_sub_weight": 0.18,
+    "physical_weights": {
+      "sc_physical_top_speed_per_match": 0.20,
+      "sc_physical_sprint_dist_per_match": 0.18,
+      "sc_physical_hsr_dist_per_match": 0.12,
+      "sc_physical_count_sprint_per_match": 0.12,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_count_high_accel_per_match": 0.10,
+      "sc_physical_dist_per_match": 0.10,
+      "sc_physical_count_high_decel_per_match": 0.08
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.30,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.30,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.20,
+      "sc_passes_opportunity_take_rate": 0.20
+    }
+  },
+  "channel_cb": {
+    "label": "Channel Centre-Back",
+    "profile_points": ["Recovery speed", "Covering large spaces", "Sharp directional changes", "Composed on exits"],
+    "physical_sub_weight": 0.74,
+    "gi_sub_weight": 0.26,
+    "physical_weights": {
+      "sc_physical_top_speed_per_match": 0.18,
+      "sc_physical_sprint_dist_per_match": 0.14,
+      "sc_physical_hsr_dist_per_match": 0.14,
+      "sc_physical_count_hsr_per_match": 0.12,
+      "sc_physical_count_high_accel_per_match": 0.12,
+      "sc_physical_count_high_decel_per_match": 0.12,
+      "sc_physical_intensity_index": 0.10,
+      "sc_physical_dist_per_match": 0.08
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.40,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.40,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.10,
+      "sc_passes_opportunity_take_rate": 0.10
+    }
+  },
+  "central_cb": {
+    "label": "Central Centre-Back",
+    "profile_points": ["Coverage and repeat duels", "Braking and turning", "Composure", "Reliable exit quality"],
+    "physical_sub_weight": 0.72,
+    "gi_sub_weight": 0.28,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.16,
+      "sc_physical_intensity_index": 0.12,
+      "sc_physical_count_high_accel_per_match": 0.14,
+      "sc_physical_count_high_decel_per_match": 0.14,
+      "sc_physical_hsr_dist_per_match": 0.10,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_top_speed_per_match": 0.08,
+      "sc_physical_sprint_dist_per_match": 0.08,
+      "sc_physical_count_sprint_per_match": 0.08
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.45,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.45,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.05,
+      "sc_passes_opportunity_take_rate": 0.05
+    }
+  },
+  "gk_mobility": {
+    "label": "GK Mobility",
+    "profile_points": ["Set position and reset", "Explosive feet", "Pressure calmness", "Distribution security"],
+    "physical_sub_weight": 0.55,
+    "gi_sub_weight": 0.45,
+    "physical_weights": {
+      "sc_physical_dist_per_match": 0.16,
+      "sc_physical_count_high_accel_per_match": 0.14,
+      "sc_physical_count_high_decel_per_match": 0.14,
+      "sc_physical_hsr_dist_per_match": 0.10,
+      "sc_physical_count_hsr_per_match": 0.10,
+      "sc_physical_top_speed_per_match": 0.10,
+      "sc_physical_sprint_dist_per_match": 0.08,
+      "sc_physical_count_sprint_per_match": 0.08,
+      "sc_physical_intensity_index": 0.10
+    },
+    "gi_weights": {
+      "sc_pressure_ball_retention_ratio_under_high_pressure": 0.45,
+      "sc_pressure_pass_completion_ratio_under_high_pressure": 0.45,
+      "sc_passes_count_completed_pass_to_run_in_behind_per_match": 0.05,
+      "sc_passes_opportunity_take_rate": 0.05
+    }
+  }
+}

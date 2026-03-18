@@ -12,7 +12,7 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Mapping
 
 import numpy as np
 import pandas as pd
@@ -58,17 +58,25 @@ _MIN_PEERS_WITH_DATA = 3
 def score_physical(
     player_id: int,
     peer_player_ids: list[int],
+    *,
+    physical_weights: Mapping[str, float] | None = None,
+    gi_weights: Mapping[str, float] | None = None,
+    physical_sub_weight: float | None = None,
+    gi_sub_weight: float | None = None,
 ) -> float | None:
     """Return a 0–100 physical score for *player_id* relative to *peer_player_ids*.
 
     Returns ``None`` if the player has no SkillCorner data.
 
     The score is the weighted average of percentile ranks (0–100) across
-    physical output metrics and game-intelligence metrics.  Each sub-score
-    is computed independently and blended 60/40 (physical/GI).
+    physical output metrics and game-intelligence metrics. Each sub-score
+    is computed independently and blended with the configured sub-weights.
 
-    If fewer than ``_MIN_PEERS_WITH_DATA`` peers have data for a metric
-    that metric is skipped for that sub-score.
+    ``physical_weights`` and ``gi_weights`` let callers override the default
+    profile templates for dashboard-specific physical emphases.
+
+    If fewer than ``_MIN_PEERS_WITH_DATA`` peers have data for a metric that
+    metric is skipped for that sub-score.
     """
     # Collect features for the full peer pool (including target player).
     all_ids = list(dict.fromkeys([player_id, *peer_player_ids]))  # deduplicated, order-stable
@@ -81,8 +89,15 @@ def score_physical(
     if not pool.loc[player_id].get("sc_has_physical", False):
         return None
 
-    physical_sub = _weighted_percentile_score(player_id, pool, _PHYSICAL_WEIGHTS)
-    gi_sub = _weighted_percentile_score(player_id, pool, _GI_WEIGHTS)
+    active_physical_weights = dict(physical_weights or _PHYSICAL_WEIGHTS)
+    active_gi_weights = dict(gi_weights or _GI_WEIGHTS)
+    active_physical_sub_weight = float(
+        _PHYSICAL_SUB_WEIGHT if physical_sub_weight is None else physical_sub_weight
+    )
+    active_gi_sub_weight = float(_GI_SUB_WEIGHT if gi_sub_weight is None else gi_sub_weight)
+
+    physical_sub = _weighted_percentile_score(player_id, pool, active_physical_weights)
+    gi_sub = _weighted_percentile_score(player_id, pool, active_gi_weights)
 
     if physical_sub is None and gi_sub is None:
         return None
@@ -93,7 +108,13 @@ def score_physical(
     if gi_sub is None:
         return round(physical_sub, 2)
 
-    blended = _PHYSICAL_SUB_WEIGHT * physical_sub + _GI_SUB_WEIGHT * gi_sub
+    total_sub_weight = active_physical_sub_weight + active_gi_sub_weight
+    if total_sub_weight <= 0.0:
+        return round((physical_sub + gi_sub) / 2.0, 2)
+
+    blended = (
+        active_physical_sub_weight * physical_sub + active_gi_sub_weight * gi_sub
+    ) / total_sub_weight
     return round(blended, 2)
 
 

@@ -26,6 +26,8 @@ class ConfigAssetTests(unittest.TestCase):
             "score_calibration.json",
             "projection_heuristics.json",
             "on_pitch_dashboard.json",
+            "on_pitch_profiles.json",
+            "on_pitch_physical_profiles.json",
         ):
             payload = self.settings.load_json(filename)
             self.assertTrue(payload, filename)
@@ -70,9 +72,41 @@ class ConfigAssetTests(unittest.TestCase):
             "maximum_midfielder_label_share",
             "minimum_central_attack_share",
             "maximum_wide_attack_share",
+            "allowed_primary_families",
+            "allowed_sc_positions",
         }
         for role_name, rules in payload.items():
             self.assertTrue(set(rules).issubset(allowed_keys), role_name)
+
+    def test_on_pitch_profiles_are_normalised(self) -> None:
+        profiles = self.settings.load_json("on_pitch_profiles.json")
+        physical_profiles = self.settings.load_json("on_pitch_physical_profiles.json")
+
+        for profile in profiles:
+            weights = profile["metrics"].values()
+            self.assertGreaterEqual(len(profile["metrics"]), 4)
+            self.assertTrue(
+                isclose(sum(weights), 1.0, rel_tol=0.0, abs_tol=1e-9),
+                profile["role_name"],
+            )
+            self.assertTrue(profile["profile_points"], profile["role_name"])
+            self.assertIn(profile["physical_profile"], physical_profiles, profile["role_name"])
+
+    def test_on_pitch_physical_profiles_are_normalised(self) -> None:
+        profiles = self.settings.load_json("on_pitch_physical_profiles.json")
+
+        for profile_name, payload in profiles.items():
+            self.assertTrue(
+                isclose(sum(payload["physical_weights"].values()), 1.0, rel_tol=0.0, abs_tol=1e-9),
+                profile_name,
+            )
+            self.assertTrue(
+                isclose(sum(payload["gi_weights"].values()), 1.0, rel_tol=0.0, abs_tol=1e-9),
+                profile_name,
+            )
+            self.assertGreater(float(payload["physical_sub_weight"]), 0.0, profile_name)
+            self.assertGreaterEqual(float(payload["gi_sub_weight"]), 0.0, profile_name)
+            self.assertTrue(payload["profile_points"], profile_name)
 
     def test_league_scope_includes_requested_expansion(self) -> None:
         leagues = self.settings.load_json("leagues.json")

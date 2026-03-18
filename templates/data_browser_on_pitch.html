@@ -92,6 +92,33 @@
   <div class="stat-box"><span class="muted">Minutes Floor</span><strong>{{ minimum_minutes }}</strong></div>
 </div>
 
+{% if selected_profile_points %}
+  <div class="panel" style="margin-bottom:18px;">
+    <h2 style="margin:0;">{{ selected_profile_label }} Profile Focus</h2>
+    <div class="muted" style="margin-top:6px;">This board is now using the Stockport squad-planning profile definition rather than the older generic role labels.</div>
+    <div class="chip-row">
+      {% for point in selected_profile_points %}
+        <span class="chip">{{ point }}</span>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
+{% if selected_physical_points %}
+  <div class="panel" style="margin-bottom:18px;">
+    <h2 style="margin:0;">Physical Emphasis{% if selected_physical_label %} · {{ selected_physical_label }}{% endif %}</h2>
+    <div class="muted" style="margin-top:6px;">The physical score is now profile-specific as well, so wide roles can lean into pace and sprint repeatability while midfield engine roles can lean more into running volume and repeat effort.</div>
+    <div class="chip-row">
+      {% for point in selected_physical_points %}
+        <span class="chip">{{ point }}</span>
+      {% endfor %}
+      {% for row in selected_physical_blend %}
+        <span class="chip">{{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}
+
 {% if candidate_match_note %}
   <div class="panel" style="margin-bottom:18px;">
     <h2 style="margin:0;">Profile Match Mode</h2>
@@ -107,7 +134,7 @@
 
 <div class="panel" style="margin-bottom:18px;">
   <h2 style="margin:0;">Method</h2>
-  <div class="muted" style="margin-top:6px;">This board ignores availability and financial value. It ranks role-matched players only, requires at least {{ minimum_minutes }} season minutes, and applies a softer minutes-evidence multiplier so tiny samples do not dominate. On-pitch score is 60% technical (role fit, current performance, projection) + 40% physical (peer-percentile SkillCorner output). Players without SkillCorner data fall back to technical only.</div>
+  <div class="muted" style="margin-top:6px;">This board ignores availability and financial value. It ranks role-matched players only, requires at least {{ minimum_minutes }} season minutes, and applies a softer minutes-evidence multiplier so tiny samples do not dominate. On-pitch score is 60% technical (role fit, current performance, projection) + 40% physical (peer-percentile SkillCorner output). Football-facing board scores are then adjusted by league strength so cross-league comparisons stay sensible. The physical layer now uses the selected profile template{% if selected_physical_label %} ({{ selected_physical_label }}){% endif %} rather than one shared athletic model for every role. Players without SkillCorner data fall back to technical only.</div>
   <div class="chip-row">
     {% for row in overall_weights %}<span class="chip">Overall {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
     {% for row in present_weights %}<span class="chip">Present {{ row.label }} {{ "%.1f"|format(row.percent) }}%</span>{% endfor %}
