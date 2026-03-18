@@ -104,7 +104,11 @@ def bar(v: float, colour: str) -> str:
     return f'<div class="bar-wrap"><div class="bar" style="width:{w}%;background:{colour}"></div><span class="bar-label">{w}%</span></div>'
 
 
-def build_html(profiles: list, physical: dict) -> str:
+def build_html(profiles: list, physical: dict, primary_config: dict) -> str:
+    primary_weight = int(primary_config.get("primary_weight", 0.40) * 100)
+    secondary_weight = 100 - primary_weight
+    primary_families = primary_config.get("families", {})
+
     # Group by family in order
     by_family: dict[str, list] = {f: [] for f in FAMILY_ORDER}
     for p in profiles:
@@ -126,7 +130,15 @@ def build_html(profiles: list, physical: dict) -> str:
             phys_sub = phys.get("physical_sub_weight", 0)
             gi_sub = phys.get("gi_sub_weight", 0)
 
-            # Technical metrics rows
+            # Primary metrics rows (family-level quality baseline)
+            fam_primary = primary_families.get(fam, {})
+            primary_metrics = fam_primary.get("metrics", {})
+            primary_rows = "".join(
+                f'<tr><td>{METRIC_LABELS.get(k, k)}</td><td>{bar(v, "#b5451b")}</td></tr>'
+                for k, v in sorted(primary_metrics.items(), key=lambda x: -x[1])
+            )
+
+            # Secondary (profile-specific) metrics rows
             tech_rows = "".join(
                 f'<tr><td>{METRIC_LABELS.get(k, k)}</td><td>{bar(v, "#1a3a6b")}</td></tr>'
                 for k, v in sorted(p["metrics"].items(), key=lambda x: -x[1])
@@ -159,7 +171,9 @@ def build_html(profiles: list, physical: dict) -> str:
   <div class="profile-points">{profile_points_html}</div>
   <div class="two-col">
     <div class="col">
-      <h4>Technical Metrics</h4>
+      <h4 class="layer-primary">Layer 1 · Quality Baseline <span class="sub-weight">({primary_weight}% of score) — shared by all {FAMILY_LABELS[fam]}</span></h4>
+      <table>{primary_rows}</table>
+      <h4 class="layer-secondary" style="margin-top:10px">Layer 2 · Profile Fit <span class="sub-weight">({secondary_weight}% of score)</span></h4>
       <table>{tech_rows}</table>
     </div>
     <div class="col">
@@ -199,6 +213,8 @@ def build_html(profiles: list, physical: dict) -> str:
   .tag {{ background: #f0f4ff; color: #1a3a6b; border: 1px solid #c5d0f0; font-size: 8.5px; padding: 2px 7px; border-radius: 10px; font-weight: 500; }}
   .two-col {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }}
   .col h4 {{ font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #555; margin-bottom: 5px; }}
+  .layer-primary {{ color: #7a2c0e !important; }}
+  .layer-secondary {{ color: #1a3a6b !important; }}
   .sub-weight {{ font-weight: 400; text-transform: none; letter-spacing: 0; }}
   table {{ width: 100%; border-collapse: collapse; }}
   table tr {{ border-bottom: 1px solid #f0f0f0; }}
@@ -225,12 +241,16 @@ def build_html(profiles: list, physical: dict) -> str:
 </html>"""
 
 
+PRIMARY_JSON = ROOT / "config" / "on_pitch_primary_metrics.json"
+
+
 def main() -> None:
     profiles = json.loads(PROFILES_JSON.read_text())
     physical = json.loads(PHYSICAL_JSON.read_text())
+    primary = json.loads(PRIMARY_JSON.read_text())
 
     OUT_HTML.parent.mkdir(parents=True, exist_ok=True)
-    html = build_html(profiles, physical)
+    html = build_html(profiles, physical, primary)
     OUT_HTML.write_text(html, encoding="utf-8")
     print(f"HTML written → {OUT_HTML}")
 

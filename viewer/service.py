@@ -344,6 +344,8 @@ def get_on_pitch_profiles_context(
             **candidate,
             "projection_score": projection_score,
             "role_fit_score": float(role_fit.get("score") or 0.0),
+            "primary_score": float(role_fit.get("primary_score") or 0.0),
+            "secondary_score": float(role_fit.get("secondary_score") or 0.0),
             "current_score": float(current.get("score") or 0.0),
             "soft_minutes_multiplier": soft_multiplier,
         }

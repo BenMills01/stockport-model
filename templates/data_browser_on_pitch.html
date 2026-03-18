@@ -181,6 +181,8 @@
               <th title="60% technical + 40% physical (falls back to technical when no SkillCorner data)">On-Pitch</th>
               <th title="Role fit, current performance and projection blend">Technical</th>
               <th title="Peer-percentile ranked SkillCorner physical output">Physical</th>
+              <th title="Layer 1 · 40% — universal quality baseline for this position family">Quality</th>
+              <th title="Layer 2 · 60% — how well they fit this specific profile type">Type Fit</th>
               <th>Present</th>
               <th>Upside</th>
               <th>Age</th>
@@ -198,6 +200,8 @@
                 <td><strong>{{ "%.1f"|format(row.on_pitch_score or 0) }}</strong></td>
                 <td>{{ "%.1f"|format(row.technical_score or 0) }}</td>
                 <td>{% if row.physical_score is not none %}{{ "%.1f"|format(row.physical_score) }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                <td style="color:#7a2c0e;font-weight:600;">{{ "%.1f"|format(row.primary_score or 0) }}</td>
+                <td style="color:#1a3a6b;font-weight:600;">{{ "%.1f"|format(row.secondary_score or 0) }}</td>
                 <td>{{ "%.1f"|format(row.present_on_pitch_score or 0) }}</td>
                 <td>{{ "%.1f"|format(row.upside_on_pitch_score or 0) }}</td>
                 <td>{{ row.age_label }}</td>
